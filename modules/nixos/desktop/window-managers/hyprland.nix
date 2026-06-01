@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, system, ... }:
+{ config, pkgs, ... }:
 
 {
   programs.hyprland = {
@@ -14,13 +14,11 @@
     extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
   };
 
-  environment.systemPackages = (with pkgs; [
+  environment.systemPackages = with pkgs; [
     kitty
     wofi
     waybar
     hyprpaper
     hyprlauncher
-  ]) ++ [
-    inputs.caelestia-shell.packages.${system}.default
   ];
 }
