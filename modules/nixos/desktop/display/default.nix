@@ -31,6 +31,5 @@
   environment.sessionVariables = {
     XCURSOR_THEME = "Bibata-Modern-Classic";
     XCURSOR_SIZE = "24";
-    LIBVA_DRIVER_NAME = "radeonsi";
   };
 }

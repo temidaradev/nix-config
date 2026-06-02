@@ -2,8 +2,8 @@
 
 {
   options.temidaradev.hardware.graphics.driver = lib.mkOption {
-    type = lib.types.enum [ "amd" ];
-    default = "amd";
+    type = lib.types.enum [ "intel" ];
+    default = "intel";
   };
 
   config.hardware.graphics = {
@@ -12,6 +12,6 @@
   };
 
   imports = [
-    ./amd.nix
+    ./intel.nix
   ];
 }

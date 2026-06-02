@@ -86,7 +86,7 @@ with pkgs; {
     gnumake
     unzip
     luajit
-    (btop.override { cudaSupport = false; rocmSupport = true; })
+    (btop.override { cudaSupport = false; rocmSupport = false; })
     fastfetch
     arduino-ide
     ddcutil
