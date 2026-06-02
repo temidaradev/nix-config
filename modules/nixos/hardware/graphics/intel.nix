@@ -7,19 +7,12 @@
 
   hardware.graphics = {
     extraPackages = with pkgs; [
-      intel-media-driver
       vpl-gpu-rt
       intel-compute-runtime
       level-zero
       vulkan-validation-layers
     ];
-
-    extraPackages32 = with pkgs.pkgsi686Linux; [
-      intel-media-driver
-    ];
   };
-
-  environment.variables.LIBVA_DRIVER_NAME = "iHD";
 
   environment.systemPackages = with pkgs; [
     intel-gpu-tools
