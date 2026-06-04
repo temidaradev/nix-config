@@ -8,6 +8,7 @@
       autoUpdate = true;
       upgrade = true;
       cleanup = "uninstall";
+      extraFlags = [ "--force" ];
     };
 
     taps = [
@@ -16,6 +17,7 @@
       "koekeishiya/formulae"
       "nikitabobko/tap"
       "osx-cross/avr"
+      "sikarugir-app/sikarugir"
     ];
 
     brews = [

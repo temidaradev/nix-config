@@ -67,7 +67,6 @@ with pkgs; {
 
     # Languages / toolchains
     go
-    odin
     zig
     ghc
     cabal-install
