@@ -87,6 +87,7 @@
       "font-sf-pro"
       "gcc-arm-embedded"
       "godot"
+      "google-chrome"
       "gstreamer-runtime"
       "ios-app-signer"
       "iterm2"
