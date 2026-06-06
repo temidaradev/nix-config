@@ -11,6 +11,7 @@ with pkgs; {
     # Networking
     proton-vpn
     nicotine-plus
+    google-chrome
 
     # Hardware
     kdePackages.qtmultimedia
