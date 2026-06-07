@@ -121,6 +121,7 @@ with pkgs; {
     autossh
     glib-networking
     libsoup_3
+    libsecret
     gtk3
     webkitgtk_4_1
     xdotool
