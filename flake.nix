@@ -16,9 +16,13 @@
       url = "github:AlvaroParker/helium-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    kopuz = {
+      url = "github:temidaradev/kopuz";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = inputs@{ self, nixpkgs, nix-darwin, home-manager, zen-browser, helium, ... }:
+  outputs = inputs@{ self, nixpkgs, nix-darwin, home-manager, zen-browser, helium, kopuz, ... }:
     let
       lib = nixpkgs.lib;
 
@@ -47,7 +51,7 @@
         specialArgs = {
           system = linuxSystem;
           inherit zen-browser;
-          inputs = { inherit helium; };
+          inputs = { inherit helium kopuz; };
         };
       };
 
