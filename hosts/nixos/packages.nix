@@ -21,7 +21,6 @@ with pkgs; {
     qt6Packages.qtdeclarative
     qt6Packages.qtwayland
     qt6Packages.qtwebsockets
-    mesa
     cava
     direnv
 
@@ -72,6 +71,7 @@ with pkgs; {
     fzf
     zoxide
     eza
+    librespot
 
     # Development tools
     git
@@ -85,6 +85,7 @@ with pkgs; {
     dos2unix
     alsa-lib
     gnumake
+    gh
     unzip
     luajit
     (btop.override { cudaSupport = false; rocmSupport = false; })
@@ -187,6 +188,7 @@ with pkgs; {
     calibre
     ani-cli
     gnome-themes-extra
+    ollama
 
     # Fonts
     noto-fonts-cjk-sans
