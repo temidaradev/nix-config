@@ -20,9 +20,13 @@
       url = "github:temidaradev/kopuz";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    caelestia-shell = {
+      url = "github:caelestia-dots/shell";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = inputs@{ self, nixpkgs, nix-darwin, home-manager, zen-browser, helium, kopuz, ... }:
+  outputs = inputs@{ self, nixpkgs, nix-darwin, home-manager, zen-browser, helium, kopuz, caelestia-shell, ... }:
     let
       lib = nixpkgs.lib;
 
@@ -45,7 +49,14 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.backupFileExtension = "bak";
-            home-manager.users.temidaradev = import ./modules/home/home.nix;
+            home-manager.users.temidaradev = {
+              imports = [
+                ./modules/home/home.nix
+                ./modules/home/dolphin.nix
+                # caelestia-shell.homeManagerModules.default
+                # ./modules/home/caelestia
+              ];
+            };
           }
         ];
         specialArgs = {
