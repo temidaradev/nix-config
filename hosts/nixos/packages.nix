@@ -197,7 +197,6 @@ with pkgs; {
     # Applications
     thunderbird
     firefox
-    librewolf
     telegram-desktop
     pear-desktop
     blender
