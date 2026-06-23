@@ -9,8 +9,9 @@
         Enable = "Source,Sink,Media,Socket";
         Experimental = true;
       };
+      Policy = {
+        AutoEnable = false;
+      };
     };
   };
-
-  services.blueman.enable = true;
 }
