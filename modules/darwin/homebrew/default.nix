@@ -101,7 +101,6 @@
       "miniforge"
       "mullvad-vpn"
       "nikitabobko/tap/aerospace"
-      "ngrok/ngrok/ngrok"
       "pear-desktop"
       "qt-creator"
       "rectangle"
