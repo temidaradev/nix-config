@@ -58,15 +58,7 @@ in
     extraPackages = gruvbox-sddm.propagatedBuildInputs;
   };
 
-  services.displayManager.sddm.settings = {
-    Theme = {
-      CursorTheme = "Bibata-Modern-Classic";
-      CursorSize = 24;
-    };
-  };
-
   environment.systemPackages = with pkgs; [
-    bibata-cursors
     gruvbox-sddm
   ];
 
@@ -78,9 +70,4 @@ in
   };
 
   console.keyMap = "us";
-
-  environment.sessionVariables = {
-    XCURSOR_THEME = "Bibata-Modern-Classic";
-    XCURSOR_SIZE = "24";
-  };
 }
