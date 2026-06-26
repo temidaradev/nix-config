@@ -52,7 +52,6 @@
             home-manager.users.temidaradev = {
               imports = [
                 ./modules/home/home.nix
-                ./modules/home/dolphin.nix
                 # caelestia-shell.homeManagerModules.default
                 # ./modules/home/caelestia
               ];
