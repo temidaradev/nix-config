@@ -34,11 +34,11 @@
         "quickshell": "quickshell"
       },
       "locked": {
-        "lastModified": 1782486555,
-        "narHash": "sha256-sH+qDN1bxcfzN6D3lMgs18xhOL4WzkWV3NtKIu66Cxg=",
+        "lastModified": 1782493264,
+        "narHash": "sha256-fdODCUuuateiwEsPStno5pXN+6ozbG0oKqfCVXEdPSc=",
         "owner": "caelestia-dots",
         "repo": "shell",
-        "rev": "9952fb0531965c46e3a22232f1a35dc423faee21",
+        "rev": "f557786c008c192857c200fa375aaf4d46a90871",
         "type": "github"
       },
       "original": {
@@ -168,11 +168,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1782485774,
-        "narHash": "sha256-P9BUICjN9LYTRa1kEm6vh1HWyVdDCATc17Rb1d2uH/g=",
+        "lastModified": 1782491936,
+        "narHash": "sha256-dCeLUhDiHqAUPxcJ+2Dprk/uZj6hHJgjUZgpiBBaeZM=",
         "owner": "temidaradev",
         "repo": "kopuz",
-        "rev": "8a2fe513ab56a408cbae1345b8308afe46b86ae1",
+        "rev": "d1d113dbbe223be82447cb9b33a4c2d877e30034",
         "type": "github"
       },
       "original": {
