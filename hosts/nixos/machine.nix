@@ -12,6 +12,8 @@ in
   networking.hostName = "temidaradev";
   system.stateVersion = "26.05";
 
+  powerManagement.cpuFreqGovernor = "performance";
+
   environment.systemPackages = packages.system ++ [
     inputs.helium.packages.${system}.default
     inputs.kopuz.packages.${system}.default
