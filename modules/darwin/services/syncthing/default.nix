@@ -1,13 +1,18 @@
 { config, pkgs, ... }:
 
 {
-  services.syncthing = {
-    enable = true;
-    user = "lidldev";
-    dataDir = "/Users/lidldev";
-    configDir = "/Users/lidldev/Library/Application Support/Syncthing";
-    overrideDevices = false;
-    overrideFolders = false;
-    guiAddress = "127.0.0.1:8384";
+  launchd.user.agents.syncthing = {
+    serviceConfig = {
+      ProgramArguments = [
+        "${pkgs.syncthing}/bin/syncthing"
+        "serve"
+        "--no-browser"
+        "--no-restart"
+        "--gui-address=127.0.0.1:8384"
+      ];
+      KeepAlive = true;
+      RunAtLoad = true;
+      ProcessType = "Background";
+    };
   };
 }
