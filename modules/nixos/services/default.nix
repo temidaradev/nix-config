@@ -13,5 +13,6 @@
     ./fwupd
     ./xmrig
     ./samba
+    ./syncthing
   ];
 }
