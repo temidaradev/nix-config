@@ -137,6 +137,7 @@ with pkgs; {
     lmstudio
 
     # Languages
+    openjdk17
     uv
     pkg-config
     odin
