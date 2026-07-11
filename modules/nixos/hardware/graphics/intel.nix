@@ -16,7 +16,6 @@
       vpl-gpu-rt
       intel-compute-runtime
       level-zero
-      vulkan-validation-layers
     ];
   };
 
