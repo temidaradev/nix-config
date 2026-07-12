@@ -2,6 +2,7 @@
 
 let
   packages = import ./packages.nix { inherit pkgs; };
+  shared = import ../../modules/shared/packages.nix { inherit pkgs; };
 in
 {
   imports = [
@@ -14,7 +15,7 @@ in
 
   powerManagement.cpuFreqGovernor = "performance";
 
-  environment.systemPackages = packages.system ++ [
+  environment.systemPackages = packages.system ++ shared ++ [
     inputs.helium.packages.${system}.default
     inputs.kopuz.packages.${system}.default
     zen-browser.packages.${system}.default

@@ -21,15 +21,12 @@ with pkgs; {
     qt6Packages.qtdeclarative
     qt6Packages.qtwayland
     qt6Packages.qtwebsockets
-    cava
-    direnv
 
     # MTP support for Android devices
     libmtp
     jmtpfs
     doublecmd
     rar
-    scrcpy
 
     # iphone stuff
     libimobiledevice
@@ -52,10 +49,8 @@ with pkgs; {
     xdg-desktop-portal-wlr
     fwupd
     whatsapp-electron
-    ffmpeg
     discordo
     youtube-tui
-    sioyek
     gsmartcontrol
     smartmontools
     kdePackages.konsole
@@ -63,40 +58,24 @@ with pkgs; {
     eww
     tradingview
     qbittorrent
-    localsend
     jellyfin-media-player
     parted
-    ollama
     alacritty
-    fzf
-    zoxide
-    eza
     librespot
 
     # Development tools
-    git
     qmk
     qmk-udev-rules
     hidapi
     cachix
-    avrdude
-    dfu-programmer
-    dfu-util
-    dos2unix
     alsa-lib
-    gnumake
-    gh
     unzip
-    luajit
     (btop.override { cudaSupport = false; rocmSupport = false; })
-    fastfetch
     arduino-ide
     ddcutil
     brightnessctl
     networkmanager
     lm_sensors
-    fish
-    openssl
     openssl.dev
     android-studio
     solaar
@@ -109,15 +88,12 @@ with pkgs; {
     trunk
     libqalculate
     material-symbols
-    nerd-fonts.caskaydia-cove
     kitty
     slack
     dioxus-cli
     sqlite
-    picotool
     stripe-cli
     tigervnc
-    xmrig
     chromium
     autossh
     glib-networking
@@ -128,46 +104,31 @@ with pkgs; {
     xdotool
 
     # Editors
-    vim
     antigravity
-    neovim
-    helix
     vscode
     zed-editor
     lmstudio
 
     # Languages
-    openjdk17
     uv
-    pkg-config
     odin
-    ghc
-    cabal-install
-    go
     rustc
-    rustup
     gcc
     binutils
     libGL
-    wget
-    glm
     glib
     glibc
     zlib
-    zig
-    lua
 
     # Hyprland
     waybar
     wofi
 
     # Desktop tools
-    yt-dlp
     wl-clipboard
     grim
     slurp
     wf-recorder
-    imagemagick
     gpu-screen-recorder
     nixos-icons
     papirus-icon-theme
@@ -180,20 +141,13 @@ with pkgs; {
     shared-mime-info
     qalculate-gtk
     kdePackages.gwenview
-    mpv
     pavucontrol
     playerctl
     pamixer
     alsa-utils
-    zip
     calibre
     ani-cli
     gnome-themes-extra
-    ollama
-
-    # Fonts
-    noto-fonts-cjk-sans
-    nerd-fonts.jetbrains-mono
 
     # Applications
     thunderbird
@@ -202,7 +156,6 @@ with pkgs; {
     pear-desktop
     blender
     godot
-    kitty
     ghostty
     kdePackages.dolphin
     wine

@@ -3,6 +3,7 @@
 
 let
   packages = import ./packages.nix { inherit pkgs; };
+  shared = import ../../modules/shared/packages.nix { inherit pkgs; };
 in
 {
   imports = [
@@ -17,5 +18,5 @@ in
   system.stateVersion = 5;
   system.primaryUser = "lidldev";
 
-  environment.systemPackages = packages.system;
+  environment.systemPackages = packages.system ++ shared;
 }

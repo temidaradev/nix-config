@@ -40,8 +40,6 @@ in
     taps = [
       "charmbracelet/tap"
       "gromgit/fuse"
-      "koekeishiya/formulae"
-      "nikitabobko/tap"
       "osx-cross/avr"
       "pear-devs/pear"
       "sikarugir-app/sikarugir"
@@ -54,7 +52,6 @@ in
       "nowplaying-cli"
       "switchaudio-osx"
       "pidof"
-      "koekeishiya/formulae/skhd"
 
       # nixpkgs-darwin pain
       "cocoapods"
@@ -119,7 +116,6 @@ in
       "ios-app-signer"
       "iterm2"
       "itsycal"
-      "karabiner-elements"
       "kitty"
       "lm-studio"
       "localsend"
@@ -127,7 +123,6 @@ in
       "middleclick"
       "miniforge"
       "mullvad-vpn"
-      "nikitabobko/tap/aerospace"
       "pear-desktop"
       "qt-creator"
       "rectangle"

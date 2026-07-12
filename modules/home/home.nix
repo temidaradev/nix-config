@@ -8,6 +8,9 @@
     bat
     fd
     ripgrep
+    tealdeer
+    glow
+    yt-dlp
   ];
 
   programs.zsh = {
@@ -74,6 +77,12 @@
     enable = true;
     enableZshIntegration = true;
   };
+
+  programs.lazygit.enable = true;
+
+  programs.tmux.enable = true;
+
+  programs.fastfetch.enable = true;
 
   programs.zoxide = {
     enable = true;

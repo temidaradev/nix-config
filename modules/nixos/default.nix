@@ -3,6 +3,7 @@
 {
   imports = [
     ../home/git.nix
+    ../shared/fonts.nix
     ./boot
     ./desktop
     ./gaming

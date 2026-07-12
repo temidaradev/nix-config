@@ -9,13 +9,10 @@ in
 
   time.timeZone = "Europe/Istanbul";
 
-  fonts.packages = with pkgs; [
-    noto-fonts
-    noto-fonts-cjk-sans
-    noto-fonts-cjk-serif
-    noto-fonts-color-emoji
-    nerd-fonts.jetbrains-mono
-  ];
+  security.pam.services.sudo_local = {
+    touchIdAuth = true;
+    reattach = true;
+  };
 
   system.defaults = {
     NSGlobalDomain = {
@@ -44,7 +41,15 @@ in
       autohide = true;
       orientation = "bottom";
       tilesize = 48;
+      show-recents = false;
+      mru-spaces = false;
     };
+    screencapture = {
+      location = "~/Pictures/screenshots";
+      type = "png";
+      disable-shadow = true;
+    };
+    menuExtraClock.ShowSeconds = true;
     finder = {
       AppleShowAllExtensions = true;
       ShowPathbar = true;
@@ -62,5 +67,9 @@ in
   system.activationScripts.postActivation.text = mkAfter ''
     echo "unhiding ${config.users.users.${config.system.primaryUser}.home}/Library..."
     /usr/bin/chflags nohidden ${config.users.users.${config.system.primaryUser}.home}/Library
+
+    # screencapture silently falls back to Desktop if the target dir is missing
+    /usr/bin/install -d -o ${config.system.primaryUser} -g staff \
+      ${config.users.users.${config.system.primaryUser}.home}/Pictures/screenshots
   '';
 }
