@@ -25,7 +25,6 @@ with pkgs; {
     mtr
     inetutils
     libpcap
-    czkawka
     qemu
     watchman
 
@@ -49,7 +48,7 @@ with pkgs; {
     clang-tools
     ccls
     stylua
-    commitizen
+    cocogitto
     tailwindcss
     xcodegen
 

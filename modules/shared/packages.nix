@@ -40,7 +40,6 @@ with pkgs; [
   glm
 
   # Apps / misc
-  sioyek
   localsend
   scrcpy
   ollama
