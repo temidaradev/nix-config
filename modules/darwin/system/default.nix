@@ -5,7 +5,17 @@ let
 in
 
 {
-  nix.enable = false;
+  nix.enable = true;
+
+  nix.settings = {
+    experimental-features = [ "nix-command" "flakes" ];
+    trusted-users = [ "root" "@admin" ];
+  };
+
+  nix.gc = {
+    automatic = true;
+    options = "--delete-older-than 14d";
+  };
 
   time.timeZone = "Europe/Istanbul";
 
