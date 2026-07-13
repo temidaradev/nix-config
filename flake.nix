@@ -7,8 +7,8 @@
       url = "github:nix-darwin/nix-darwin/master";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    home-manager = {
-      url = "github:nix-community/home-manager";
+    hjem = {
+      url = "github:feel-co/hjem";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
@@ -26,7 +26,7 @@
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, nix-darwin, home-manager, zen-browser, helium, kopuz, caelestia-shell, ... }:
+  outputs = inputs@{ self, nixpkgs, nix-darwin, hjem, zen-browser, helium, kopuz, caelestia-shell, ... }:
     let
       lib = nixpkgs.lib;
 
@@ -44,19 +44,8 @@
           ./hosts/nixos/machine.nix
           (nixpkgs + "/nixos/modules/misc/nixpkgs/read-only.nix")
           { nixpkgs.pkgs = mkPkgs linuxSystem; }
-          home-manager.nixosModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.backupFileExtension = "bak";
-            home-manager.users.temidaradev = {
-              imports = [
-                ./modules/home/home.nix
-                # caelestia-shell.homeManagerModules.default
-                # ./modules/home/caelestia
-              ];
-            };
-          }
+          hjem.nixosModules.hjem
+          ./modules/home/home.nix
         ];
         specialArgs = {
           system = linuxSystem;
@@ -69,13 +58,8 @@
         modules = [
           ./hosts/darwin/machine.nix
           { nixpkgs.pkgs = mkPkgs darwinSystem; }
-          home-manager.darwinModules.home-manager
-          {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.backupFileExtension = "bak";
-            home-manager.users.lidldev = import ./modules/home/home.nix;
-          }
+          hjem.darwinModules.hjem
+          ./modules/home/home.nix
         ];
         specialArgs = {
           system = darwinSystem;
