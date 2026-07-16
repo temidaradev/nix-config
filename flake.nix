@@ -53,21 +53,6 @@
           inputs = { inherit helium kopuz; };
         };
       };
-
-      nixosConfigurations.server = lib.nixosSystem {
-        modules = [
-          ./hosts/server/machine.nix
-          (nixpkgs + "/nixos/modules/misc/nixpkgs/read-only.nix")
-          { nixpkgs.pkgs = mkPkgs linuxSystem; }
-          hjem.nixosModules.hjem
-          ./modules/home/home.nix
-        ];
-        specialArgs = {
-          system = linuxSystem;
-          inputs = { };
-        };
-      };
-
       darwinConfigurations.temidaradev-darwin = nix-darwin.lib.darwinSystem {
         modules = [
           ./hosts/darwin/machine.nix
