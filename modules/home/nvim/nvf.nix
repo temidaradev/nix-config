@@ -112,6 +112,10 @@
       setupOpts = {
         view.width = 25;
         view.side = "left";
+        view.preserve_window_proportions = true;
+        # Snap the tree back to view.width after opening a file
+        # (nvf defaults this to false, which lets the tree stay half-width).
+        actions.open_file.resize_window = true;
         filters.dotfiles = false;
         renderer = {
           root_folder_label = false;
