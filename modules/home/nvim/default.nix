@@ -1,12 +1,14 @@
-{ pkgs, hmUsername, ... }:
+{ pkgs, flakeInputs, ... }:
 
+let
+  # Standalone Neovim built with nvf (github:notashelf/nvf).
+  # The whole config lives in ./nvf.nix as nvf's `vim.*` options.
+  nvim =
+    (flakeInputs.nvf.lib.neovimConfiguration {
+      inherit pkgs;
+      modules = [ ./nvf.nix ];
+    }).neovim;
+in
 {
-  hjem.users.${hmUsername} = {
-    # neovim itself comes from modules/shared/packages.nix.
-    # NvChad-based config, kept in-repo under ./config.
-    # Note: the deployed directory is a read-only store symlink, so lazy.nvim
-    # can't rewrite lazy-lock.json in place — update it here in the repo and
-    # rebuild instead.
-    xdg.config.files."nvim".source = ./config;
-  };
+  environment.systemPackages = [ nvim ];
 }

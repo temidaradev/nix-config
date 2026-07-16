@@ -20,7 +20,7 @@ with pkgs; [
 
   # Editors
   vim
-  neovim
+  # neovim now comes from modules/home/nvim (standalone nvf wrapper).
   helix
 
   # Languages / toolchains
