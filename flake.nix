@@ -45,12 +45,13 @@
           (nixpkgs + "/nixos/modules/misc/nixpkgs/read-only.nix")
           { nixpkgs.pkgs = mkPkgs linuxSystem; }
           hjem.nixosModules.hjem
-          ./modules/home/home.nix
+          ./modules/home
         ];
         specialArgs = {
           system = linuxSystem;
           inherit zen-browser;
           inputs = { inherit helium kopuz; };
+          flakeInputs = inputs;
         };
       };
       darwinConfigurations.temidaradev-darwin = nix-darwin.lib.darwinSystem {
@@ -58,11 +59,12 @@
           ./hosts/darwin/machine.nix
           { nixpkgs.pkgs = mkPkgs darwinSystem; }
           hjem.darwinModules.hjem
-          ./modules/home/home.nix
+          ./modules/home
         ];
         specialArgs = {
           system = darwinSystem;
           inputs = { };
+          flakeInputs = inputs;
         };
       };
     };

@@ -36,7 +36,7 @@ with pkgs; [
   # Media / graphics
   ffmpeg
   imagemagick
-  mpv
+  #mpv
   glm
 
   # Apps / misc

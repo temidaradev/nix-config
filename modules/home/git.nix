@@ -10,6 +10,12 @@ let
     	gpgsign = true
     [tag]
     	gpgsign = true
+    [fetch]
+    	fsckObjects = true
+    [receive]
+    	fsckObjects = true
+    [transfer]
+    	fsckObjects = true
   '';
 
   darwinExtra = ''
@@ -17,8 +23,13 @@ let
     	helper = osxkeychain
   '';
 
+  linuxExtra = ''
+    [credential "https://github.com"]
+    	helper = !${pkgs.gh}/bin/gh auth git-credential
+  '';
+
   gitconfig = pkgs.writeText "gitconfig"
-    (base + lib.optionalString pkgs.stdenv.isDarwin darwinExtra);
+    (base + (if pkgs.stdenv.isDarwin then darwinExtra else linuxExtra));
 in
 {
   environment.variables.GIT_CONFIG_SYSTEM = "${gitconfig}";

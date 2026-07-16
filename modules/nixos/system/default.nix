@@ -7,6 +7,14 @@
     ./power.nix
   ];
 
+  # man pages yes, rarely-used doc/info/nixos-manual no
+  documentation = {
+    man.enable = true;
+    doc.enable = false;
+    info.enable = false;
+    nixos.enable = false;
+  };
+
   fonts = {
     packages = with pkgs; [
       noto-fonts

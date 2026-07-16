@@ -1,0 +1,140 @@
+{
+  "ssh_connections": [
+    {
+      "host": "192.168.1.98",
+      "username": "temidaradev",
+      "args": [],
+      "projects": [
+        {
+          "paths": [
+            "/home/temidaradev/.dotfiles"
+          ]
+        },
+        {
+          "paths": [
+            "/home/temidaradev/nix-config"
+          ]
+        }
+      ]
+    },
+    {
+      "host": "192.168.1.98",
+      "username": "temidaradev",
+      "args": [],
+      "projects": []
+    }
+  ],
+  "project_panel": {
+    "dock": "left"
+  },
+  "outline_panel": {
+    "dock": "left"
+  },
+  "collaboration_panel": {
+    "dock": "left"
+  },
+  "git_panel": {
+    "dock": "left"
+  },
+  "agent_servers": {
+    "stakpak": {
+      "type": "registry"
+    },
+    "opencode": {
+      "type": "registry"
+    },
+    "codex-acp": {
+      "type": "registry"
+    },
+    "claude-acp": {
+      "default_config_options": {
+        "mode": "acceptEdits",
+        "model": "claude-fable-5[1m]"
+      },
+      "favorite_config_option_values": {
+        "mode": [
+          "bypassPermissions"
+        ]
+      },
+      "type": "registry"
+    },
+    "github-copilot-cli": {
+      "type": "registry"
+    },
+    "gemini": {
+      "type": "registry"
+    },
+    "qwen-code": {
+      "type": "registry"
+    }
+  },
+  "icon_theme": "JetBrains New UI Icons (Dark)",
+  "agent_ui_font_size": 16.0,
+  "session": {
+    "trust_all_worktrees": true
+  },
+  "agent": {
+    "dock": "right",
+    "tool_permissions": {
+      "tools": {
+        "terminal": {
+          "always_allow": [
+            {
+              "pattern": "^cat\\b"
+            },
+            {
+              "pattern": "^find\\b"
+            },
+            {
+              "pattern": "^sed\\b"
+            },
+            {
+              "pattern": "^grep\\b"
+            }
+          ]
+        }
+      }
+    },
+    "default_profile": "write",
+    "default_model": {
+      "effort": "high",
+      "enable_thinking": false,
+      "provider": "copilot_chat",
+      "model": "gpt-5.3-codex"
+    },
+    "inline_assistant_model": {
+      "provider": "copilot_chat",
+      "model": "gpt-4o",
+    },
+  },
+  "telemetry": {
+    "diagnostics": false,
+    "metrics": false,
+  },
+  "redact_private_values": false,
+  "use_autoclose": false,
+  "show_completions_on_input": false,
+  "current_line_highlight": "none",
+  "indent_guides": {
+    "enabled": false,
+  },
+  "ui_font_features": {
+    "calt": true,
+  },
+  "buffer_font_family": "JetBrainsMono Nerd Font Mono",
+  "ui_font_family": "JetBrainsMono Nerd Font Mono",
+  "cursor_blink": false,
+  "vertical_scroll_margin": 6,
+  "vim_mode": false,
+  "cursor_shape": "block",
+  "ui_font_size": 16.0,
+  "buffer_font_size": 13.0,
+  "theme": {
+    "mode": "system",
+    "light": "Gruvbox Light Soft",
+    "dark": "Gruvbox Dark Soft",
+  },
+  "auto_install_extensions": {
+    "wakatime": true
+  },
+}

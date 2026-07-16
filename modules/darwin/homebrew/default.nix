@@ -119,6 +119,7 @@ in
       "kitty"
       "lm-studio"
       "localsend"
+      "maccy"
       "macfuse"
       "middleclick"
       "miniforge"

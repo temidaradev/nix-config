@@ -1,8 +1,6 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, hmUsername, ... }:
 
 let
-  username = if pkgs.stdenv.isDarwin then "lidldev" else "temidaradev";
-
   zshrc = ''
     # Completion
     autoload -U compinit && compinit
@@ -25,6 +23,7 @@ let
     alias ll='eza -l --git'
     alias la='eza -la --git'
     alias lt='eza --tree'
+    alias tree='eza --tree --git-ignore --group-directories-first'
     alias cat='bat'
     alias lg='lazygit'
     alias gs='git status'
@@ -35,9 +34,39 @@ let
     alias jd='jj diff'
     alias ..='cd ..'
     alias ...='cd ../..'
+    alias cp='cp -rv'
+    alias mv='mv -v'
+
+    # Create a directory and cd into it.
+    mc() {
+      mkdir -p "$1" && cd "$1"
+    }
+
+    # Create a directory, cd into it and initialize version control.
+    mcg() {
+      mkdir -p "$1" && cd "$1" && jj git init
+    }
 
     export GPG_TTY=$(tty)
     export PATH="$HOME/.local/bin:$HOME/go/bin:$HOME/.cargo/bin:$PATH"
+
+    # Pager: quit if one screen, case-insensitive incremental search,
+    # no line wrapping, keep colors, highlight unread portion
+    export LESS='--quit-if-one-screen --quit-on-intr --ignore-case --incsearch --LONG-PROMPT --no-edit-warn --chop-long-lines --HILITE-UNREAD --tilde --RAW-CONTROL-CHARS'
+
+    # Colored man pages via bat
+    export MANROFFOPT='-c'
+    export MANPAGER="sh -c 'col -bx | bat --language man --plain --color always'"
+
+    export RIPGREP_CONFIG_PATH="$HOME/.config/ripgrep/config"
+
+    # ssh connection multiplexing needs its socket directory
+    [[ -d "$HOME/.cache/ssh" ]] || mkdir -p "$HOME/.cache/ssh"
+
+    # Get the realpath of a program on PATH.
+    realwhich() {
+      readlink -f "$(command -v "$1")"
+    }
 
     # Up/Down search history by typed prefix (e.g. type "nh" then Up)
     autoload -U up-line-or-beginning-search down-line-or-beginning-search
@@ -61,9 +90,15 @@ let
     eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || true)"
   '' + ''
 
+    # Route interactive zsh into nushell once env/PATH are set.
+    # Escape hatch: `ZSH_NO_NU=1 zsh` (nu also sets this for its children).
+    if [[ -o interactive && -z "$ZSH_NO_NU" ]] && command -v nu >/dev/null; then
+      exec nu
+    fi
+
     # Shell integrations
     eval "$(starship init zsh)"
-    eval "$(zoxide init zsh)"
+    eval "$(zoxide init zsh --cmd cd)"
     source <(fzf --zsh)
     eval "$(direnv hook zsh)"
 
@@ -72,54 +107,22 @@ let
   '';
 in
 {
-  hjem.users.${username} = {
-    enable = true;
-    clobberFiles = true;
-
+  hjem.users.${hmUsername} = {
     packages = with pkgs; [
       eza
       bat
-      fd
-      ripgrep
-      tealdeer
-      glow
-      yt-dlp
-
       starship
-      lazygit
       tmux
       fastfetch
       zoxide
       fzf
-      direnv
-      jujutsu
+      tealdeer
+      glow
     ];
 
     files.".zshrc".text = zshrc;
 
-    xdg.config.files = {
-      "direnv/direnvrc".text = ''
-        source ${pkgs.nix-direnv}/share/nix-direnv/direnvrc
-      '';
-
-      "jj/config.toml" = {
-        generator = (pkgs.formats.toml { }).generate "jj-config.toml";
-        value = {
-          user = {
-            name = "temidaradev";
-            email = "temidaradev@proton.me";
-          };
-          ui = {
-            default-command = "log";
-            pager = "less -FRX";
-          };
-          signing = {
-            behavior = "own";
-            backend = "gpg";
-            key = "CF0CCF7E9AD5BD9D";
-          };
-        };
-      };
-    };
+    # Silence macOS "Last login" banner
+    files.".hushlogin".text = "";
   };
 }

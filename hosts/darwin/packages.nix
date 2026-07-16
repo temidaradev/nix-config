@@ -30,7 +30,7 @@ with pkgs; {
 
     # macOS hardware/embedded
     esptool
-    micropython
+    #micropython
 
     # Editors
     neovim-remote
