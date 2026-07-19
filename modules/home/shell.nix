@@ -91,9 +91,11 @@ let
   '' + ''
 
     # Route interactive zsh into nushell once env/PATH are set.
+    # Use the nix-managed nushell by absolute store path so a stale
+    # `~/.cargo/bin/nu` (broken/old) can't shadow it and abort the exec.
     # Escape hatch: `ZSH_NO_NU=1 zsh` (nu also sets this for its children).
-    if [[ -o interactive && -z "$ZSH_NO_NU" ]] && command -v nu >/dev/null; then
-      exec nu
+    if [[ -o interactive && -z "$ZSH_NO_NU" ]]; then
+      exec ${pkgs.nushell}/bin/nu
     fi
 
     # Shell integrations
