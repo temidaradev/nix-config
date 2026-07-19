@@ -38,6 +38,7 @@ in
       InitialKeyRepeat = 15;
       KeyRepeat = 2;
       ApplePressAndHoldEnabled = false;
+      AppleEnableSwipeNavigateWithScrolls = true;
       AppleShowAllFiles = true;
       AppleShowAllExtensions = true;
       "com.apple.springing.enabled" = true;
@@ -69,9 +70,6 @@ in
 
       # Save to disk, not iCloud, by default
       NSDocumentSaveNewDocumentsToCloud = false;
-
-      # Faster trackpad tracking
-      "com.apple.trackpad.scaling" = 1.5;
 
       # 24h time + metric
       AppleICUForce24HourTime = true;
