@@ -24,7 +24,7 @@ with pkgs; {
 
     # MTP support for Android devices
     libmtp
-    jmtpfs
+    go-mtpfs
     doublecmd
     rar
 
