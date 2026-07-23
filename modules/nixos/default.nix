@@ -7,6 +7,7 @@
     ../shared/nix-settings.nix
     ./boot
     ./desktop
+    ./discord
     ./gaming
     ./hardware
     ./networking

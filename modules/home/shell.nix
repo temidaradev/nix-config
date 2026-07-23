@@ -94,9 +94,10 @@ let
     # Use the nix-managed nushell by absolute store path so a stale
     # `~/.cargo/bin/nu` (broken/old) can't shadow it and abort the exec.
     # Escape hatch: `ZSH_NO_NU=1 zsh` (nu also sets this for its children).
-    if [[ -o interactive && -z "$ZSH_NO_NU" ]]; then
-      exec ${pkgs.nushell}/bin/nu
-    fi
+    # Disabled for now: stay in zsh instead of exec'ing into nushell.
+    # if [[ -o interactive && -z "$ZSH_NO_NU" ]]; then
+    #   exec ${pkgs.nushell}/bin/nu
+    # fi
 
     # Shell integrations
     eval "$(starship init zsh)"
