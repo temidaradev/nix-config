@@ -1,16 +1,25 @@
-{ flakeInputs, pkgs, ... }:
+{ flakeInputs, lib, pkgs, system, ... }:
+let
+  isDarwin = builtins.match ".*-darwin" system != null;
+in
 {
-  imports = [ flakeInputs.nixcord.nixosModules.nixcord ];
+  imports = [
+    (if isDarwin then
+      flakeInputs.nixcord.darwinModules.nixcord
+    else
+      flakeInputs.nixcord.nixosModules.nixcord)
+  ];
 
   programs.nixcord = {
     enable = true;
-    # Required for the system-level (NixOS) module so it knows whose
-    # ~/.config/Vencord to manage.
-    user = "temidaradev";
+    # Required for the system-level module so it knows whose Vencord
+    # configuration to manage.
+    user = if isDarwin then "lidldev" else "temidaradev";
 
     discord = {
       commandLineArgs = [
         "--enable-blink-features=MiddleClickAutoscroll"
+      ] ++ lib.optionals (!isDarwin) [
         # enable vaapi (single Intel GPU -> renderD128)
         "--render-node-override=/dev/dri/renderD128"
         # use wayland and enable IME

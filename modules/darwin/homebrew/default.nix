@@ -47,6 +47,7 @@ in
 
     brews = [
       "mas"
+      "bazelisk"
 
       # macOS-specific
       "nowplaying-cli"

@@ -32,11 +32,12 @@ with pkgs; [
   rustup
   luajit
   lua
+  buck2
 
   # Media / graphics
   ffmpeg
   imagemagick
-  #mpv
+  mpv
   glm
 
   # Apps / misc

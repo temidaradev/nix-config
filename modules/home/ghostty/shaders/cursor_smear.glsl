@@ -147,8 +147,17 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     vec2 trailP2 = mix(prevP2, currP2, easedProgressDouble);
     vec2 trailP3 = mix(prevP3, currP3, easedProgressDouble);
 
-    // Compute hexagon SDF and convert to alpha with antialiasing
     vec2 normCoord = fragCoord * scale - normOffset;
+
+    // Cheap AABB reject: the trail only ever covers a small region, so skip the
+    // 6-edge hexagon SDF (with its per-edge sqrt) for the many pixels far from it.
+    vec2 bbMin = min(min(min(trailP1, trailP2), min(currP2, currP4)), min(currP3, trailP3)) - aaWidth;
+    vec2 bbMax = max(max(max(trailP1, trailP2), max(currP2, currP4)), max(currP3, trailP3)) + aaWidth;
+    if (any(lessThan(normCoord, bbMin)) || any(greaterThan(normCoord, bbMax))) {
+        return;
+    }
+
+    // Compute hexagon SDF and convert to alpha with antialiasing
     float sdfHex = sdHexagon(normCoord, trailP1, trailP2, currP2, currP4, currP3, trailP3);
     float alpha = 1.0 - smoothstep(-aaWidth, aaWidth, sdfHex);
 
