@@ -15,6 +15,12 @@ in
   # pear-desktop -> pear-devs/pear) — so no per-tap edits are ever needed.
   # preActivation runs early, ahead of the homebrew phase.
   system.activationScripts.preActivation.text = ''
+    # mas discovers installed App Store apps through Spotlight. Refresh the
+    # application metadata first so `brew bundle` does not try to reinstall an
+    # app merely because its Spotlight entry is temporarily missing.
+    echo "indexing Mac App Store apps..." >&2
+    /usr/bin/sudo -u lidldev /usr/bin/mdimport /Applications >/dev/null 2>&1 || true
+
     echo "seeding homebrew tap trust..." >&2
     /usr/bin/install -d -o lidldev -g staff -m 700 /Users/lidldev/.homebrew
     {

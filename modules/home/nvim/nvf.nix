@@ -122,6 +122,11 @@
       };
     };
 
+    # NVF's ToggleTerm module does not register TermNew as a lazy-load
+    # command, so the split mappings below fail until ToggleTerm is loaded by
+    # another mapping first.
+    lazy.plugins.toggleterm-nvim.cmd = [ "TermNew" ];
+
     filetree.nvimTree = {
       enable = true;
       setupOpts = {
