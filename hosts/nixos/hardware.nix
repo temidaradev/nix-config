@@ -34,6 +34,19 @@
       ];
     };
 
+  fileSystems."/mnt/430GB-SSD" =
+    { device = "/dev/disk/by-uuid/aa932d4b-a5ec-4664-a1e0-063bf645ac5f";
+      fsType = "ext4";
+      options = [
+        "rw"
+        "noatime"
+        "nodiratime"
+        "commit=60"
+        "nofail"
+        "x-systemd.device-timeout=5s"
+      ];
+    };
+
   swapDevices = [{
     device = "/dev/disk/by-uuid/2a22c94c-53a3-4806-b566-edec101b6648";
   }];

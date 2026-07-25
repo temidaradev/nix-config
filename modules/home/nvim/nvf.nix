@@ -107,6 +107,21 @@
 
     telescope.enable = true;
 
+    terminal.toggleterm = {
+      enable = true;
+      # NvChad's floating term key. The built-in mapping toggles terminal id 1
+      # using setupOpts.direction, so pin that to float and give the
+      # horizontal/vertical terms their own ids in `keymaps` below.
+      mappings.open = "<A-i>";
+      setupOpts = {
+        direction = "float";
+        shade_terminals = true;
+        start_in_insert = true;
+        persist_size = true;
+        persist_mode = true;
+      };
+    };
+
     filetree.nvimTree = {
       enable = true;
       setupOpts = {
@@ -119,7 +134,8 @@
         filters.dotfiles = false;
         renderer = {
           root_folder_label = false;
-          highlight_git = false;
+          # Match NvChad: color changed files and their parent directories.
+          highlight_git = true;
           indent_markers.enable = false;
           icons = {
             show = {
@@ -216,6 +232,46 @@
         key = "<Leader>e";
         action = "<cmd>NvimTreeFocus<CR>";
         desc = "Focus file tree";
+      }
+
+      # Terminals, mirroring NvChad's defaults. Leader mappings create a new
+      # split, while Alt mappings explicitly toggle the persistent terminals.
+      # Id 1 is the float, claimed by terminal.toggleterm.mappings.open above.
+      {
+        mode = "n";
+        key = "<Leader>h";
+        action = "<cmd>TermNew direction=horizontal<CR>";
+        desc = "New horizontal terminal";
+      }
+      {
+        mode = "n";
+        key = "<Leader>v";
+        action = "<cmd>TermNew direction=vertical<CR>";
+        desc = "New vertical terminal";
+      }
+      {
+        mode = [ "n" "t" ];
+        key = "<A-h>";
+        action = "<cmd>2ToggleTerm direction=horizontal<CR>";
+        desc = "Terminal toggle horizontal";
+      }
+      {
+        mode = [ "n" "t" ];
+        key = "<A-v>";
+        action = "<cmd>3ToggleTerm direction=vertical<CR>";
+        desc = "Terminal toggle vertical";
+      }
+      {
+        mode = "t";
+        key = "<Esc>";
+        action = "<C-\\><C-n>";
+        desc = "Terminal normal mode";
+      }
+      {
+        mode = "t";
+        key = "<C-x>";
+        action = "<C-\\><C-n>";
+        desc = "Terminal escape terminal mode";
       }
 
       {
