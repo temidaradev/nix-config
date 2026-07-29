@@ -5,7 +5,6 @@ with pkgs; {
     opentabletdriver
     # Gaming
     lunar-client
-    osu-lazer
     heroic
 
     # Networking
