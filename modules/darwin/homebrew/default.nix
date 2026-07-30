@@ -134,13 +134,9 @@ in
       "rectangle"
       "sf-symbols"
       "signal"
-      "sikarugir"
-      "sioyek"
-      "stats"
       "thonny"
       "tigervnc"
       "unnaturalscrollwheels"
-      "upscayl"
       "vlc"
       "vnc-viewer"
       "warp"
@@ -151,13 +147,10 @@ in
     ];
 
     masApps = {
-      "1Password for Safari" = 1569813296;
       "Cake Wallet" = 1334702542;
       "CapCut" = 1500855883;
       "Developer" = 640199958;
-      "FreeChat" = 6458534902;
       "GarageBand" = 682658836;
-      "Hidden Bar" = 1452453066;
       "iMovie" = 408981434;
       "Keynote" = 409183694;
       "Monal" = 1637078500;
