@@ -14,6 +14,7 @@ in
     ./tools.nix
     ./claude-code.nix
     ./helium.nix
+    ./vencord
     ./ghostty
     ./nvim
     ./dotfiles
