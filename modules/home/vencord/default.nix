@@ -113,12 +113,20 @@ let
   # OpenASAR picks a Chromium flag preset at launch and defaults to `perf` when
   # unset -- that is where the --force_high_performance_gpu and
   # --enable-gpu-rasterization on the GPU process come from, along with a 300s
-  # BackForwardCache. Ask for its `battery` preset on the laptop.
-  darwinSettings = {
+  # BackForwardCache. Spelled out per platform rather than left to the default:
+  # `perf` on the desktop, `battery` on the laptop, where those same flags keep
+  # the discrete GPU awake for a chat window.
+  #
+  # `setup = true` suppresses OpenASAR's first-run setup prompt; without it the
+  # prompt returns on every rebuild, since this file is rewritten each time.
+  openasarSettings = {
     openasar = {
       setup = true;
-      cmdPreset = "battery";
+      cmdPreset = if isDarwin then "battery" else "perf";
     };
+  };
+
+  darwinSettings = {
     BACKGROUND_COLOR = "#121214";
     # Left on: on Apple Silicon, GPU compositing costs less than making the CPU
     # rasterize every frame.
@@ -130,7 +138,9 @@ let
   # named here. Window geometry is deliberately left out: Discord re-persists it
   # on its own afterwards.
   discordSettingsFile = pkgs.writeText "discord-settings.json" (
-    builtins.toJSON (updateSettings // lib.optionalAttrs isDarwin darwinSettings)
+    builtins.toJSON (
+      updateSettings // openasarSettings // lib.optionalAttrs isDarwin darwinSettings
+    )
   );
 
   # Discord refuses to get past the "STARTING" splash until its native modules
