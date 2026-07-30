@@ -41,9 +41,7 @@ let
   # Themes fetched by Vencord over the network at startup. Adding one through
   # the Vencord UI does not survive a rebuild -- settings.json is rewritten
   # wholesale -- so online themes have to be listed here to stick.
-  themeLinks = [
-    "https://maendisease.github.io/Steam/Steam.css"
-  ];
+  themeLinks = [ ];
 
   # Local themes: drop a .css next to this file under ./themes/, name it here,
   # and add the same filename to enabledThemes below to switch it on. Kept as an
