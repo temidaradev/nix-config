@@ -1,0 +1,27 @@
+/*
+Darwin-only overrides, appended to quickCss.css on aarch64-darwin.
+
+Everything here trades eye candy for frames the GPU never has to draw. The
+laptop panel is 144 Hz, so an always-on decorative effect is paid for 144
+times a second whether or not anything is happening.
+*/
+
+/* Backdrop blur is re-sampled every frame for as long as the blurred surface
+   is on screen -- popouts, modals, the member list overlay, the upload
+   dropzone. It is the most expensive purely cosmetic effect in the client. */
+* {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* Collapse transitions instead of removing them. 1ms still fires
+   `transitionend`, which Discord uses to unmount popouts and modals; a flat
+   0s can leave them stuck on screen. Infinite animations (loading spinners)
+   are deliberately left alone -- shortening those would make them repaint
+   faster, not slower. */
+*,
+*::before,
+*::after {
+  transition-duration: 1ms !important;
+  transition-delay: 0s !important;
+}

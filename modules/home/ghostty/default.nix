@@ -6,9 +6,6 @@ let
     font-family = "JetBrains Nerd Font Mono"
     font-size = 14
 
-    custom-shader = ${./shaders/cursor_smear.glsl}
-    custom-shader-animation = true
-
     background-image = ${./background.png}
     background-image-opacity = 0.3
     background-image-position = center

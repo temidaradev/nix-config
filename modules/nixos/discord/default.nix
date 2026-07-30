@@ -1,6 +1,17 @@
 { flakeInputs, lib, pkgs, system, ... }:
 let
   isDarwin = builtins.match ".*-darwin" system != null;
+
+  # The only two plugins worth losing on the laptop. Everything else in the
+  # main list is deliberately kept on Darwin too -- the frame and memory cost
+  # is real, but so is the feature.
+  darwinDisabledPlugins = {
+    # Lets Discord drop us out of voice on idle again instead of holding the
+    # connection (and the mic) open indefinitely.
+    disableCallIdle.enable = false;
+    # A CSS blur filter, re-sampled every frame while the embed is on screen.
+    blurNsfw.enable = false;
+  };
 in
 {
   imports = [
@@ -35,10 +46,34 @@ in
         });
       };
       openASAR.enable = true;
+
+      # OpenASAR picks a Chromium flag preset at launch and defaults to `perf`
+      # when unset -- that is where the --force_high_performance_gpu and
+      # --enable-gpu-rasterization on the GPU process come from, along with a
+      # 300s BackForwardCache. Ask for its `battery` preset on the laptop.
+      #
+      # nixcord rewrites this file wholesale on every rebuild, so anything
+      # worth keeping has to be named here. Window geometry is deliberately
+      # left out: Discord re-persists it on its own after each rebuild.
+      settings = lib.mkIf isDarwin {
+        openasar = {
+          setup = true;
+          cmdPreset = "battery";
+        };
+        BACKGROUND_COLOR = "#121214";
+        # Left on: on Apple Silicon, GPU compositing costs less than making
+        # the CPU rasterize every frame.
+        enableHardwareAcceleration = true;
+        DANGEROUS_ENABLE_DEVTOOLS_ONLY_ENABLE_IF_YOU_KNOW_WHAT_YOURE_DOING = true;
+      };
     };
 
     # config
-    quickCss = builtins.readFile ./quickCss.css;
+    quickCss =
+      builtins.readFile ./quickCss.css
+      # Appended, not prepended: quickCss.css opens with @import rules, which
+      # CSS requires to come before any other rule.
+      + lib.optionalString isDarwin (builtins.readFile ./lowPower.css);
     config = {
       useQuickCss = true;
       plugins = {
@@ -158,7 +193,7 @@ in
           enable = true;
           multiplier = 3.0;
         };
-        alwaysAnimate.enable = true;
+        alwaysAnimate.enable = false;
         anonymiseFileNames.enable = true;
         betterGifAltText.enable = true;
         betterRoleContext.enable = true;
@@ -181,7 +216,6 @@ in
         fakeNitro.enable = true;
         fakeProfileThemes.enable = true;
         favoriteEmojiFirst.enable = true;
-        favoriteGifSearch.enable = true;
         fixCodeblockGap.enable = true;
         fixImagesQuality.enable = true;
         fixSpotifyEmbeds.enable = true;
@@ -238,6 +272,7 @@ in
         vencordToolbox.enable = true;
 
         # equicord
+        # favoriteGifSearch.enable = true;
         # timezones = {
         #   enable = true;
         #   askedTimezone = true;
@@ -249,5 +284,10 @@ in
       # disable translate button on chatbar
       uiElements.chatBarButtons.Translate.enable = false;
     };
+
+    # extraConfig is recursiveUpdate'd over `config` and wins, so the low-power
+    # profile only has to name the plugins that differ rather than restating
+    # the block above.
+    extraConfig = lib.optionalAttrs isDarwin { plugins = darwinDisabledPlugins; };
   };
 }
