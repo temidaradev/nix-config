@@ -12,10 +12,8 @@ in
 
   programs.uwsm.enable = true;
 
-  xdg.portal = {
-    enable = true;
-    extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
-  };
+  # Portals are configured once in ../../default.nix; programs.hyprland pulls
+  # in xdg-desktop-portal-hyprland on its own.
 
   environment.systemPackages = (with pkgs; [
     kitty
