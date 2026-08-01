@@ -132,7 +132,6 @@ with pkgs; {
     nixos-icons
     papirus-icon-theme
     adwaita-icon-theme
-    gnome-icon-theme
     hicolor-icon-theme
     pantheon.elementary-icon-theme
     tango-icon-theme
