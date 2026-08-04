@@ -8,6 +8,7 @@ with pkgs; {
     heroic
 
     # Networking
+    localsend
     proton-vpn
     nicotine-plus
     google-chrome

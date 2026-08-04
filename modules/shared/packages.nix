@@ -41,7 +41,6 @@ with pkgs; [
   glm
 
   # Apps / misc
-  localsend
   scrcpy
   ollama
   cava

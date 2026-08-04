@@ -124,6 +124,7 @@ in
       "itsycal"
       "kitty"
       "lm-studio"
+      "localsend"
       "maccy"
       "macfuse"
       "middleclick"
