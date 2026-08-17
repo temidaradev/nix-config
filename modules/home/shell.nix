@@ -85,7 +85,7 @@ let
         command nh "$@"
       fi
     }
-  '' + lib.optionalString pkgs.stdenv.isDarwin ''
+  '' + lib.optionalString pkgs.stdenv.hostPlatform.isDarwin ''
     # macOS-only: keep Homebrew tools on PATH
     eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || true)"
   '' + ''

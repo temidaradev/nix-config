@@ -37,7 +37,7 @@ let
 in
 {
   hjem.users.${hmUsername} =
-    if pkgs.stdenv.isDarwin then {
+    if pkgs.stdenv.hostPlatform.isDarwin then {
       # Ghostty.app on macOS reads Application Support, which overrides the
       # XDG path — manage the one that wins.
       files."Library/Application Support/com.mitchellh.ghostty/config".text = baseConfig;

@@ -104,7 +104,7 @@ with pkgs; {
     xdotool
 
     # Editors
-    antigravity
+    antigravity-ide
     vscode
     zed-editor
     lmstudio
@@ -149,6 +149,7 @@ with pkgs; {
     gnome-themes-extra
 
     # Applications
+    ollama
     thunderbird
     firefox
     telegram-desktop

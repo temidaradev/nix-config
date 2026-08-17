@@ -42,7 +42,6 @@ with pkgs; [
 
   # Apps / misc
   scrcpy
-  ollama
   cava
   xmrig
 ]

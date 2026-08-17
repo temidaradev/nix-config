@@ -1,36 +1,30 @@
-{ config, lib, ... }:
+{ lib, ... }:
 
 let
-  # Homebrew 6.x refuses to load formulae/casks from untrusted third-party taps
-  # unless they are recorded in ~/.homebrew/trust.json. Trusting whole taps also
-  # covers their transitive deps (e.g. osx-cross/avr/avr-binutils pulled in by
-  # avr-gcc@9), which per-formula trust does not.
-  tapNames = map (t: if builtins.isString t then t else t.name) config.homebrew.taps;
-  declaredTaps = lib.concatStringsSep "\n" tapNames;
+  trustedTaps = [
+    "charmbracelet/tap"
+    "gromgit/fuse"
+    "osx-cross/avr"
+    "pear-devs/pear"
+    "sikarugir-app/sikarugir"
+  ];
 in
 {
-  # Trust every third-party tap before `brew bundle` runs so activation never
-  # fails on an untrusted tap. Trusts the union of taps declared below AND any
-  # taps already installed (e.g. auto-tapped by an unprefixed cask like
-  # pear-desktop -> pear-devs/pear) — so no per-tap edits are ever needed.
-  # preActivation runs early, ahead of the homebrew phase.
+  # mas discovers installed App Store apps through Spotlight. Refresh the
+  # application metadata before `brew bundle` runs so it does not try to
+  # reinstall an app merely because its Spotlight entry is temporarily missing.
   system.activationScripts.preActivation.text = ''
-    # mas discovers installed App Store apps through Spotlight. Refresh the
-    # application metadata first so `brew bundle` does not try to reinstall an
-    # app merely because its Spotlight entry is temporarily missing.
     echo "indexing Mac App Store apps..." >&2
     /usr/bin/sudo -u lidldev /usr/bin/mdimport /Applications >/dev/null 2>&1 || true
 
-    echo "seeding homebrew tap trust..." >&2
-    /usr/bin/install -d -o lidldev -g staff -m 700 /Users/lidldev/.homebrew
-    {
-      printf '%s\n' ${lib.escapeShellArg declaredTaps}
-      [ -x /opt/homebrew/bin/brew ] && /usr/bin/sudo -u lidldev /opt/homebrew/bin/brew tap 2>/dev/null
-    } | grep -v '^homebrew/' | sort -u | grep . \
-      | /usr/bin/awk 'BEGIN{printf "{\"trustedtaps\":["} NR>1{printf ","} {printf "\"%s\"", $0} END{printf "]}\n"}' \
-      > /Users/lidldev/.homebrew/trust.json
-    chown lidldev:staff /Users/lidldev/.homebrew/trust.json
-    chmod 600 /Users/lidldev/.homebrew/trust.json
+    # Homebrew reads installed formulae while parsing the Brewfile, before its
+    # `trusted: true` entries take effect. Bootstrap the same declarative tap
+    # trust first; forced bundle cleanup then preserves these entries.
+    if [ -x /opt/homebrew/bin/brew ]; then
+      echo "seeding homebrew tap trust..." >&2
+      /usr/bin/sudo --user=lidldev --set-home \
+        /opt/homebrew/bin/brew trust --tap ${lib.escapeShellArgs trustedTaps}
+    fi
   '';
 
   homebrew = {
@@ -43,13 +37,7 @@ in
       extraFlags = [ "--force" ];
     };
 
-    taps = [
-      "charmbracelet/tap"
-      "gromgit/fuse"
-      "osx-cross/avr"
-      "pear-devs/pear"
-      "sikarugir-app/sikarugir"
-    ];
+    taps = map (name: { inherit name; trusted = true; }) trustedTaps;
 
     brews = [
       "mas"
@@ -130,6 +118,7 @@ in
       "middleclick"
       "miniforge"
       "mullvad-vpn"
+      "ollama-app"
       "pear-desktop"
       "qt-creator"
       "rectangle"
@@ -163,6 +152,7 @@ in
       "uBlock Origin Lite" = 6745342698;
       "Unzip - RAR ZIP 7Z Unarchiver" = 1537056818;
       "WhatsApp" = 310633997;
+      "Windows App" = 1295203466;
       "Xcode" = 497799835;
     };
   };

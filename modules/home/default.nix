@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 let
-  username = if pkgs.stdenv.isDarwin then "lidldev" else "temidaradev";
+  username = if pkgs.stdenv.hostPlatform.isDarwin then "lidldev" else "temidaradev";
 in
 {
   # git.nix is system-level (GIT_CONFIG_SYSTEM) and already imported by

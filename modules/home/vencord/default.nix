@@ -11,7 +11,7 @@
 # source. It is kept for reference should that ever be revisited.
 { hmUsername, lib, pkgs, ... }:
 let
-  isDarwin = pkgs.stdenv.isDarwin;
+  isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
 
   # nixpkgs takes these as one string, unlike nixcord's list.
   commandLineArgs = lib.concatStringsSep " " (
@@ -72,13 +72,6 @@ let
   };
 
   settingsFile = pkgs.writeText "vencord-settings.json" (builtins.toJSON settings);
-
-  quickCssFile = pkgs.writeText "vencord-quickcss.css" (
-    builtins.readFile ./quickCss.css
-    # Appended, not prepended: quickCss.css opens with @import rules, which
-    # CSS requires to come before any other rule.
-    + lib.optionalString isDarwin (builtins.readFile ./lowPower.css)
-  );
 
   # `copy` rather than the default `symlink`: Vencord rewrites settings.json at
   # runtime (it normalises the schema and expands every plugin to its defaults
@@ -193,7 +186,7 @@ in
 
   hjem.users.${hmUsername}.files = {
     "${vencordDir}/settings.json" = mutable settingsFile;
-    "${vencordDir}/quickCss.css" = mutable quickCssFile;
+    "${vencordDir}/quickCss.css" = mutable ./quickCss.css;
     "${discordDir}/settings.json" = mutable discordSettingsFile;
   } // lib.mapAttrs' (name: src: lib.nameValuePair "${vencordRoot}/themes/${name}" (mutable src)) localThemes
   // lib.optionalAttrs isDarwin (

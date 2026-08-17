@@ -29,7 +29,7 @@ let
   '';
 
   gitconfig = pkgs.writeText "gitconfig"
-    (base + (if pkgs.stdenv.isDarwin then darwinExtra else linuxExtra));
+    (base + (if pkgs.stdenv.hostPlatform.isDarwin then darwinExtra else linuxExtra));
 in
 {
   environment.variables.GIT_CONFIG_SYSTEM = "${gitconfig}";
