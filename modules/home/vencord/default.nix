@@ -17,7 +17,9 @@ let
   commandLineArgs = lib.concatStringsSep " " (
     [ "--enable-blink-features=MiddleClickAutoscroll" ]
     ++ lib.optionals (!isDarwin) [
-      # enable vaapi (single Intel GPU -> renderD128)
+      # enable vaapi -- the Arc B580 is the only render node on this box, so
+      # renderD128 is unambiguous. Kept explicit so a second GPU appearing
+      # later cannot silently move VA-API onto the wrong node.
       "--render-node-override=/dev/dri/renderD128"
       # use wayland and enable IME
       "--ozone-platform-hint=auto"
@@ -104,18 +106,40 @@ let
   };
 
   # OpenASAR picks a Chromium flag preset at launch and defaults to `perf` when
-  # unset -- that is where the --force_high_performance_gpu and
-  # --enable-gpu-rasterization on the GPU process come from, along with a 300s
-  # BackForwardCache. Spelled out per platform rather than left to the default:
-  # `perf` on the desktop, `battery` on the laptop, where those same flags keep
-  # the discrete GPU awake for a chat window.
+  # unset. Its presets are `base`, `perf` and `battery`, and it always merges
+  # `base` with the one named here -- it looks the name up as `presets[x]?.split`
+  # and concatenates, so an unrecognised name contributes nothing and is then
+  # dropped by the falsy check in the flag loop. `none` is therefore the way to
+  # ask for "base only"; naming `base` would instead apply it twice.
+  #
+  # Linux is deliberately NOT on `perf`. That preset expands to
+  #   --enable-gpu-rasterization --enable-zero-copy --ignore-gpu-blocklist
+  #   --enable-hardware-overlays=single-fullscreen,single-on-top,underlay
+  #   --enable-features=EnableDrDc,... --disable-features=Vulkan
+  #   --force_high_performance_gpu
+  # and on the Arc B580 (Battlemage, `xe` driver, Mesa 26.x, KDE Wayland) that
+  # combination kills the Chromium GPU process with SIGTRAP -- a CHECK failure,
+  # not a kernel GPU hang -- whenever an image, GIF or video is composited. The
+  # window survives but goes black or grey. Every coredump under
+  # `coredumpctl list` for .Discord-wrapped is `--type=gpu-process` carrying
+  # exactly these flags. The dangerous ones are the non-default four:
+  # --ignore-gpu-blocklist overrides Chromium's own driver blocklist on very new
+  # hardware, --enable-zero-copy and --enable-hardware-overlays push dmabuf tiles
+  # and Xe2 compression modifiers through paths Chromium mishandles, EnableDrDc
+  # is Android-oriented cross-thread GL context sharing, and disabling Vulkan
+  # forces the less-exercised iris GL backend on a discrete Arc card. What is
+  # left behind on `base` costs close to nothing: GPU rasterization and the Skia
+  # renderer are Chromium defaults on Linux anyway.
+  #
+  # macOS stays on `battery` -- it only adds --force_low_power_gpu and a media
+  # caching tweak, and that machine has never crashed.
   #
   # `setup = true` suppresses OpenASAR's first-run setup prompt; without it the
   # prompt returns on every rebuild, since this file is rewritten each time.
   openasarSettings = {
     openasar = {
       setup = true;
-      cmdPreset = if isDarwin then "battery" else "perf";
+      cmdPreset = if isDarwin then "battery" else "none";
     };
   };
 
