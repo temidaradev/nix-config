@@ -5,12 +5,14 @@ let
 in
 {
   programs.hyprland = {
-    enable = false;
+    enable = true;
     xwayland.enable = true;
     withUWSM = true;
   };
 
-  programs.uwsm.enable = false;
+  # NOTE: no `programs.uwsm.enable` definition here — `withUWSM = true` sets it
+  # to true itself (unconditionally, not mkDefault), so any explicit definition
+  # in this file is a conflicting definition rather than an override.
 
   # Portals are configured once in ../../default.nix; programs.hyprland pulls
   # in xdg-desktop-portal-hyprland on its own.
