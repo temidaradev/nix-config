@@ -34,10 +34,15 @@
     let
       lib = nixpkgs.lib;
 
+      overlays = [
+        (final: prev: {
+          avrdude = prev.avrdude.override { docSupport = false; };
+        })
+      ];
+
       mkPkgs = system: import nixpkgs {
-        inherit system;
+        inherit system overlays;
         config.allowUnfree = true;
-        overlays = [ ];
       };
 
       linuxSystem = "x86_64-linux";
