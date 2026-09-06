@@ -77,6 +77,22 @@ in
       AppleMetricUnits = 1;
       AppleTemperatureUnit = "Celsius";
     };
+    CustomUserPreferences."com.apple.symbolichotkeys".AppleSymbolicHotKeys =
+      let
+        spaceHotkey = keyCode: modifiers: {
+          enabled = 1;
+          value = {
+            type = "standard";
+            parameters = [ 65535 keyCode modifiers ];
+          };
+        };
+      in
+      {
+        "79" = spaceHotkey 123 262144; # ctrl+left        move left a space
+        "80" = spaceHotkey 123 393216; # ctrl+shift+left  move left a space, with window
+        "81" = spaceHotkey 124 262144; # ctrl+right       move right a space
+        "82" = spaceHotkey 124 393216; # ctrl+shift+right move right a space, with window
+      };
     CustomSystemPreferences = {
       "com.apple.desktopservices" = {
         DSDontWriteNetworkStores = true;

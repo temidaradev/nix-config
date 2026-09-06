@@ -34,7 +34,7 @@ with pkgs; {
 
     # Editors
     neovim-remote
-    (emacs.override { withMailutils = false; })
+    emacs
     bear
 
     # Languages / toolchains

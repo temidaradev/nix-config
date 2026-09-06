@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, system, zen-browser, ... }:
+{ config, pkgs, system, flakeInputs, ... }:
 
 let
   packages = import ./packages.nix { inherit pkgs; };
@@ -16,8 +16,8 @@ in
   powerManagement.cpuFreqGovernor = "performance";
 
   environment.systemPackages = packages.system ++ shared ++ [
-    inputs.helium.packages.${system}.default
-    inputs.kopuz.packages.${system}.default
-    zen-browser.packages.${system}.default
+    flakeInputs.helium.packages.${system}.default
+    flakeInputs.kopuz.packages.${system}.default
+    flakeInputs.zen-browser.packages.${system}.default
   ];
 }

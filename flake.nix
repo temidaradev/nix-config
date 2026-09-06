@@ -15,7 +15,10 @@
       url = "github:notashelf/nvf";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    zen-browser.url = "github:0xc000022070/zen-browser-flake";
+    zen-browser = {
+      url = "github:0xc000022070/zen-browser-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     helium = {
       url = "github:AlvaroParker/helium-nix";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -30,7 +33,7 @@
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, nix-darwin, hjem, zen-browser, helium, kopuz, caelestia-shell, ... }:
+  outputs = inputs@{ self, nixpkgs, nix-darwin, hjem, nvf, zen-browser, helium, kopuz, caelestia-shell, ... }:
     let
       lib = nixpkgs.lib;
 
@@ -58,8 +61,6 @@
         ];
         specialArgs = {
           system = linuxSystem;
-          inherit zen-browser;
-          inputs = { inherit helium kopuz; };
           flakeInputs = inputs;
         };
       };
@@ -72,7 +73,6 @@
         ];
         specialArgs = {
           system = darwinSystem;
-          inputs = { };
           flakeInputs = inputs;
         };
       };

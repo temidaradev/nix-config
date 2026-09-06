@@ -121,6 +121,7 @@ in
       "ollama-app"
       "pear-desktop"
       "qt-creator"
+      "raycast"
       "rectangle"
       "sf-symbols"
       "signal"
