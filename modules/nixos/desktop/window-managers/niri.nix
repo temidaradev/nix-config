@@ -53,6 +53,9 @@ in
     pavucontrol
     nixos-icons          # nix-snowflake icon used by the launcher button
     playerctl
+    cava                 # visualizer in the dashboard
+    libqalculate         # "=" calculator in the launcher
+    imagemagick          # accent-from-wallpaper
     libnotify            # notify-send, lands in the shell's notification daemon
     curl
     grim

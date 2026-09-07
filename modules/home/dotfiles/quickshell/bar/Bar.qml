@@ -49,6 +49,8 @@ PanelWindow {
             }
 
             Workspaces { screenName: bar.screen.name }
+
+            WindowTitle {}
         }
 
         // ---------------- centre: clock + now playing, one button -> dashboard ----------------

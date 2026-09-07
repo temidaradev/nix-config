@@ -11,7 +11,21 @@ Singleton {
     readonly property string stateFile: stateDir + "/wallpaper"
     readonly property string dir: Quickshell.env("HOME") + "/Pictures/Wallpapers"
     property string current: Theme.wallpaper
-    onCurrentChanged: {}
+    property string accent: ""          // dominant hue of the wallpaper, boosted (Settings: appearance.accentFromWallpaper)
+    onCurrentChanged: pickAccent.running = true
+
+    Process {
+        id: pickAccent
+        command: ["sh", "-c", "magick \"$1\" -resize 64x64! -modulate 100,160 -colors 6 -depth 8 -format '%c' histogram:info: | sort -rn | head -1 | grep -o '#[0-9A-Fa-f]\\{6\\}' | head -1", "sh", root.current]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const h = text.trim()
+                if (!/^#[0-9a-fA-F]{6}$/.test(h)) return
+                const c = Qt.color(h)
+                root.accent = Qt.hsla(c.hslHue, Math.max(0.55, c.hslSaturation), 0.58, 1).toString()
+            }
+        }
+    }
     property var available: []
 
     FileView {

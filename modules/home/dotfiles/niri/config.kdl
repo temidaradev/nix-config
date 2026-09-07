@@ -84,7 +84,7 @@ gestures {
 
 // Lid closed: lock; logind suspends unless an external screen is connected.
 switch-events {
-    lid-close { spawn "swaylock" "-f" "-c" "1b1e20"; }
+    lid-close { spawn "qs" "ipc" "call" "lock" "lock"; }
 }
 
 // Shown behind workspaces in the overview (top-left hot corner / Mod+O).
@@ -159,7 +159,7 @@ binds {
     Mod+A hotkey-overlay-title="Control center" { spawn "qs" "ipc" "call" "control" "toggle"; }
     Mod+S hotkey-overlay-title="System sidebar" { spawn "qs" "ipc" "call" "sidebar" "toggle"; }
     Mod+E { spawn "dolphin"; }
-    Mod+Shift+L hotkey-overlay-title="Lock" { spawn "swaylock" "-f" "-c" "1b1e20"; }
+    Mod+Shift+L hotkey-overlay-title="Lock" { spawn "qs" "ipc" "call" "lock" "lock"; }
 
     XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "-l" "1.0" "@DEFAULT_AUDIO_SINK@" "5%+"; }
     XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "5%-"; }
@@ -273,7 +273,7 @@ binds {
 
     Mod+Escape allow-inhibiting=false { toggle-keyboard-shortcuts-inhibit; }
 
-    Mod+Shift+E { quit; }
-    Ctrl+Alt+Delete { quit; }
+    Mod+Shift+E hotkey-overlay-title="Session menu" { spawn "qs" "ipc" "call" "session" "toggle"; }
+    Ctrl+Alt+Delete { spawn "qs" "ipc" "call" "session" "toggle"; }
     Mod+Shift+P { power-off-monitors; }
 }

@@ -37,7 +37,7 @@ laptop-only ones on or off.
 NixOS hosts boot into [niri](https://github.com/YaLTeR/niri) with a shell
 written in [Quickshell](https://quickshell.org) (QML). Plasma stays installed
 and selectable in SDDM. No Noctalia, Caelestia, waybar or mako: the shell is
-the bar, launcher, notification daemon, OSD and desktop.
+the bar, launcher, notification daemon, OSD, lock screen, session menu and desktop.
 
 ```
 modules/home/dotfiles/niri/                  niri config; host-<hostname>.kdl holds the monitor block
@@ -53,14 +53,15 @@ Keys worth knowing (Mod = Super):
 
 | Key | Action |
 | --- | --- |
-| Mod+D, Alt+Space | app drawer |
+| Mod+D, Alt+Space | app drawer (`=2+2` calculates, `:cmd` runs a command) |
 | Mod+A | control center (sound, bluetooth, network, wallpaper, notifications) |
 | Mod+S | sidebar (weather, quick launch, todo, windows, capture, clipboard, timer) |
 | Mod+O | overview |
 | Mod+T / Mod+E | terminal / file manager |
 | Mod+Up / Down | previous / next workspace |
 | Mod+Shift+S | area screenshot with annotation (swappy) |
-| Mod+Shift+L | lock |
+| Mod+Shift+L | lock screen (in the shell) |
+| Mod+Shift+E, Ctrl+Alt+Del | session menu: lock, suspend, log out, reboot, shut down |
 | Win+Space | keyboard layout (us / tr) |
 
 Clicking the clock opens the dashboard (calendar, media, resources); the

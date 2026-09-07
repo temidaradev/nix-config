@@ -4,6 +4,7 @@
 {
   appearance = {
     accent = "#3daee9";        # Breeze blue
+    accentFromWallpaper = false;   # true: derive the accent from the wallpaper instead
     panelOpacity = 0.95;       # 0..1, bar and popups
     barHeight = 36;
     radius = 4;
@@ -28,6 +29,8 @@
     sidebar = true;
     # centre
     nowPlaying = true;
+    windowTitle = true;        # focused window icon + title next to the workspaces
+    workspaceIcons = true;     # app icons inside the workspace pills
     marqueeWidth = 220;
     clockFormat = "HH:mm";
     dateFormat = "ddd d MMM";

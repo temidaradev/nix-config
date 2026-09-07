@@ -14,3 +14,5 @@ singleton Power 1.0 Power.qml
 singleton Settings 1.0 Settings.qml
 singleton Battery 1.0 Battery.qml
 singleton Brightness 1.0 Brightness.qml
+singleton Apps 1.0 Apps.qml
+singleton Lock 1.0 Lock.qml

@@ -15,7 +15,7 @@ Singleton {
     readonly property color bg3: "#31363b"
     readonly property color fg: "#fcfcfc"
     readonly property color fgDim: "#a9aeb3"
-    readonly property color accent: a.accent
+    readonly property color accent: a.accentFromWallpaper && Wallpaper.accent !== "" ? Wallpaper.accent : a.accent
     readonly property color green: "#27ae60"
     readonly property color yellow: "#f6c744"
     readonly property color red: "#da4453"

@@ -325,10 +325,10 @@ BarPopup {
             padding: 10; implicitHeight: 32
             BarText { text: glyph; font.pointSize: 13 }
         }
-        SessionButton { glyph: "⏻"; onClicked: win.runAndClose(["systemctl", "poweroff"]) }
+        SessionButton { glyph: "⏻"; onClicked: { Launcher.hideControl(); Launcher.toggleSession() } }
         SessionButton { glyph: "󰜉"; onClicked: win.runAndClose(["systemctl", "reboot"]) }
         SessionButton { glyph: "󰍃"; onClicked: win.runAndClose(["niri", "msg", "action", "quit", "--skip-confirmation"]) }
-        SessionButton { glyph: "󰌾"; onClicked: win.runAndClose(["swaylock", "-f", "-c", "1b1e20"]) }
+        SessionButton { glyph: "󰌾"; onClicked: { Launcher.hideControl(); Lock.lock() } }
         Text {
             anchors.verticalCenter: parent.verticalCenter
             text: Quickshell.env("USER") + "@" + Niri.hostname

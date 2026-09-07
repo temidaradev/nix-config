@@ -93,6 +93,8 @@ BarPopup {
                 }
             }
 
+            Visualizer { width: parent.width; height: 34; active: dash.visible && Media.playing }
+
             Column {   // seek
                 width: parent.width; spacing: 0
                 Slider {
