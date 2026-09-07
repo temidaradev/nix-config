@@ -94,6 +94,8 @@ overview {
 // Polkit prompts and GTK theming (wrappers from niri.nix).
 spawn-at-startup "niri-polkit-agent"
 spawn-at-startup "niri-gtk-settings"
+spawn-at-startup "wl-paste" "--type" "text" "--watch" "cliphist" "store"
+spawn-at-startup "wl-paste" "--type" "image" "--watch" "cliphist" "store"
 
 animations {
     slowdown 1.0

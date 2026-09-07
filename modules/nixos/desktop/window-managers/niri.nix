@@ -59,6 +59,7 @@ in
     slurp
     swappy
     wl-clipboard
+    cliphist             # clipboard history shown in the sidebar
     polkitAgent
     gtkSettings
     screenshot

@@ -51,20 +51,25 @@ PanelWindow {
             Workspaces { screenName: bar.screen.name }
         }
 
-        // ---------------- centre: now playing + clock ----------------
-        Row {
+        // ---------------- centre: clock + now playing, one button -> dashboard ----------------
+        BarButton {
+            id: nowPlaying
             anchors.horizontalCenter: parent.horizontalCenter
-            height: parent.height
-            spacing: 6
+            padding: 10
+            color: Launcher.dashOpen ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
+            onClicked: e => {
+                if (e.button === Qt.LeftButton) Launcher.toggleDash(nowPlaying.mapToItem(null, 0, 0).x + nowPlaying.width / 2)
+                else if (Media.player && e.button === Qt.MiddleButton) Media.player.togglePlaying()
+                else if (Media.player) Media.player.next()
+            }
 
-            BarButton {   // now playing: art, marquee title, progress line
-                id: nowPlaying
-                visible: Media.player !== null
-                padding: 8
-                color: Launcher.mediaOpen ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
+                BarText { text: Qt.formatDateTime(clock.date, "ddd d MMM"); color: Theme.fgDim }
+                BarText { text: Qt.formatDateTime(clock.date, "HH:mm"); font.bold: true }
+                Sep { visible: Media.player !== null }
                 readonly property real progress: Media.player && Media.player.length > 0 ? Math.min(1, Media.player.position / Media.player.length) : 0
 
                 Rectangle {
+                    visible: Media.player !== null
                     anchors.verticalCenter: parent.verticalCenter
                     width: 22; height: 22; radius: 3; color: Theme.bg3
                     clip: true
@@ -79,6 +84,7 @@ PanelWindow {
                 }
                 Item {   // marquee
                     id: marquee
+                    visible: Media.player !== null
                     anchors.verticalCenter: parent.verticalCenter
                     readonly property string full: Media.title + (Media.artist ? "  ·  " + Media.artist : "")
                     readonly property bool overflow: label.implicitWidth > 220
@@ -103,6 +109,7 @@ PanelWindow {
                 }
                 Rectangle {   // progress line
                     parent: nowPlaying
+                    visible: Media.player !== null
                     anchors.bottom: parent.bottom; anchors.bottomMargin: 3
                     anchors.left: parent.left; anchors.leftMargin: 8
                     width: (parent.width - 16) * nowPlaying.progress
@@ -111,27 +118,11 @@ PanelWindow {
                 }
                 Rectangle {
                     parent: nowPlaying
+                    visible: Media.player !== null
                     anchors.bottom: parent.bottom; anchors.bottomMargin: 3
                     anchors.left: parent.left; anchors.leftMargin: 8
                     width: parent.width - 16; height: 2; radius: 1; color: "#22ffffff"; z: -1
                 }
-                onClicked: e => {
-                    if (!Media.player) return
-                    if (e.button === Qt.LeftButton) Launcher.toggleMedia(nowPlaying.mapToItem(null, 0, 0).x + nowPlaying.width / 2)
-                    else if (e.button === Qt.MiddleButton) Media.player.togglePlaying()
-                    else Media.player.next()
-                }
-            }
-
-            Sep { visible: Media.player !== null }
-
-            BarButton {   // clock -> calendar
-                padding: 8
-                color: Launcher.calendarOpen ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
-                BarText { text: Qt.formatDateTime(clock.date, "ddd d MMM"); color: Theme.fgDim }
-                BarText { text: Qt.formatDateTime(clock.date, "HH:mm"); font.bold: true }
-                onClicked: Launcher.toggleCalendar()
-            }
         }
 
         // ---------------- right ----------------
@@ -179,7 +170,7 @@ PanelWindow {
                         BarText { text: modelData.pct + "%"; font.pointSize: Theme.smallSize }
                     }
                 }
-                onClicked: Launcher.toggleSidebar()
+                onClicked: Launcher.toggleDash(nowPlaying.mapToItem(null, 0, 0).x + nowPlaying.width / 2)
             }
 
             Sep {}
@@ -188,14 +179,14 @@ PanelWindow {
                 BarText { text: "󰻠"; color: Theme.accent; font.pointSize: 12 }
                 Sparkline { data: SysStats.cpuHist }
                 BarText { text: Math.round(SysStats.cpu) + "%"; font.pointSize: Theme.smallSize; width: 30; horizontalAlignment: Text.AlignRight }
-                onClicked: Launcher.toggleSidebar()
+                onClicked: Launcher.toggleDash(nowPlaying.mapToItem(null, 0, 0).x + nowPlaying.width / 2)
             }
 
             BarButton {   // memory sparkline
                 BarText { text: "󰍛"; color: Theme.green; font.pointSize: 12 }
                 Sparkline { data: SysStats.memHist; color: Theme.green }
                 BarText { text: Math.round(SysStats.memUsed / SysStats.memTotal * 100 || 0) + "%"; font.pointSize: Theme.smallSize; width: 30; horizontalAlignment: Text.AlignRight }
-                onClicked: Launcher.toggleSidebar()
+                onClicked: Launcher.toggleDash(nowPlaying.mapToItem(null, 0, 0).x + nowPlaying.width / 2)
             }
 
             BarButton {   // temperatures

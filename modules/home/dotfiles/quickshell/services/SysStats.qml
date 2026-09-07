@@ -77,8 +77,14 @@ Singleton {
     }
     Process {
         id: up
-        command: ["uptime", "-p"]
-        stdout: StdioCollector { onStreamFinished: root.uptime = text.trim().replace(/^up /, "") }
+        command: ["cat", "/proc/uptime"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const s = parseFloat(text) || 0
+                const d = Math.floor(s / 86400), h = Math.floor(s % 86400 / 3600), m = Math.floor(s % 3600 / 60)
+                root.uptime = (d > 0 ? d + "d " : "") + (h > 0 ? h + "h " : "") + m + "m"
+            }
+        }
     }
     Timer { interval: 30000; running: true; repeat: true; triggeredOnStart: true; onTriggered: { df.running = true; up.running = true } }
 }

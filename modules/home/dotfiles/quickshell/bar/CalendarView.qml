@@ -1,22 +1,17 @@
 import QtQuick
 import qs
-import qs.services
 
-BarPopup {
+Column {
     id: cal
-    visible: Launcher.calendarOpen
-    panelWidth: 300
-    onDismissed: Launcher.calendarOpen = false
-
+    spacing: 4
     property date today: new Date()
     property int year: today.getFullYear()
     property int month: today.getMonth()
-    onVisibleChanged: if (visible) { today = new Date(); year = today.getFullYear(); month = today.getMonth() }
-
+    function reset() { today = new Date(); year = today.getFullYear(); month = today.getMonth() }
     function shift(d) { const m = new Date(year, month + d, 1); year = m.getFullYear(); month = m.getMonth() }
     readonly property var cells: {
         const first = new Date(year, month, 1)
-        const start = (first.getDay() + 6) % 7            // Monday first
+        const start = (first.getDay() + 6) % 7
         const days = new Date(year, month + 1, 0).getDate()
         const prevDays = new Date(year, month, 0).getDate()
         const out = []
@@ -29,7 +24,7 @@ BarPopup {
         return out
     }
 
-    Item {   // header
+    Item {
         width: parent.width; height: 28
         BarButton { anchors.left: parent.left; implicitHeight: 28; padding: 8; onClicked: cal.shift(-1)
             BarText { text: "󰅁" } }
@@ -37,12 +32,11 @@ BarPopup {
             anchors.centerIn: parent
             text: Qt.formatDate(new Date(cal.year, cal.month, 1), "MMMM yyyy")
             color: Theme.fg; font.bold: true; font.family: Theme.font; font.pointSize: Theme.fontSize
-            MouseArea { anchors.fill: parent; onClicked: { cal.today = new Date(); cal.year = cal.today.getFullYear(); cal.month = cal.today.getMonth() } }
+            MouseArea { anchors.fill: parent; onClicked: cal.reset() }
         }
         BarButton { anchors.right: parent.right; implicitHeight: 28; padding: 8; onClicked: cal.shift(1)
             BarText { text: "󰅂" } }
     }
-
     Grid {
         columns: 7; width: parent.width
         Repeater {
@@ -56,7 +50,6 @@ BarPopup {
             }
         }
     }
-
     Grid {
         columns: 7; width: parent.width
         Repeater {
@@ -76,12 +69,5 @@ BarPopup {
                 }
             }
         }
-    }
-
-    Text {
-        width: parent.width; horizontalAlignment: Text.AlignHCenter
-        text: Qt.formatDate(cal.today, "dddd, d MMMM yyyy")
-        color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1
-        topPadding: 4
     }
 }

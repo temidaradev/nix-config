@@ -12,11 +12,11 @@ TrayMenu 1.0 TrayMenu.qml
 Workspaces 1.0 Workspaces.qml
 AppDrawer 1.0 AppDrawer.qml
 ControlCenter 1.0 ControlCenter.qml
-MediaPopup 1.0 MediaPopup.qml
-Calendar 1.0 Calendar.qml
 WallpaperPicker 1.0 WallpaperPicker.qml
 NotificationPopups 1.0 NotificationPopups.qml
 NotificationCard 1.0 NotificationCard.qml
 Osd 1.0 Osd.qml
 NotificationPanel 1.0 NotificationPanel.qml
 TempPopup 1.0 TempPopup.qml
+CalendarView 1.0 CalendarView.qml
+Dashboard 1.0 Dashboard.qml

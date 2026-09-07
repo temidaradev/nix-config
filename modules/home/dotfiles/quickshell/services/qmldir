@@ -5,3 +5,5 @@ singleton Launcher 1.0 Launcher.qml
 singleton Notifs 1.0 Notifs.qml
 singleton Wallpaper 1.0 Wallpaper.qml
 singleton Devices 1.0 Devices.qml
+singleton Clipboard 1.0 Clipboard.qml
+singleton Pomodoro 1.0 Pomodoro.qml

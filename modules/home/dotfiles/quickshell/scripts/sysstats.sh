@@ -41,7 +41,7 @@ while :; do
 
     eval "$(awk '/^MemTotal/{print "mt="$2} /^MemAvailable/{print "ma="$2} /^SwapTotal/{print "st="$2} /^SwapFree/{print "sf="$2}' /proc/meminfo)"
 
-    read -r rx tx <<< "$(awk -F'[: ]+' 'NR>2 && $2 ~ /^(en|eth|wl)/ {r+=$3; t+=$11} END{print r+0, t+0}' /proc/net/dev)"
+    read -r rx tx <<< "$(awk 'NR>2 { sub(/^ +/, ""); split($0, a, /[: ]+/); if (a[1] ~ /^(en|eth|wl)/) { r+=a[2]; t+=a[10] } } END{print r+0, t+0}' /proc/net/dev)"
     rxs=0; txs=0
     if [ "$first" = 0 ]; then rxs=$((rx - prev_rx)); txs=$((tx - prev_tx)); fi
     prev_rx=$rx; prev_tx=$tx; first=0

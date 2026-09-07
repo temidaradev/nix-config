@@ -10,7 +10,8 @@ Singleton {
     property bool open: false            // app drawer
     property bool controlOpen: false
     property bool mediaOpen: false
-    property bool calendarOpen: false
+    property bool dashOpen: false
+    property real dashAnchorX: 0
     property bool wallpaperOpen: false
     property bool sidebarOpen: false
     property bool diskOpen: false
@@ -23,14 +24,14 @@ Singleton {
     property real mediaAnchorX: 0
     property real trayAnchorX: 0
 
-    function closeAll() { open = false; controlOpen = false; mediaOpen = false; calendarOpen = false; wallpaperOpen = false; sidebarOpen = false; diskOpen = false; notifOpen = false; tempOpen = false; trayItem = null }
+    function closeAll() { open = false; controlOpen = false; mediaOpen = false; dashOpen = false; wallpaperOpen = false; sidebarOpen = false; diskOpen = false; notifOpen = false; tempOpen = false; trayItem = null }
     function toggle() { const o = !open; closeAll(); open = o }
     function show() { closeAll(); open = true }
     function hide() { open = false }
     function toggleControl() { const o = !controlOpen; closeAll(); controlOpen = o }
     function hideControl() { controlOpen = false }
-    function toggleMedia(x) { const o = !mediaOpen; closeAll(); mediaOpen = o; mediaAnchorX = x }
-    function toggleCalendar() { const o = !calendarOpen; closeAll(); calendarOpen = o }
+    function toggleMedia(x) { toggleDash(x) }
+    function toggleDash(x) { const o = !dashOpen; closeAll(); dashOpen = o; dashAnchorX = x }
     function toggleSidebar() { const o = !sidebarOpen; closeAll(); sidebarOpen = o }
     function toggleNotifs(x) { const o = !notifOpen; closeAll(); notifOpen = o; notifAnchorX = x }
     function toggleTemps(x) { const o = !tempOpen; closeAll(); tempOpen = o; tempAnchorX = x }
@@ -52,5 +53,5 @@ Singleton {
     }
     IpcHandler { target: "notifications"; function toggle(): void { root.toggleNotifs(root.notifAnchorX) } }
     IpcHandler { target: "sidebar"; function toggle(): void { root.toggleSidebar() } }
-    IpcHandler { target: "calendar"; function toggle(): void { root.toggleCalendar() } }
+    IpcHandler { target: "dashboard"; function toggle(): void { root.toggleDash(root.dashAnchorX) } }
 }

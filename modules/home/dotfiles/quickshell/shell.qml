@@ -18,8 +18,7 @@ ShellRoot {
             Backdrop { screen: modelData }
             AppDrawer { screen: modelData }
             ControlCenter { screen: modelData }
-            MediaPopup { screen: modelData }
-            Calendar { screen: modelData }
+            Dashboard { screen: modelData }
             DiskPopup { screen: modelData }
             NotificationPanel { screen: modelData }
             TempPopup { screen: modelData }
