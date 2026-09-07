@@ -53,9 +53,9 @@ Keys worth knowing (Mod = Super):
 
 | Key | Action |
 | --- | --- |
-| Mod+D, Alt+Space | app drawer (`=2+2` calculates, `:cmd` runs a command) |
+| Mod+D, Alt+Space | launcher: apps, `/win` windows, `/wall` wallpapers, `/clip` clipboard, `/session`, `=2+2` calculator, `:cmd` runs a command |
 | Mod+A | control center (sound, bluetooth, network, wallpaper, notifications) |
-| Mod+S | sidebar (weather, quick launch, todo, windows, capture, clipboard, timer) |
+| Mod+S | side panel with tabs: home, media, audio, system, network, bluetooth, weather, calendar, notifications, screen time, power |
 | Mod+O | overview |
 | Mod+T / Mod+E | terminal / file manager |
 | Mod+Up / Down | previous / next workspace |

@@ -14,6 +14,7 @@ Singleton {
     property real dashAnchorX: 0
     property bool wallpaperOpen: false
     property bool sidebarOpen: false
+    property string sidebarTab: "home"
     property bool diskOpen: false
     property bool notifOpen: false
     property bool tempOpen: false
@@ -55,6 +56,10 @@ Singleton {
     }
     IpcHandler { target: "notifications"; function toggle(): void { root.toggleNotifs(root.notifAnchorX) } }
     IpcHandler { target: "session"; function toggle(): void { root.toggleSession() } }
-    IpcHandler { target: "sidebar"; function toggle(): void { root.toggleSidebar() } }
+    IpcHandler {
+        target: "sidebar"
+        function toggle(): void { root.toggleSidebar() }
+        function open(tab: string): void { closeAll(); root.sidebarTab = tab; root.sidebarOpen = true }
+    }
     IpcHandler { target: "dashboard"; function toggle(): void { root.toggleDash(root.dashAnchorX) } }
 }

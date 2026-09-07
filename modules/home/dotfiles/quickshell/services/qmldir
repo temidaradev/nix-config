@@ -6,9 +6,7 @@ singleton Notifs 1.0 Notifs.qml
 singleton Wallpaper 1.0 Wallpaper.qml
 singleton Devices 1.0 Devices.qml
 singleton Clipboard 1.0 Clipboard.qml
-singleton Pomodoro 1.0 Pomodoro.qml
 singleton Weather 1.0 Weather.qml
-singleton Todo 1.0 Todo.qml
 singleton Capture 1.0 Capture.qml
 singleton Power 1.0 Power.qml
 singleton Settings 1.0 Settings.qml
@@ -16,3 +14,6 @@ singleton Battery 1.0 Battery.qml
 singleton Brightness 1.0 Brightness.qml
 singleton Apps 1.0 Apps.qml
 singleton Lock 1.0 Lock.qml
+singleton ScreenTime 1.0 ScreenTime.qml
+singleton SysInfo 1.0 SysInfo.qml
+singleton Network 1.0 Network.qml
