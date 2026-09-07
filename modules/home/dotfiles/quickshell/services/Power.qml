@@ -7,11 +7,13 @@ import Quickshell.Io
 Singleton {
     id: root
     property string profile: ""
+    property bool watt: false          // watt daemon active: AC = max performance, battery = power save
     readonly property var profiles: ["power-saver", "balanced", "performance"]
     readonly property string flake: Quickshell.env("HOME") + "/.dotfiles"
 
     Process { id: get; command: ["powerprofilesctl", "get"]; stdout: StdioCollector { onStreamFinished: root.profile = text.trim() } }
-    function refresh() { get.running = true }
+    Process { id: wattCheck; command: ["systemctl", "is-active", "watt"]; stdout: StdioCollector { onStreamFinished: root.watt = text.trim() === "active" } }
+    function refresh() { get.running = true; wattCheck.running = true }
     function set(p) { Quickshell.execDetached(["powerprofilesctl", "set", p]); profile = p }
 
     function term(title, cmd) {

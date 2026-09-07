@@ -317,14 +317,23 @@ PanelWindow {
                 }
 
                 // ---- power & system ----
-                Section { title: "Power profile" }
+                Section { title: Power.watt ? "Power (watt)" : "Power profile" }
                 Card {
                     Row {
+                        visible: !Power.watt
                         spacing: 6
                         Repeater {
                             model: Power.profiles
                             SmallButton { required property string modelData; label: modelData.replace("-", " "); on: Power.profile === modelData; onClicked: Power.set(modelData) }
                         }
+                    }
+                    Column {
+                        visible: Power.watt
+                        width: parent.width; spacing: 2
+                        Row { spacing: 8
+                            Text { text: Battery.onAc ? "󰚥" : "󰁹"; color: Battery.onAc ? Theme.green : Theme.accent; font.family: Theme.font; font.pointSize: 13 }
+                            Text { text: Battery.onAc ? "Wall power: maximum performance" : "Battery: power saving"; color: Theme.fg; font.bold: true; font.family: Theme.font; font.pointSize: Theme.smallSize; anchors.verticalCenter: parent.verticalCenter } }
+                        Text { text: "Managed by watt; charge held between 40 and 80 %"; color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1 }
                     }
                 }
                 Section { title: "NixOS" }
