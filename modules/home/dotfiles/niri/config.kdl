@@ -153,6 +153,7 @@ binds {
     Mod+D hotkey-overlay-title="App drawer" { spawn "qs" "ipc" "call" "launcher" "toggle"; }
     Alt+Space { spawn "qs" "ipc" "call" "launcher" "toggle"; }
     Mod+A hotkey-overlay-title="Control center" { spawn "qs" "ipc" "call" "control" "toggle"; }
+    Mod+S hotkey-overlay-title="System sidebar" { spawn "qs" "ipc" "call" "sidebar" "toggle"; }
     Mod+E { spawn "dolphin"; }
     Mod+Shift+L hotkey-overlay-title="Lock" { spawn "swaylock" "-f" "-c" "1b1e20"; }
 

@@ -1,10 +1,20 @@
 #!/usr/bin/env bash
-# Prints one JSON object per second with cpu/mem/swap/temp/gpu/net stats.
-# cpu is in tenths of a percent; bytes are raw; net is bytes per second.
+# Prints one JSON object per second with cpu/mem/swap/temps/gpu/net stats.
+# cpu is in tenths of a percent; temps in millidegrees; bytes raw; net is bytes/s.
 
-tempf=""
+tempf=""; gputempf=""; nvmetempf=""
 for d in /sys/class/hwmon/hwmon*; do
-    [ "$(cat "$d/name" 2>/dev/null)" = k10temp ] && tempf="$d/temp1_input"
+    case "$(cat "$d/name" 2>/dev/null)" in
+        k10temp|coretemp) tempf="$d/temp1_input" ;;
+        nvme) [ -z "$nvmetempf" ] && nvmetempf="$d/temp1_input" ;;
+        xe|i915|amdgpu)
+            for l in "$d"/temp*_label; do
+                [ -r "$l" ] || continue
+                case "$(cat "$l")" in pkg|edge|junction) gputempf="${l%_label}_input" ;; esac
+            done
+            [ -z "$gputempf" ] && [ -r "$d/temp1_input" ] && gputempf="$d/temp1_input"
+            ;;
+    esac
 done
 cores=$(nproc)
 
@@ -14,10 +24,11 @@ for c in /sys/class/drm/card?/device; do
     [ -r "$c/mem_info_vram_used" ] && gpu_used="$c/mem_info_vram_used"
     [ -r "$c/mem_info_vram_total" ] && gpu_total="$c/mem_info_vram_total"
 done
-# Intel xe exposes only the size
 [ -z "$gpu_total" ] && for t in /sys/class/drm/card?/device/tile0/physical_vram_size_bytes; do
     [ -r "$t" ] && gpu_total="$t"
 done
+
+rd() { [ -n "$1" ] && cat "$1" 2>/dev/null || echo 0; }
 
 prev_total=0 prev_idle=0 prev_rx=0 prev_tx=0 first=1
 while :; do
@@ -35,12 +46,9 @@ while :; do
     if [ "$first" = 0 ]; then rxs=$((rx - prev_rx)); txs=$((tx - prev_tx)); fi
     prev_rx=$rx; prev_tx=$tx; first=0
 
-    temp=0; [ -n "$tempf" ] && temp=$(cat "$tempf" 2>/dev/null || echo 0)
-    gb=0;  [ -n "$gpu_busy" ]  && gb=$(cat "$gpu_busy" 2>/dev/null || echo 0)
-    gu=0;  [ -n "$gpu_used" ]  && gu=$(cat "$gpu_used" 2>/dev/null || echo 0)
-    gt=0;  [ -n "$gpu_total" ] && gt=$(cat "$gpu_total" 2>/dev/null || echo 0)
-
-    printf '{"cpu":%d,"cores":%d,"temp":%d,"memTotal":%d,"memUsed":%d,"swapTotal":%d,"swapUsed":%d,"gpu":%d,"gpuUsed":%d,"gpuTotal":%d,"rx":%d,"tx":%d}\n' \
-        "$cpu" "$cores" "$temp" $((mt * 1024)) $(((mt - ma) * 1024)) $((st * 1024)) $(((st - sf) * 1024)) "$gb" "$gu" "$gt" "$rxs" "$txs"
+    printf '{"cpu":%d,"cores":%d,"temp":%d,"gpuTemp":%d,"nvmeTemp":%d,"memTotal":%d,"memUsed":%d,"swapTotal":%d,"swapUsed":%d,"gpu":%d,"gpuUsed":%d,"gpuTotal":%d,"rx":%d,"tx":%d}\n' \
+        "$cpu" "$cores" "$(rd "$tempf")" "$(rd "$gputempf")" "$(rd "$nvmetempf")" \
+        $((mt * 1024)) $(((mt - ma) * 1024)) $((st * 1024)) $(((st - sf) * 1024)) \
+        "$(rd "$gpu_busy")" "$(rd "$gpu_used")" "$(rd "$gpu_total")" "$rxs" "$txs"
     sleep 1
 done

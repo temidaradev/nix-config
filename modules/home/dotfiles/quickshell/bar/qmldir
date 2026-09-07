@@ -2,6 +2,11 @@ Bar 1.0 Bar.qml
 BarButton 1.0 BarButton.qml
 BarText 1.0 BarText.qml
 BarPopup 1.0 BarPopup.qml
+Sparkline 1.0 Sparkline.qml
+Gauge 1.0 Gauge.qml
+DiskRow 1.0 DiskRow.qml
+DiskPopup 1.0 DiskPopup.qml
+Sidebar 1.0 Sidebar.qml
 Tray 1.0 Tray.qml
 TrayMenu 1.0 TrayMenu.qml
 Workspaces 1.0 Workspaces.qml
