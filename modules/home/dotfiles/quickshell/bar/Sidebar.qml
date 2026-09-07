@@ -1,13 +1,4 @@
-                            Item {
-                                width: parent.width; height: 22
-                                Row {
-                                    spacing: 6; height: parent.height
-                                    Rectangle { width: 18; height: 18; radius: 3; color: modelData.is_active ? Theme.accent : Theme.bg3; anchors.verticalCenter: parent.verticalCenter
-                                        Text { anchors.centerIn: parent; text: modelData.name || modelData.idx; color: modelData.is_active ? "#1b1e20" : Theme.fg; font.bold: true; font.family: Theme.font; font.pointSize: Theme.smallSize - 2 } }
-                                    Text { text: "Workspace " + (modelData.name || modelData.idx); color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1; anchors.verticalCenter: parent.verticalCenter }
-                                }
-                                MouseArea { anchors.fill: parent; onClicked: Niri.focusWorkspace(modelData.idx) }
-                            }import QtQuick
+import QtQuick
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Widgets
@@ -106,11 +97,14 @@ PanelWindow {
                             readonly property var wins: Niri.windows.filter(w => w.workspace_id === modelData.id)
                             visible: wins.length > 0
                             width: parent.width; spacing: 2
-                            Row {
-                                spacing: 6
-                                Rectangle { width: 18; height: 18; radius: 3; color: modelData.is_active ? Theme.accent : Theme.bg3; anchors.verticalCenter: parent.verticalCenter
-                                    Text { anchors.centerIn: parent; text: modelData.name || modelData.idx; color: modelData.is_active ? "#1b1e20" : Theme.fg; font.bold: true; font.family: Theme.font; font.pointSize: Theme.smallSize - 2 } }
-                                Text { text: "Workspace " + (modelData.name || modelData.idx); color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1; anchors.verticalCenter: parent.verticalCenter }
+                            Item {
+                                width: parent.width; height: 22
+                                Row {
+                                    spacing: 6; height: parent.height
+                                    Rectangle { width: 18; height: 18; radius: 3; color: modelData.is_active ? Theme.accent : Theme.bg3; anchors.verticalCenter: parent.verticalCenter
+                                        Text { anchors.centerIn: parent; text: modelData.name || modelData.idx; color: modelData.is_active ? "#1b1e20" : Theme.fg; font.bold: true; font.family: Theme.font; font.pointSize: Theme.smallSize - 2 } }
+                                    Text { text: "Workspace " + (modelData.name || modelData.idx); color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1; anchors.verticalCenter: parent.verticalCenter }
+                                }
                                 MouseArea { anchors.fill: parent; onClicked: Niri.focusWorkspace(modelData.idx) }
                             }
                             Repeater {
