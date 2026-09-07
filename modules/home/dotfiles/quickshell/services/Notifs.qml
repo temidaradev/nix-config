@@ -22,7 +22,7 @@ Singleton {
         persistenceSupported: true
         onNotification: n => {
             n.tracked = true
-            n.closed.connect(() => root.hidePopup(n))
+            n.closed.connect(() => { root.gone[n.id] = true; root.hidePopup(n) })
             if (root.dnd && n.urgency !== NotificationUrgency.Critical) return
             root.popups = [n].concat(root.popups).slice(0, Settings.s.notifications.maxPopups)
             const ms = n.urgency === NotificationUrgency.Critical ? 0 : (n.expireTimeout > 0 ? n.expireTimeout : Settings.s.notifications.timeoutMs)
@@ -37,9 +37,10 @@ Singleton {
     }
     Component { id: timerComp; PopupTimer {} }
 
+    property var gone: ({})                                  // ids already closed by the app
     function hidePopup(n) { popups = popups.filter(p => p !== n) }
-    function dismiss(n) { hidePopup(n); n.dismiss() }
-    function clearAll() { for (const n of history.slice()) n.dismiss(); popups = [] }
+    function dismiss(n) { hidePopup(n); if (!gone[n.id]) { gone[n.id] = true; n.dismiss() } }
+    function clearAll() { for (const n of history.slice()) dismiss(n); popups = [] }
     function activate(n) {
         const a = n.actions.find(x => x.identifier === "default") || n.actions[0]
         if (a) a.invoke()
