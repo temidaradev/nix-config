@@ -50,23 +50,6 @@ PanelWindow {
 
             Workspaces { screenName: bar.screen.name }
 
-            Sep {}
-
-            Rectangle {   // crypto ticker
-                anchors.verticalCenter: parent.verticalCenter
-                height: parent.height - 10
-                width: tick.implicitWidth + 12
-                radius: Theme.radius
-                color: "#1a3daee9"
-                Row {
-                    id: tick
-                    anchors.centerIn: parent
-                    spacing: 6
-                    BarText { text: "◎"; color: Theme.accent; font.bold: true }
-                    BarText { text: Crypto.pair.replace("-", "/") + ": "; font.bold: true }
-                    BarText { text: Crypto.price; font.bold: true }
-                }
-            }
         }
 
         // ---------------- right ----------------
