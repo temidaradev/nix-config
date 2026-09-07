@@ -51,6 +51,7 @@ BarPopup {
         Card {   // calendar
             id: calCard
             width: (parent.width - 12) / 2
+            height: Math.max(calCard.implicitHeight, mediaCard.implicitHeight)
             Text {
                 width: parent.width
                 text: Qt.formatDate(new Date(), "dddd, d MMMM")
@@ -60,7 +61,9 @@ BarPopup {
         }
 
         Card {   // media, same height as the calendar
+            id: mediaCard
             width: (parent.width - 12) / 2
+            height: Math.max(calCard.implicitHeight, mediaCard.implicitHeight)
             spacing: 12
             Row {
                 width: parent.width; spacing: 14
