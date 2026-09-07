@@ -1,0 +1,4 @@
+# Keep the shell out of GitHub language stats (this is a Nix config repo)
+*.qml linguist-vendored
+qmldir linguist-vendored
+modules/home/dotfiles/quickshell/** linguist-vendored
