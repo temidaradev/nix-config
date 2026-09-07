@@ -44,6 +44,8 @@
 
   weather = { city = "Istanbul"; };
 
+  dashboard = { visualizer = true; };   # cava bars in the media card (runs only while it is open)
+
   osd = { timeoutMs = 1500; bottomMargin = 90; };
 
   notifications = { timeoutMs = 6000; maxPopups = 5; };

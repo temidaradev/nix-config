@@ -14,6 +14,7 @@ Singleton {
                notifications: true, control: true, sidebar: true, nowPlaying: true, windowTitle: true, workspaceIcons: true, marqueeWidth: 220, clockFormat: "HH:mm", dateFormat: "ddd d MMM" },
         pinned: ["org.kde.dolphin", "zen-beta", "code", "dev.zed.Zed", "discord", "moe.kopuz.kopuz", "com.mitchellh.ghostty", "steam", "thunderbird", "org.jellyfin.JellyfinDesktop"],
         weather: { city: "Istanbul" },
+        dashboard: { visualizer: true },
         osd: { timeoutMs: 1500, bottomMargin: 90 },
         notifications: { timeoutMs: 6000, maxPopups: 5 },
         wallpaper: ""

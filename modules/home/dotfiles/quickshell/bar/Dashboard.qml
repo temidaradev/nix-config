@@ -61,7 +61,6 @@ BarPopup {
 
         Card {   // media, same height as the calendar
             width: (parent.width - 12) / 2
-            height: calCard.implicitHeight
             spacing: 12
             Row {
                 width: parent.width; spacing: 14
@@ -93,7 +92,7 @@ BarPopup {
                 }
             }
 
-            Visualizer { width: parent.width; height: 34; active: dash.visible && Media.playing }
+            Visualizer { visible: Settings.s.dashboard.visualizer; width: parent.width; height: 34; active: visible && dash.visible && Media.playing }
 
             Column {   // seek
                 width: parent.width; spacing: 0
