@@ -71,7 +71,9 @@ PanelWindow {
         radius: Theme.radius; color: Theme.bg2
         default property alias content: inner.data
         property alias spacing: inner.spacing
+        signal clicked
         implicitHeight: inner.implicitHeight + 20
+        MouseArea { anchors.fill: parent; z: -1; onClicked: parent.clicked() }
         Column { id: inner; anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top; anchors.margins: 10; spacing: 6 }
     }
     component KV: Row {
@@ -242,7 +244,7 @@ PanelWindow {
                                 Column { anchors.verticalCenter: parent.verticalCenter
                                     Label { text: Weather.ready ? Weather.current.temp + "°" : "—"; font.bold: true; font.pointSize: Theme.fontSize + 3 }
                                     Dim { text: Weather.ready ? Weather.describe(Weather.current.code) : (Weather.error || "Loading…") } } }
-                            MouseArea { anchors.fill: parent; onClicked: win.tab = "weather" }
+                            onClicked: win.tab = "weather"
                         }
                         Card {   // media summary
                             width: (parent.width - 8) / 2
@@ -253,7 +255,7 @@ PanelWindow {
                                 Column { anchors.verticalCenter: parent.verticalCenter; width: parent.width - 50
                                     Label { width: parent.width; elide: Text.ElideRight; text: Media.player ? Media.title : "Nothing playing"; font.bold: true; font.pointSize: Theme.smallSize }
                                     Dim { width: parent.width; elide: Text.ElideRight; text: Media.artist } } }
-                            MouseArea { anchors.fill: parent; onClicked: win.tab = "media" }
+                            onClicked: win.tab = "media"
                         }
                     }
                     Section { text: "Shortcuts" }
