@@ -1,0 +1,15 @@
+Bar 1.0 Bar.qml
+BarButton 1.0 BarButton.qml
+BarText 1.0 BarText.qml
+BarPopup 1.0 BarPopup.qml
+Tray 1.0 Tray.qml
+TrayMenu 1.0 TrayMenu.qml
+Workspaces 1.0 Workspaces.qml
+AppDrawer 1.0 AppDrawer.qml
+ControlCenter 1.0 ControlCenter.qml
+MediaPopup 1.0 MediaPopup.qml
+Calendar 1.0 Calendar.qml
+WallpaperPicker 1.0 WallpaperPicker.qml
+NotificationPopups 1.0 NotificationPopups.qml
+NotificationCard 1.0 NotificationCard.qml
+Osd 1.0 Osd.qml

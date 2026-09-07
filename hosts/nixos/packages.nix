@@ -54,8 +54,6 @@ with pkgs; {
     gsmartcontrol
     smartmontools
     kdePackages.konsole
-    conky
-    eww
     tradingview
     qbittorrent
     jellyfin-media-player
@@ -120,9 +118,6 @@ with pkgs; {
     glibc
     zlib
 
-    # Hyprland
-    waybar
-    wofi
 
     # Desktop tools
     wl-clipboard

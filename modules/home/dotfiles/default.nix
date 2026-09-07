@@ -22,5 +22,11 @@
     "zed/keymap.json".source = ./zed/keymap.json;
 
     "karabiner/karabiner.json".source = ./karabiner.json;
+
+    # niri + its Quickshell shell (see quickshell/README.md)
+    "niri/config.kdl".source = ./niri/config.kdl;
+    "niri/wallpaper.png".source = ./niri/wallpaper.png;
+    "swappy/config".source = ./niri/swappy;
+    "quickshell".source = ./quickshell;
   };
 }
