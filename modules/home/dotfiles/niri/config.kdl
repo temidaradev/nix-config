@@ -113,12 +113,6 @@ animations {
     }
 }
 
-// Fixed, named workspaces first; numbered ones get created after them.
-workspace "web"
-workspace "code"
-workspace "chat"
-workspace "music"
-
 // Blurred wallpaper from the shell shown behind workspaces in the overview.
 layer-rule {
     match namespace="^qs-backdrop$"
@@ -149,17 +143,6 @@ window-rule {
     match app-id="^steam$" title=r#"^(Friends List|Steam Settings|Special Offers|Screenshot Manager|Steam - .*)$"#
     match app-id="^steam$" title="^notificationtoasts"
     open-floating true
-}
-
-// Chat and music apps open on their own workspaces.
-window-rule {
-    match app-id="^discord$"
-    open-on-workspace "chat"
-}
-window-rule {
-    match app-id=r#"^moe\.kopuz\.kopuz$"#
-    match app-id="^kopuz$"
-    open-on-workspace "music"
 }
 
 binds {
