@@ -1,5 +1,15 @@
 { pkgs, hmUsername, ... }:
 
+let
+  # Shell defaults as JSON next to the QML; the Settings window layers overrides
+  # from ~/.local/state/quickshell/settings.json on top.
+  shellSettings = pkgs.writeText "quickshell-settings.json" (builtins.toJSON (import ./quickshell-settings.nix));
+  quickshellDir = pkgs.runCommand "quickshell-config" { } ''
+    cp -r ${./quickshell} $out
+    chmod -R u+w $out
+    ln -s ${shellSettings} $out/settings.json
+  '';
+in
 {
   hjem.users.${hmUsername}.xdg.config.files = {
     # macOS window management (dormant unless the daemons are started)
@@ -27,6 +37,6 @@
     "niri/config.kdl".source = ./niri/config.kdl;
     "niri/wallpaper.png".source = ./niri/wallpaper.png;
     "swappy/config".source = ./niri/swappy;
-    "quickshell".source = ./quickshell;
+    "quickshell".source = quickshellDir;
   };
 }

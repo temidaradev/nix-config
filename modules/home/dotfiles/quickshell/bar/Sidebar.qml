@@ -19,7 +19,7 @@ PanelWindow {
     onVisibleChanged: if (visible) { Clipboard.refresh(); Capture.refresh(); Power.refresh() }
     Timer { interval: 4000; repeat: true; running: win.visible; onTriggered: { Clipboard.refresh(); Capture.refresh() } }
 
-    property var pinned: ["org.kde.dolphin", "zen-beta", "code", "dev.zed.Zed", "discord", "moe.kopuz.kopuz", "com.mitchellh.ghostty", "steam", "thunderbird", "org.jellyfin.JellyfinDesktop"]
+    readonly property var pinned: Settings.s.pinned
     readonly property var apps: DesktopEntries.applications.values
     function entry(id) { const l = id.toLowerCase(); return apps.find(e => e.id.toLowerCase() === l) || apps.find(e => e.id.toLowerCase().endsWith("." + l) || l.endsWith("." + e.id.toLowerCase())) || null }
     readonly property var launchers: pinned.map(id => entry(id)).filter(e => e !== null)

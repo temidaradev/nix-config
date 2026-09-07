@@ -63,13 +63,13 @@ PanelWindow {
                 else if (Media.player) Media.player.next()
             }
 
-                BarText { text: Qt.formatDateTime(clock.date, "ddd d MMM"); color: Theme.fgDim }
-                BarText { text: Qt.formatDateTime(clock.date, "HH:mm"); font.bold: true }
-                Sep { visible: Media.player !== null }
+                BarText { text: Qt.formatDateTime(clock.date, Settings.s.bar.dateFormat); color: Theme.fgDim }
+                BarText { text: Qt.formatDateTime(clock.date, Settings.s.bar.clockFormat); font.bold: true }
+                Sep { visible: Settings.s.bar.nowPlaying && Media.player !== null }
                 readonly property real progress: Media.player && Media.player.length > 0 ? Math.min(1, Media.player.position / Media.player.length) : 0
 
                 Rectangle {
-                    visible: Media.player !== null
+                    visible: Settings.s.bar.nowPlaying && Media.player !== null
                     anchors.verticalCenter: parent.verticalCenter
                     width: 22; height: 22; radius: 3; color: Theme.bg3
                     clip: true
@@ -84,11 +84,11 @@ PanelWindow {
                 }
                 Item {   // marquee
                     id: marquee
-                    visible: Media.player !== null
+                    visible: Settings.s.bar.nowPlaying && Media.player !== null
                     anchors.verticalCenter: parent.verticalCenter
                     readonly property string full: Media.title + (Media.artist ? "  ·  " + Media.artist : "")
-                    readonly property bool overflow: label.implicitWidth > 220
-                    width: Math.min(label.implicitWidth, 220)
+                    readonly property bool overflow: label.implicitWidth > Settings.s.bar.marqueeWidth
+                    width: Math.min(label.implicitWidth, Settings.s.bar.marqueeWidth)
                     height: label.implicitHeight
                     clip: true
                     BarText {
@@ -109,7 +109,7 @@ PanelWindow {
                 }
                 Rectangle {   // progress line
                     parent: nowPlaying
-                    visible: Media.player !== null
+                    visible: Settings.s.bar.nowPlaying && Media.player !== null
                     anchors.bottom: parent.bottom; anchors.bottomMargin: 3
                     anchors.left: parent.left; anchors.leftMargin: 8
                     width: (parent.width - 16) * nowPlaying.progress
@@ -118,7 +118,7 @@ PanelWindow {
                 }
                 Rectangle {
                     parent: nowPlaying
-                    visible: Media.player !== null
+                    visible: Settings.s.bar.nowPlaying && Media.player !== null
                     anchors.bottom: parent.bottom; anchors.bottomMargin: 3
                     anchors.left: parent.left; anchors.leftMargin: 8
                     width: parent.width - 16; height: 2; radius: 1; color: "#22ffffff"; z: -1
@@ -131,16 +131,18 @@ PanelWindow {
             height: parent.height
             spacing: 2
 
-            Tray { bar: bar }
+            Tray { bar: bar; visible: Settings.s.bar.tray }
 
             Sep {}
 
             BarButton {   // keyboard layout
+                visible: Settings.s.bar.layout
                 BarText { text: Niri.layout || "us"; font.bold: true }
                 onClicked: Niri.nextLayout()
             }
 
             BarButton {   // volume
+                visible: Settings.s.bar.volume
                 BarText { text: bar.muted ? "󰖁" : (bar.volume < 0.01 ? "󰕿" : bar.volume < 0.5 ? "󰖀" : "󰕾"); font.pointSize: 12 }
                 onClicked: e => {
                     if (e.button === Qt.LeftButton) Launcher.toggleControl()
@@ -154,12 +156,13 @@ PanelWindow {
             }
 
             BarButton {   // bluetooth
+                visible: Settings.s.bar.bluetooth
                 BarText { text: "󰂯"; font.pointSize: 12 }
                 onClicked: e => e.button === Qt.RightButton ? Quickshell.execDetached(["blueman-manager"]) : Launcher.toggleControl()
             }
 
             BarButton {   // peripheral batteries (only when something reports one)
-                visible: Devices.all.length > 0
+                visible: Settings.s.bar.battery && Devices.all.length > 0
                 Repeater {
                     model: Devices.all
                     Row {
@@ -176,6 +179,7 @@ PanelWindow {
             Sep {}
 
             BarButton {   // cpu sparkline
+                visible: Settings.s.bar.cpu
                 BarText { text: "󰻠"; color: Theme.accent; font.pointSize: 12 }
                 Sparkline { data: SysStats.cpuHist }
                 BarText { text: Math.round(SysStats.cpu) + "%"; font.pointSize: Theme.smallSize; width: 30; horizontalAlignment: Text.AlignRight }
@@ -183,6 +187,7 @@ PanelWindow {
             }
 
             BarButton {   // memory sparkline
+                visible: Settings.s.bar.memory
                 BarText { text: "󰍛"; color: Theme.green; font.pointSize: 12 }
                 Sparkline { data: SysStats.memHist; color: Theme.green }
                 BarText { text: Math.round(SysStats.memUsed / SysStats.memTotal * 100 || 0) + "%"; font.pointSize: Theme.smallSize; width: 30; horizontalAlignment: Text.AlignRight }
@@ -190,6 +195,7 @@ PanelWindow {
             }
 
             BarButton {   // temperatures
+                visible: Settings.s.bar.temps
                 id: tempBtn
                 color: Launcher.tempOpen ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
                 BarText { text: "󰔏"; color: SysStats.temp > 80 ? Theme.red : Theme.accent; font.pointSize: 12 }
@@ -200,6 +206,7 @@ PanelWindow {
             }
 
             BarButton {   // disk usage of /
+                visible: Settings.s.bar.disk
                 id: diskBtn
                 readonly property var rootDisk: SysStats.disks.find(d => d.mount === "/")
                 color: Launcher.diskOpen ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
@@ -209,6 +216,7 @@ PanelWindow {
             }
 
             BarButton {   // network speed
+                visible: Settings.s.bar.network
                 Column {
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: -2
@@ -225,6 +233,7 @@ PanelWindow {
             Sep {}
 
             BarButton {   // notifications
+                visible: Settings.s.bar.notifications
                 id: bellBtn
                 color: Launcher.notifOpen ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
                 BarText { text: Notifs.dnd ? "󰂛" : (Notifs.count > 0 ? "󰂚" : "󰂜"); font.pointSize: 12 }
@@ -233,12 +242,14 @@ PanelWindow {
             }
 
             BarButton {   // control center
+                visible: Settings.s.bar.control
                 color: Launcher.controlOpen ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
                 BarText { text: "󰒓"; font.pointSize: 12 }
                 onClicked: Launcher.toggleControl()
             }
 
             BarButton {   // sidebar
+                visible: Settings.s.bar.sidebar
                 color: Launcher.sidebarOpen ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
                 BarText { text: "󰨝"; font.pointSize: 12 }
                 onClicked: Launcher.toggleSidebar()

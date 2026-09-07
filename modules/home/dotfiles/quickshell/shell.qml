@@ -7,7 +7,7 @@ import qs.services
 
 ShellRoot {
     // singletons that must exist even before a window references them
-    Component.onCompleted: { Notifs.count; Wallpaper.current; Devices.all }
+    Component.onCompleted: { Settings.s; Notifs.count; Wallpaper.current; Devices.all }
 
     Variants {
         model: Quickshell.screens
@@ -23,6 +23,7 @@ ShellRoot {
             NotificationPanel { screen: modelData }
             TempPopup { screen: modelData }
             Sidebar { screen: modelData }
+            SettingsWindow { screen: modelData }
             TrayMenu { screen: modelData }
             WallpaperPicker { screen: modelData }
             NotificationPopups { screen: modelData }

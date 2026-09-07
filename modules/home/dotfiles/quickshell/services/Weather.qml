@@ -40,9 +40,9 @@ Singleton {
         id: cityFile
         path: root.stateDir + "/weather-city"
         onLoaded: { const t = text().trim(); if (t !== "") root.city = t }
-        onLoadFailed: root.city = (Quickshell.env("TZ") || "").split("/").pop() || "Istanbul"
+        onLoadFailed: root.city = Settings.s.weather.city
     }
-    Timer { interval: 200; running: root.city === ""; onTriggered: if (root.city === "") root.city = "Istanbul" }
+    Timer { interval: 200; running: root.city === ""; onTriggered: if (root.city === "") root.city = Settings.s.weather.city }
     onCityChanged: if (city !== "") geocode.running = true
 
     function setCity(name) {

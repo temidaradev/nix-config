@@ -11,6 +11,7 @@ Singleton {
     readonly property string stateFile: stateDir + "/wallpaper"
     readonly property string dir: Quickshell.env("HOME") + "/Pictures/Wallpapers"
     property string current: Theme.wallpaper
+    onCurrentChanged: {}
     property var available: []
 
     FileView {

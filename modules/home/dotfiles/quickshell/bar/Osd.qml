@@ -9,7 +9,7 @@ import qs.services
 PanelWindow {
     id: osd
     anchors { bottom: true }
-    margins.bottom: 90
+    margins.bottom: Settings.s.osd.bottomMargin
     implicitWidth: 320
     implicitHeight: 64
     exclusionMode: ExclusionMode.Ignore
@@ -39,7 +39,7 @@ PanelWindow {
         : (muted ? "󰖁" : (volume < 0.01 ? "󰕿" : volume < 0.5 ? "󰖀" : "󰕾"))
 
     Timer { interval: 1500; running: true; onTriggered: osd.ready = true }
-    Timer { id: hide; interval: 1500; onTriggered: osd.shown = false }
+    Timer { id: hide; interval: Settings.s.osd.timeoutMs; onTriggered: osd.shown = false }
 
     function ping(k) {
         if (!ready) return

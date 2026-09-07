@@ -11,3 +11,4 @@ singleton Weather 1.0 Weather.qml
 singleton Todo 1.0 Todo.qml
 singleton Capture 1.0 Capture.qml
 singleton Power 1.0 Power.qml
+singleton Settings 1.0 Settings.qml

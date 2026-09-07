@@ -24,8 +24,8 @@ Singleton {
             n.tracked = true
             n.closed.connect(() => root.hidePopup(n))
             if (root.dnd && n.urgency !== NotificationUrgency.Critical) return
-            root.popups = [n].concat(root.popups).slice(0, 5)
-            const ms = n.urgency === NotificationUrgency.Critical ? 0 : (n.expireTimeout > 0 ? n.expireTimeout : 6000)
+            root.popups = [n].concat(root.popups).slice(0, Settings.s.notifications.maxPopups)
+            const ms = n.urgency === NotificationUrgency.Critical ? 0 : (n.expireTimeout > 0 ? n.expireTimeout : Settings.s.notifications.timeoutMs)
             if (ms > 0) timerComp.createObject(root, { n: n, interval: ms })
         }
     }

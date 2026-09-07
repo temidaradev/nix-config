@@ -20,3 +20,4 @@ NotificationPanel 1.0 NotificationPanel.qml
 TempPopup 1.0 TempPopup.qml
 CalendarView 1.0 CalendarView.qml
 Dashboard 1.0 Dashboard.qml
+SettingsWindow 1.0 SettingsWindow.qml
