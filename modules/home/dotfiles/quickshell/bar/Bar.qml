@@ -199,11 +199,13 @@ PanelWindow {
             }
 
             BarButton {   // temperatures
+                id: tempBtn
+                color: Launcher.tempOpen ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
                 BarText { text: "󰔏"; color: SysStats.temp > 80 ? Theme.red : Theme.accent; font.pointSize: 12 }
                 BarText { text: Math.round(SysStats.temp) + "°"; font.pointSize: Theme.smallSize }
                 BarText { visible: SysStats.gpuTemp > 0; text: "󰢮"; color: SysStats.gpuTemp > 85 ? Theme.red : Theme.accent; font.pointSize: 12 }
                 BarText { visible: SysStats.gpuTemp > 0; text: Math.round(SysStats.gpuTemp) + "°"; font.pointSize: Theme.smallSize }
-                onClicked: Launcher.toggleSidebar()
+                onClicked: Launcher.toggleTemps(tempBtn.mapToItem(null, 0, 0).x + tempBtn.width / 2)
             }
 
             BarButton {   // disk usage of /
@@ -232,9 +234,11 @@ PanelWindow {
             Sep {}
 
             BarButton {   // notifications
+                id: bellBtn
+                color: Launcher.notifOpen ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
                 BarText { text: Notifs.dnd ? "󰂛" : (Notifs.count > 0 ? "󰂚" : "󰂜"); font.pointSize: 12 }
                 BarText { visible: Notifs.count > 0; text: String(Notifs.count); color: Theme.accent; font.bold: true; font.pointSize: Theme.smallSize }
-                onClicked: e => e.button === Qt.RightButton ? Notifs.dnd = !Notifs.dnd : Launcher.toggleControl()
+                onClicked: e => e.button === Qt.RightButton ? Notifs.dnd = !Notifs.dnd : Launcher.toggleNotifs(bellBtn.mapToItem(null, 0, 0).x + bellBtn.width / 2)
             }
 
             BarButton {   // control center

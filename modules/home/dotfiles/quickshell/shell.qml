@@ -21,6 +21,8 @@ ShellRoot {
             MediaPopup { screen: modelData }
             Calendar { screen: modelData }
             DiskPopup { screen: modelData }
+            NotificationPanel { screen: modelData }
+            TempPopup { screen: modelData }
             Sidebar { screen: modelData }
             TrayMenu { screen: modelData }
             WallpaperPicker { screen: modelData }
