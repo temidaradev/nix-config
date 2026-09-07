@@ -311,7 +311,6 @@ BarPopup {
         SessionButton { glyph: "󰜉"; onClicked: win.runAndClose(["systemctl", "reboot"]) }
         SessionButton { glyph: "󰍃"; onClicked: win.runAndClose(["niri", "msg", "action", "quit", "--skip-confirmation"]) }
         SessionButton { glyph: "󰌾"; onClicked: win.runAndClose(["swaylock", "-f", "-c", "1b1e20"]) }
-        SessionButton { glyph: "󰒓"; onClicked: Launcher.toggleSettings() }
         Text {
             anchors.verticalCenter: parent.verticalCenter
             text: Quickshell.env("USER") + "@" + Niri.hostname

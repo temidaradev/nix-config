@@ -99,20 +99,7 @@ PanelWindow {
                 }
 
                 // ---- weather ----
-                Section {
-                    title: "Weather"
-                    Rectangle {
-                        width: 130; height: 22; radius: Theme.radius; color: Theme.bg3
-                        TextInput {
-                            id: cityInput
-                            anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 8
-                            verticalAlignment: TextInput.AlignVCenter
-                            text: Weather.city; color: Theme.fg; font.family: Theme.font; font.pointSize: Theme.smallSize - 1
-                            clip: true
-                            onAccepted: { Weather.setCity(text); focus = false }
-                        }
-                    }
-                }
+                Section { title: "Weather" }
                 Card {
                     Text { visible: Weather.error !== ""; text: Weather.error; color: Theme.red; font.family: Theme.font; font.pointSize: Theme.smallSize }
                     Text { visible: !Weather.ready && Weather.error === ""; text: "Loading…"; color: "#66ffffff"; font.family: Theme.font; font.pointSize: Theme.smallSize }

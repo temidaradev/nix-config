@@ -36,19 +36,8 @@ Singleton {
         return m[code] || "—"
     }
 
-    FileView {
-        id: cityFile
-        path: root.stateDir + "/weather-city"
-        onLoaded: { const t = text().trim(); if (t !== "") root.city = t }
-        onLoadFailed: root.city = Settings.s.weather.city
-    }
-    Timer { interval: 200; running: root.city === ""; onTriggered: if (root.city === "") root.city = Settings.s.weather.city }
+    Component.onCompleted: city = Settings.s.weather.city
     onCityChanged: if (city !== "") geocode.running = true
-
-    function setCity(name) {
-        Quickshell.execDetached(["sh", "-c", "mkdir -p '" + stateDir + "' && printf '%s' '" + name.replace(/'/g, "") + "' > '" + stateDir + "/weather-city'"])
-        city = name
-    }
 
     Process {
         id: geocode
