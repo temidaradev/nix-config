@@ -7,7 +7,7 @@ import qs.services
 
 ShellRoot {
     // singletons that must exist even before a window references them
-    Component.onCompleted: { Settings.s; Notifs.count; Wallpaper.current; Devices.all }
+    Component.onCompleted: { Settings.s; Notifs.count; Wallpaper.current; Devices.all; Battery.present; Brightness.present }
 
     Variants {
         model: Quickshell.screens

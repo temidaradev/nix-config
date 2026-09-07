@@ -10,12 +10,9 @@ in
     ../../modules/nixos
   ];
 
-  networking.hostName = "temidaradev";
+  networking.hostName = "thinkpad";
   system.stateVersion = "26.05";
-
-  temidaradev.role = "desktop";
-  boot.kernelParams = [ "amd_pstate=active" ];
-  powerManagement.cpuFreqGovernor = "performance";
+  temidaradev.role = "laptop";
 
   environment.systemPackages = packages.system ++ shared ++ [
     flakeInputs.helium.packages.${system}.default

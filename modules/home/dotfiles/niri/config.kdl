@@ -18,11 +18,8 @@ input {
     focus-follows-mouse max-scroll-amount="0%"
 }
 
-// GS27QA on DP-3: 2560x1440 @ 180 Hz. Drop this block if you move the cable.
-output "DP-3" {
-    mode "2560x1440@180.001"
-    variable-refresh-rate on-demand=true
-}
+// Monitor layout is per host: hjem places niri/host-<hostname>.kdl here.
+include "host.kdl"
 
 layout {
     gaps 8
@@ -83,6 +80,11 @@ gestures {
     hot-corners {
         off
     }
+}
+
+// Lid closed: lock; logind suspends unless an external screen is connected.
+switch-events {
+    lid-close { spawn "swaylock" "-f" "-c" "1b1e20"; }
 }
 
 // Shown behind workspaces in the overview (top-left hot corner / Mod+O).
@@ -166,6 +168,12 @@ binds {
     XF86AudioPlay        allow-when-locked=true { spawn "playerctl" "play-pause"; }
     XF86AudioNext        allow-when-locked=true { spawn "playerctl" "next"; }
     XF86AudioPrev        allow-when-locked=true { spawn "playerctl" "previous"; }
+
+    // Laptop keys (no-ops on the desktop)
+    XF86MonBrightnessUp   allow-when-locked=true { spawn "sh" "-c" "brightnessctl set 5%+ && qs ipc call brightness osd"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "sh" "-c" "brightnessctl set 5%- && qs ipc call brightness osd"; }
+    XF86KbdBrightnessUp   allow-when-locked=true { spawn "brightnessctl" "-d" "tpacpi::kbd_backlight" "set" "1+"; }
+    XF86KbdBrightnessDown allow-when-locked=true { spawn "brightnessctl" "-d" "tpacpi::kbd_backlight" "set" "1-"; }
 
     Mod+Q { close-window; }
     Mod+O repeat=false { toggle-overview; }

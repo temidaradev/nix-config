@@ -5,9 +5,6 @@
   
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  boot.kernelParams = [
-    "amd_pstate=active"
-  ];
 
   boot.loader = {
     timeout = 10;

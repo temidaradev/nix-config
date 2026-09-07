@@ -31,10 +31,12 @@ PanelWindow {
     readonly property real micVolume: source?.audio?.volume ?? 0
     readonly property bool micMuted: source?.audio?.muted ?? false
     readonly property string layout: Niri.layout
+    readonly property real brightness: Brightness.level
 
-    readonly property real level: kind === "mic" ? micVolume : volume
-    readonly property bool isMuted: kind === "mic" ? micMuted : muted
+    readonly property real level: kind === "mic" ? micVolume : kind === "brightness" ? brightness : volume
+    readonly property bool isMuted: kind === "mic" ? micMuted : kind === "brightness" ? false : muted
     readonly property string glyph: kind === "layout" ? "󰌌"
+        : kind === "brightness" ? (brightness < 0.34 ? "󰃞" : brightness < 0.67 ? "󰃟" : "󰃠")
         : kind === "mic" ? (micMuted ? "󰍭" : "󰍬")
         : (muted ? "󰖁" : (volume < 0.01 ? "󰕿" : volume < 0.5 ? "󰖀" : "󰕾"))
 
@@ -50,6 +52,7 @@ PanelWindow {
     onMicVolumeChanged: ping("mic")
     onMicMutedChanged: ping("mic")
     onLayoutChanged: ping("layout")
+    Connections { target: Brightness; function onOsd() { osd.ping("brightness") } }
 
     Rectangle {
         anchors.fill: parent

@@ -64,6 +64,19 @@
           flakeInputs = inputs;
         };
       };
+      nixosConfigurations.thinkpad = lib.nixosSystem {
+        modules = [
+          ./hosts/thinkpad/machine.nix
+          (nixpkgs + "/nixos/modules/misc/nixpkgs/read-only.nix")
+          { nixpkgs.pkgs = mkPkgs linuxSystem; }
+          hjem.nixosModules.hjem
+          ./modules/home
+        ];
+        specialArgs = {
+          system = linuxSystem;
+          flakeInputs = inputs;
+        };
+      };
       darwinConfigurations.temidaradev-darwin = nix-darwin.lib.darwinSystem {
         modules = [
           ./hosts/darwin/machine.nix

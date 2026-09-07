@@ -1,0 +1,7 @@
+// ThinkPad E16 Gen 3: 16" 1920x1200 @ 60 Hz panel. External screens via
+// HDMI 2.1 / USB-C get placed to the right automatically.
+output "eDP-1" {
+    mode "1920x1200@60.000"
+    scale 1.0
+    position x=0 y=0
+}

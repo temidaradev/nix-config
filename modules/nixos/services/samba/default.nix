@@ -1,6 +1,7 @@
 { config, lib, pkgs, ... }:
 
 {
+  config = lib.mkIf (config.temidaradev.role == "desktop") {
   systemd.tmpfiles.rules = [
     "d /var/lib/samba/usershares 0755 temidaradev users -"
   ];
@@ -54,5 +55,6 @@
   services.samba-wsdd = {
     enable = true;
     openFirewall = true;
+  };
   };
 }

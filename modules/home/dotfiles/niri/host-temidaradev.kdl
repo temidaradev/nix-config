@@ -1,0 +1,5 @@
+// Desktop: GS27QA on DP-3, 2560x1440 @ 180 Hz.
+output "DP-3" {
+    mode "2560x1440@180.001"
+    variable-refresh-rate on-demand=true
+}

@@ -161,6 +161,13 @@ PanelWindow {
                 onClicked: e => e.button === Qt.RightButton ? Quickshell.execDetached(["blueman-manager"]) : Launcher.toggleControl()
             }
 
+            BarButton {   // laptop battery (only on laptops)
+                visible: Battery.present
+                BarText { text: Battery.glyph; color: Battery.low ? Theme.red : (Battery.charging ? Theme.green : Theme.fg); font.pointSize: 12 }
+                BarText { text: Battery.pct + "%"; font.pointSize: Theme.smallSize; color: Battery.low ? Theme.red : Theme.fg }
+                onClicked: Launcher.toggleControl()
+            }
+
             BarButton {   // peripheral batteries (only when something reports one)
                 visible: Settings.s.bar.battery && Devices.all.length > 0
                 Repeater {

@@ -152,6 +152,24 @@ BarPopup {
         MouseArea { id: ma; anchors.fill: parent; hoverEnabled: true; onClicked: parent.clicked() }
     }
 
+    Section { text: "Battery"; visible: Battery.present }
+    Row {
+        visible: Battery.present
+        width: parent.width; spacing: 8
+        Text { text: Battery.glyph; color: Battery.low ? Theme.red : (Battery.charging ? Theme.green : Theme.fg); font.family: Theme.font; font.pointSize: 14; anchors.verticalCenter: parent.verticalCenter }
+        Text { text: Battery.pct + "%"; color: Theme.fg; font.bold: true; font.family: Theme.font; font.pointSize: Theme.fontSize; anchors.verticalCenter: parent.verticalCenter }
+        Text { text: Battery.timeText; color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize; anchors.verticalCenter: parent.verticalCenter }
+    }
+
+    Section { text: "Display"; visible: Brightness.present }
+    VolSlider {
+        visible: Brightness.present
+        glyph: "󰃠"; node: null
+        Component.onCompleted: value = Brightness.level
+        Connections { target: Brightness; function onLevelChanged() { if (!pressed) value = Brightness.level } }
+        onMoved: Brightness.set(value)
+    }
+
     Section { text: "Sound" }
     VolSlider {
         glyph: mutedState ? "󰖁" : "󰕾"; node: win.sink
