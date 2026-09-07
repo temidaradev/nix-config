@@ -80,7 +80,7 @@ PanelWindow {
         property string k; property string v
         width: parent.width
         Dim { width: parent.width * 0.4; text: k; font.pointSize: Theme.smallSize }
-        Label { width: parent.width * 0.6; horizontalAlignment: Text.AlignRight; elide: Text.ElideMiddle; text: v; font.pointSize: Theme.smallSize }
+        Label { width: parent.width * 0.6; horizontalAlignment: Text.AlignRight; elide: v.includes("\n") ? Text.ElideNone : Text.ElideMiddle; wrapMode: v.includes("\n") ? Text.WordWrap : Text.NoWrap; text: v; font.pointSize: Theme.smallSize }
     }
     component SmallButton: BarButton {
         property string label
@@ -116,8 +116,9 @@ PanelWindow {
         width: parent.width; height: 26
         from: 0; to: 1
         leftPadding: 34; rightPadding: 44
-        Component.onCompleted: value = node?.audio?.volume ?? 0
-        Connections { target: s.node?.audio ?? null; function onVolumeChanged() { if (!s.pressed) s.value = s.node.audio.volume } }
+        readonly property real nodeVolume: node?.audio?.volume ?? 0
+        onNodeVolumeChanged: if (!pressed) value = nodeVolume
+        Component.onCompleted: value = nodeVolume
         onMoved: if (node?.audio) node.audio.volume = value
         Text { x: 4; anchors.verticalCenter: parent.verticalCenter; text: s.glyph; color: s.mutedState ? Theme.fgDim : Theme.fg; font.family: Theme.font; font.pointSize: 13
             MouseArea { anchors.fill: parent; anchors.margins: -4; onClicked: s.toggleMute() } }
@@ -382,12 +383,22 @@ PanelWindow {
                     width: parent.width; spacing: 8
                     Heading { text: "System" }
                     Card {
+                        KV { k: "User"; v: SysInfo.user }
                         KV { k: "Host"; v: SysInfo.host }
+                        KV { k: "Board"; v: SysInfo.board }
+                        KV { k: "BIOS"; v: SysInfo.bios }
                         KV { k: "OS"; v: SysInfo.os }
                         KV { k: "Kernel"; v: SysInfo.kernel }
-                        KV { k: "CPU"; v: SysInfo.cpu }
-                        KV { k: "GPU"; v: SysInfo.gpu }
+                        KV { k: "Packages"; v: SysInfo.packages > 0 ? SysInfo.packages + " (nix)" : "…" }
+                        KV { k: "Session"; v: SysInfo.session }
+                        KV { k: "WM"; v: SysInfo.wm }
                         KV { k: "Shell"; v: SysInfo.shell }
+                        KV { k: "CPU"; v: SysInfo.cpu + "  ·  " + SysStats.cores + " threads" }
+                        KV { k: "GPU"; v: SysInfo.gpu + (SysInfo.gpuDriver ? "  (" + SysInfo.gpuDriver + ")" : "") }
+                        KV { k: "Memory"; v: SysInfo.memory }
+                        KV { k: "Disk /"; v: SysInfo.rootDisk }
+                        KV { k: "Display"; v: SysInfo.display }
+                        KV { k: "Locale"; v: SysInfo.locale }
                         KV { k: "Uptime"; v: SysStats.uptime }
                     }
                     Section { text: "Live" }

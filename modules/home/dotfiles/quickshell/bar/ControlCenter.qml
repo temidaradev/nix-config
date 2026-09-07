@@ -109,8 +109,9 @@ BarPopup {
         width: parent.width; height: 26
         from: 0; to: 1
         leftPadding: 34; rightPadding: 44
-        Component.onCompleted: value = node?.audio?.volume ?? 0
-        Connections { target: s.node?.audio ?? null; function onVolumeChanged() { if (!s.pressed) s.value = s.node.audio.volume } }
+        readonly property real nodeVolume: node?.audio?.volume ?? 0
+        onNodeVolumeChanged: if (!pressed) value = nodeVolume
+        Component.onCompleted: value = nodeVolume
         onMoved: if (node?.audio) node.audio.volume = value
         Text {
             x: 4; anchors.verticalCenter: parent.verticalCenter

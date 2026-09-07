@@ -58,6 +58,7 @@ in
     imagemagick          # accent-from-wallpaper
     libnotify            # notify-send, lands in the shell's notification daemon
     curl
+    pciutils             # lspci, for the GPU name in the system tab
     grim
     slurp
     swappy
