@@ -50,7 +50,6 @@ in
     xwayland-satellite   # niri spawns it automatically when found in PATH
     fuzzel
     swaylock
-    blueman              # pairing UI, opened from the control center
     networkmanagerapplet # nm-connection-editor, opened from the control center
     pavucontrol
     nixos-icons          # nix-snowflake icon used by the launcher button

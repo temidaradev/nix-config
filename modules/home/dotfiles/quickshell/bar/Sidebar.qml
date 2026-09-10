@@ -509,8 +509,6 @@ PanelWindow {
                             ListRow { required property var modelData; glyph: "󰂯"; label: modelData.name; sub: modelData.address; action: "Pair"; onActionClicked: modelData.pair(); onClicked: modelData.pair() }
                         }
                     }
-                    Row { spacing: 6
-                        SmallButton { label: "blueman"; onClicked: { Launcher.sidebarOpen = false; Quickshell.execDetached(["blueman-manager"]) } } }
                 }
 
                 // ================= WEATHER =================

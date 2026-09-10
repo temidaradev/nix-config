@@ -160,7 +160,7 @@ PanelWindow {
             BarButton {   // bluetooth
                 visible: Settings.s.bar.bluetooth
                 BarText { text: "󰂯"; font.pointSize: 12 }
-                onClicked: e => e.button === Qt.RightButton ? Quickshell.execDetached(["blueman-manager"]) : Launcher.toggleControl()
+                onClicked: Launcher.toggleControl()
             }
 
             BarButton {   // laptop battery (only on laptops)

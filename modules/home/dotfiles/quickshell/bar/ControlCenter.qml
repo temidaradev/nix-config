@@ -225,7 +225,6 @@ BarPopup {
                 onClicked: modelData.connected ? modelData.disconnect() : modelData.connect()
             }
         }
-        ListRow { glyph: "󰂰"; label: "Pair a new device…"; sub: "blueman"; onClicked: win.runAndClose(["blueman-manager"]) }
     }
 
     Column {   // networks
