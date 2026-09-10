@@ -1,8 +1,6 @@
 # ThinkPad E16 Gen 3 (21SR006UTX): Core Ultra 7 255H, Arc 140T iGPU, 32GB DDR5,
 # 1TB NVMe (M.2 2242), Intel AX211 Wi-Fi 6E, 16" 1920x1200 60Hz.
-#
-# TODO after installing: replace the fileSystems/swap below with the output of
-#   nixos-generate-config --show-hardware-config
+
 { config, lib, pkgs, modulesPath, ... }:
 
 {
@@ -13,11 +11,11 @@
   boot.extraModulePackages = [ ];
 
   fileSystems."/" = {
-    device = "/dev/disk/by-label/nixos";
+    device = "/dev/disk/by-uuid/671df35e-f8a7-47bb-a811-7e7103533e52";
     fsType = "ext4";
   };
   fileSystems."/boot" = {
-    device = "/dev/disk/by-label/boot";
+    device = "/dev/disk/by-uuid/1EF7-EA14";
     fsType = "vfat";
     options = [ "fmask=0077" "dmask=0077" ];
   };

@@ -1,0 +1,39 @@
+{
+	"KPackageStructure": "Plasma/Applet",
+	"KPlugin": {
+		"Authors": [
+			{
+				"Email": "eliverlara@gmail.com",
+				"Name": "Eliver Lara"
+			}
+		],
+		"Category": "Utilities",
+		"Description": "A modern control station for plasma based on the awesome work of prayag2!",
+		"Description[fr]": "Une station de contrôle moderne pour Plasma basée sur l'excellent travail de prayag2 !",
+		"Description[ko]": "prayag2의 훌륭한 작업물을 기반으로 한 Plasma용 현대적인 제어 센터입니다!",
+		"Description[nl]": "Een modern bedieningspaneel voor Plasma, gebaseerd op het geweldige werk van @prayag2!",
+		"Description[pl]": "Nowoczesna stacja kontroli dla Plasma oparta na wspaniałej pracy prayag2!",
+		"Description[pt_BR]": "Uma estação de controle moderna para plasma com base no incrível trabalho de Prayag2!",
+		"Description[uk]": "Сучасна станція керування для Plasma, заснована на чудовій праці prayag2!",
+		"Icon": "configure-toolbars",
+		"Id": "KdeControlStation",
+		"License": "GPLv3",
+		"Name": "KDE control station",
+		"Name[de]": "KDE Kontrollzentrum",
+		"Name[fr]": "Station de contrôle KDE",
+		"Name[ko]": "KDE 제어 센터",
+		"Name[nl]": "KDE-bedieningspaneel",
+		"Name[pl]": "Stacja kontroli KDE",
+		"Name[pt_BR]": "Estação de controle KDE",
+		"Name[uk]": "Станція керування KDE",
+		"ServiceTypes": [
+			"Plasma/Applet"
+		],
+		"Version": "2.8.0",
+		"Website": "https://github.com/EliverLara/kde-control-station/tree/plasma6"
+	},
+	"X-Plasma-API-Minimum-Version": "6.0",
+	"X-Plasma-MainScript": "ui/main.qml",
+	"X-Plasma-NotificationArea": "true",
+	"X-Plasma-Provides": "org.kde.plasma.multimediacontrols,org.kde.plasma.powermanagement,org.kde.plasma.notifications"
+}

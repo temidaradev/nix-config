@@ -1,0 +1,27 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "adolfo@librepixels.com",
+                "Name": "zayronxio"
+            }
+        ],
+        "Name": "kpple menu",
+        "Name[es]": "Menú Kpple",
+        "Name[zh_CN]": "Kpple菜单",
+        "Name[zh_TW]": "Kpple菜單",
+        "Id": "org.kpple.kppleMenu",
+        "Description": "The Kpple menu is a drop-down menu that is usually found on the left side of the menu bar.",
+        "Category": "Application Launchers",
+        "Icon": "start-here-kde",
+        "EnabledByDefault": true,
+        "License": "GPL-2.0",
+        "ServiceTypes": [
+            "Plasma/Applet"
+        ],
+        "Version": "1.6.5",
+        "Website": "https://store.kde.org/p/2138251/"
+    },
+    "X-Plasma-API-Minimum-Version": "6.0",
+    "X-Plasma-MainScript": "ui/main.qml"
+}

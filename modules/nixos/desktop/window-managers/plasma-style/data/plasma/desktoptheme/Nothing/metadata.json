@@ -1,0 +1,19 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Email": "gicalucejo@gmail.com",
+                "Name": "jomada"
+            }
+        ],
+        "Category": "",
+        "Description": "Nothing for Plasma",
+        "EnabledByDefault": true,
+        "Id": "Nothing",
+        "License": "LGPL",
+        "Name": "Nothing",
+        "Version": "1.5",
+        "Website": "https://seduccionlinux.wordpress.com"
+    },
+    "X-Plasma-API": "5.0"
+}

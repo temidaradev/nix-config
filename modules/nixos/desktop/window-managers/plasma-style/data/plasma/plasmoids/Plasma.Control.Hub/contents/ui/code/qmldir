@@ -1,0 +1,3 @@
+module networknameplugin
+plugin networknameplugin
+HelperSsid 1.0 HelperSsid.qml

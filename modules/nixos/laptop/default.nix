@@ -60,6 +60,8 @@
         }
       ];
     };
+    # Watt otherwise falls back to its built-in balanced rules.
+    systemd.services.watt.environment.WATT_CONFIG = "/etc/watt.toml";
     services.upower.enable = true;
     powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";   # intel_pstate active mode
     boot.kernelParams = [ "intel_pstate=active" ];
