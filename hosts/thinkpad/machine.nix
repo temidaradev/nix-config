@@ -13,7 +13,6 @@ in
   networking.hostName = "thinkpad";
   system.stateVersion = "26.05";
   temidaradev.role = "laptop";
-  temidaradev.laptop.throttledArrowLake.enable = true;
 
   environment.systemPackages = packages.system ++ shared ++ [
     flakeInputs.helium.packages.${system}.default
