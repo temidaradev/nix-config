@@ -1,0 +1,320 @@
+{
+  "generated_at": "2026-09-11T13:09:00.149854+00:00",
+  "system": {
+    "platform": "Linux-7.2.4-x86_64-with-glibc2.42",
+    "machine": "x86_64",
+    "processor": "",
+    "python_version": "3.13.13",
+    "cpu_count": 16,
+    "hostname": "thinkpad",
+    "os_name": "NixOS 26.11 (Zokor)",
+    "os_version": "26.11 (Zokor)",
+    "kernel_version": "7.2.4",
+    "cpu_model": "Intel(R) Core(TM) Ultra 7 255H",
+    "memory_total_bytes": 32502902784,
+    "gpus": [
+      "Mesa Intel(R) Graphics (ARL) (0x7dd1)",
+      "Mesa Intel(R) Graphics (ARL)"
+    ]
+  },
+  "benchmarks": [
+    {
+      "name": "7zip-benchmark",
+      "status": "ok",
+      "presets": [
+        "all",
+        "balanced",
+        "compression",
+        "cpu"
+      ],
+      "metrics": {
+        "total_usage_pct": 1248.0,
+        "total_ru": 3698.0,
+        "total_rating_mips": 46722.0,
+        "compress_usage_pct": 1301.0,
+        "compress_ru_mips": 4627.0,
+        "compress_rating_mips": 60199.0,
+        "decompress_usage_pct": 1195.0,
+        "decompress_ru_mips": 2769.0,
+        "decompress_rating_mips": 33246.0
+      },
+      "parameters": {},
+      "duration_seconds": 44.28279993799879,
+      "command": "7z b",
+      "message": "",
+      "raw_output": "\n7-Zip [64] 17.05 : Copyright (c) 1999-2021 Igor Pavlov : 2017-08-28\np7zip Version 17.05 (locale=C,Utf16=off,HugeFiles=on,64 bits,16 CPUs x64)\n\nx64\nCPU Freq: 64000000 - - - - - - - -\n\nRAM size:   30997 MB,  # CPU hardware threads:  16\nRAM usage:   3530 MB,  # Benchmark threads:     16\n\n                       Compressing  |                  Decompressing\nDict     Speed Usage    R/U Rating  |      Speed Usage    R/U Rating\n         KiB/s     %   MIPS   MIPS  |      KiB/s     %   MIPS   MIPS\n\n22:      66644  1317   4924  64831  |     494012  1271   3314  42134\n23:      59121  1305   4616  60237  |     377594  1205   2710  32670\n24:      55116  1289   4597  59261  |     332194  1144   2550  29158\n25:      49455  1292   4371  56466  |     326089  1160   2502  29021\n----------------------------------  | ------------------------------\nAvr:            1301   4627  60199  |             1195   2769  33246\nTot:            1248   3698  46722\n",
+      "version": "7-Zip [64] 17.05 : Copyright (c) 1999-2021 Igor Pavlov : 2017-08-28"
+    },
+    {
+      "name": "openssl-speed",
+      "status": "ok",
+      "presets": [
+        "all",
+        "balanced",
+        "cpu",
+        "crypto"
+      ],
+      "metrics": {
+        "16B": 1203200.57,
+        "64B": 1404134.89,
+        "256B": 1546391.38,
+        "1KiB": 1608389.29,
+        "8KiB": 1639970.13,
+        "16KiB": 1635909.63,
+        "max_kbytes_per_sec": 1639970.13
+      },
+      "parameters": {
+        "seconds": 3,
+        "algorithm": "aes-256-cbc"
+      },
+      "duration_seconds": 18.00316330700298,
+      "command": "openssl speed -elapsed -seconds 3 aes-256-cbc",
+      "message": "",
+      "raw_output": "You have chosen to measure elapsed time instead of user CPU time.\nDoing aes-256-cbc ops for 3s on 16 size blocks: 225600106 aes-256-cbc ops in 3.00s\nDoing aes-256-cbc ops for 3s on 64 size blocks: 65818823 aes-256-cbc ops in 3.00s\nDoing aes-256-cbc ops for 3s on 256 size blocks: 18121774 aes-256-cbc ops in 3.00s\nDoing aes-256-cbc ops for 3s on 1024 size blocks: 4712078 aes-256-cbc ops in 3.00s\nDoing aes-256-cbc ops for 3s on 8192 size blocks: 600575 aes-256-cbc ops in 3.00s\nDoing aes-256-cbc ops for 3s on 16384 size blocks: 299544 aes-256-cbc ops in 3.00s\nversion: 3.6.2\nbuilt on: Tue Apr  7 12:17:57 2026 UTC\noptions: bn(64,64)\ncompiler: gcc -fPIC -pthread -m64 -Wa,--noexecstack -Wall -O3 -DOPENSSL_USE_NODELETE -DL_ENDIAN -DOPENSSL_PIC -DOPENSSL_BUILDING_OPENSSL -DNDEBUG\nCPUINFO: OPENSSL_ia32cap=0x7ffaf3ffefebffff:0x994007bc239c27eb:0x44c009d0fc18c430:0x0000000100040030:0x0000000000000000\nThe 'numbers' are in 1000s of bytes per second processed.\ntype             16 bytes     64 bytes    256 bytes   1024 bytes   8192 bytes  16384 bytes\naes-256-cbc    1203200.57k  1404134.89k  1546391.38k  1608389.29k  1639970.13k  1635909.63k\n",
+      "version": "OpenSSL 3.6.2 7 Apr 2026 (Library: OpenSSL 3.6.2 7 Apr 2026)"
+    },
+    {
+      "name": "zstd-compress",
+      "status": "ok",
+      "presets": [
+        "all",
+        "balanced",
+        "compression",
+        "cpu"
+      ],
+      "metrics": {
+        "compress_mb_per_s": 1781.342491456029,
+        "decompress_mb_per_s": 3857.9355039066777,
+        "level": 5,
+        "size_mb": 128
+      },
+      "parameters": {
+        "level": 5,
+        "size_mb": 128
+      },
+      "duration_seconds": 0.10503428499941947,
+      "command": "zstd -q -f -5 /tmp/tmpbdcgnden -o /tmp/tmpbdcgnden.zst",
+      "message": "",
+      "raw_output": "",
+      "version": "*** Zstandard CLI (64-bit) v1.5.7, by Yann Collet ***"
+    },
+    {
+      "name": "stress-ng",
+      "status": "ok",
+      "presets": [
+        "all",
+        "balanced",
+        "cpu"
+      ],
+      "metrics": {
+        "stressor": "cpu",
+        "bogo_ops": 180915.0,
+        "real_time_secs": 5.0,
+        "user_time_secs": 75.13,
+        "system_time_secs": 0.04,
+        "bogo_ops_per_sec_real": 36189.01,
+        "bogo_ops_per_sec_cpu": 2406.53
+      },
+      "parameters": {
+        "seconds": 5,
+        "cpu_method": "fft"
+      },
+      "duration_seconds": 5.010090481002408,
+      "command": "stress-ng --cpu 0 --cpu-method fft --timeout 5s --metrics-brief",
+      "message": "",
+      "raw_output": "stress-ng: info:  [1138769] setting to a 5 secs run per stressor\nstress-ng: info:  [1138769] dispatching hogs: 16 cpu\nstress-ng: metrc: [1138769] stressor       bogo ops real time  usr time  sys time   bogo ops/s     bogo ops/s\nstress-ng: metrc: [1138769]                           (secs)    (secs)    (secs)   (real time) (usr+sys time)\nstress-ng: metrc: [1138769] cpu              180915      5.00     75.13      0.04     36189.01        2406.53\nstress-ng: info:  [1138769] skipped: 0\nstress-ng: info:  [1138769] passed: 16: cpu (16)\nstress-ng: info:  [1138769] failed: 0\nstress-ng: info:  [1138769] metrics untrustworthy: 0\nstress-ng: info:  [1138769] successful run completed in 5.00 secs\n",
+      "version": "stress-ng, version 0.21.01 (gcc 15.2.0, x86_64 Linux 7.2.4)"
+    },
+    {
+      "name": "sysbench-cpu",
+      "status": "ok",
+      "presets": [
+        "all",
+        "balanced",
+        "cpu"
+      ],
+      "metrics": {
+        "events_per_sec": 19788.02,
+        "total_time_secs": 10.0011,
+        "total_events": 197927.0,
+        "threads": 16,
+        "cpu_max_prime": 20000
+      },
+      "parameters": {
+        "threads": 16,
+        "cpu_max_prime": 20000,
+        "runtime_secs": 10
+      },
+      "duration_seconds": 10.00482692100195,
+      "command": "sysbench cpu --cpu-max-prime=20000 --threads=16 --time=10 run",
+      "message": "",
+      "raw_output": "sysbench 1.0.20 (using system LuaJIT 2.1.1774638290)\n\nRunning the test with following options:\nNumber of threads: 16\nInitializing random number generator from current time\n\n\nPrime numbers limit: 20000\n\nInitializing worker threads...\n\nThreads started!\n\nCPU speed:\n    events per second: 19788.02\n\nGeneral statistics:\n    total time:                          10.0011s\n    total number of events:              197927\n\nLatency (ms):\n         min:                                    0.50\n         avg:                                    0.81\n         max:                                   69.22\n         95th percentile:                        1.44\n         sum:                               159955.54\n\nThreads fairness:\n    events (avg/stddev):           12370.4375/2892.34\n    execution time (avg/stddev):   9.9972/0.00\n\n",
+      "version": "sysbench 1.0.20"
+    },
+    {
+      "name": "geekbench",
+      "status": "ok",
+      "presets": [
+        "all",
+        "balanced",
+        "cpu"
+      ],
+      "metrics": {
+        "single_core_score": 2587,
+        "multi_core_score": 11587
+      },
+      "parameters": {
+        "mode": "cpu"
+      },
+      "duration_seconds": 271.4246968209991,
+      "command": "geekbench6 --cpu",
+      "message": "",
+      "raw_output": "Geekbench 6.4.0 : https://www.geekbench.com/\n\nGeekbench 6 requires an active internet connection and automatically uploads \nbenchmark results to the Geekbench Browser.\n\nUpgrade to Geekbench 6 Pro to enable offline use and unlock other features:\n\n  https://store.primatelabs.com/v6\n\nEnter your Geekbench 6 Pro license using the following command line:\n\n  /nix/store/7iidkarknpsffm16laswh49d6di5ql1c-geekbench-6.4.0/bin/geekbench6 \n--unlock <email> <key>\n\nSystem Information\n  Operating System              NixOS 26.11 (Zokor)\n  Kernel                        Linux 7.2.4 x86_64\n  Model                         LENOVO 21SR006UTX\n  Motherboard                   LENOVO 21SR006UTX\n  BIOS                          LENOVO R30ET37W(1.11 )\n\nCPU Information\n  Name                          Intel(R) Core(TM) Ultra 7 255H\n  Topology                      1 Processor, 16 Cores\n  Identifier                    GenuineIntel Family 6 Model 197 Stepping 2\n  Base Frequency                5.10 GHz\n  L1 Instruction Cache          64.0 KB x 16\n  L1 Data Cache                 32.0 KB x 16\n  L2 Cache                      4.00 MB x 2\n  L3 Cache                      24.0 MB\n  Instruction Sets              sse2 sse3 pclmul fma3 sse41 aesni avx avx2 shani vaes avx-vnni\n\nMemory Information\n  Size                          30.3 GB\n\n\nSingle-Core\n  Running File Compression\n  Running Navigation\n  Running HTML5 Browser\n  Running PDF Renderer\n  Running Photo Library\n  Running Clang\n  Running Text Processing\n  Running Asset Compression\n  Running Object Detection\n  Running Background Blur\n  Running Horizon Detection\n  Running Object Remover\n  Running HDR\n  Running Photo Filter\n  Running Ray Tracer\n  Running Structure from Motion\n\nMulti-Core\n  Running File Compression\n  Running Navigation\n  Running HTML5 Browser\n  Running PDF Renderer\n  Running Photo Library\n  Running Clang\n  Running Text Processing\n  Running Asset Compression\n  Running Object Detection\n  Running Background Blur\n  Running Horizon Detection\n  Running Object Remover\n  Running HDR\n  Running Photo Filter\n  Running Ray Tracer\n  Running Structure from Motion\n\n\nUploading results to the Geekbench Browser. This could take a minute or two \ndepending on the speed of your internet connection.\n\n Unable to parse server response: JSON value is not an integer\n",
+      "version": "Geekbench 6.4.0 Build 603514 (rosedale-main-build eb7eea2a40)"
+    },
+    {
+      "name": "sysbench-memory",
+      "status": "ok",
+      "presets": [
+        "all",
+        "balanced",
+        "memory"
+      ],
+      "metrics": {
+        "operations": 4096.0,
+        "operations_per_sec": 81350.6,
+        "transferred_mib": 4096.0,
+        "throughput_mib_per_s": 81350.6,
+        "total_time_secs": 0.0493,
+        "threads": 16,
+        "block_kb": 1024,
+        "total_mb": 4096,
+        "operation": "write"
+      },
+      "parameters": {
+        "threads": 16,
+        "block_kb": 1024,
+        "total_mb": 4096,
+        "operation": "write"
+      },
+      "duration_seconds": 0.05312595100258477,
+      "command": "sysbench memory --memory-block-size=1024K --memory-total-size=4096M --memory-oper=write --threads=16 run",
+      "message": "",
+      "raw_output": "sysbench 1.0.20 (using system LuaJIT 2.1.1774638290)\n\nRunning the test with following options:\nNumber of threads: 16\nInitializing random number generator from current time\n\n\nRunning memory speed test with the following options:\n  block size: 1024KiB\n  total size: 4096MiB\n  operation: write\n  scope: global\n\nInitializing worker threads...\n\nThreads started!\n\nTotal operations: 4096 (81350.60 per second)\n\n4096.00 MiB transferred (81350.60 MiB/sec)\n\n\nGeneral statistics:\n    total time:                          0.0493s\n    total number of events:              4096\n\nLatency (ms):\n         min:                                    0.02\n         avg:                                    0.15\n         max:                                    3.84\n         95th percentile:                        0.27\n         sum:                                  625.96\n\nThreads fairness:\n    events (avg/stddev):           256.0000/0.00\n    execution time (avg/stddev):   0.0391/0.01\n\n",
+      "version": "sysbench 1.0.20"
+    },
+    {
+      "name": "fio-seq",
+      "status": "ok",
+      "presets": [
+        "all",
+        "balanced",
+        "io"
+      ],
+      "metrics": {
+        "seqwrite_mib_per_s": 1572.552734375,
+        "seqwrite_iops": 1572.552783,
+        "seqread_mib_per_s": 1582.0205078125,
+        "seqread_iops": 1582.021128
+      },
+      "parameters": {
+        "size_mb": 256,
+        "runtime_s": 5,
+        "block_kb": 1024
+      },
+      "duration_seconds": 5.647404225997889,
+      "command": "fio --output-format=json /tmp/tmpl17g_vhk.fio",
+      "message": "",
+      "raw_output": "{\n  \"fio version\" : \"fio-3.42\",\n  \"timestamp\" : 1789131946,\n  \"timestamp_ms\" : 1789131946005,\n  \"time\" : \"Fri Sep 11 16:05:46 2026\",\n  \"global options\" : {\n    \"ioengine\" : \"sync\",\n    \"direct\" : \"0\",\n    \"size\" : \"256m\",\n    \"runtime\" : \"5\",\n    \"time_based\" : \"1\",\n    \"group_reporting\" : \"1\",\n    \"bs\" : \"1024k\",\n    \"filename\" : \"results/fio-testfile.bin\"\n  },\n  \"jobs\" : [\n    {\n      \"jobname\" : \"seqwrite\",\n      \"groupid\" : 0,\n      \"job_start\" : 1789131940607,\n      \"error\" : 0,\n      \"eta\" : 0,\n      \"elapsed\" : 6,\n      \"job options\" : {\n        \"rw\" : \"read\"\n      },\n      \"read\" : {\n        \"io_bytes\" : 8322547712,\n        \"io_kbytes\" : 8127488,\n        \"bw_bytes\" : 1658869386,\n        \"bw\" : 1619989,\n        \"iops\" : 1582.021128,\n        \"runtime\" : 5017,\n        \"total_ios\" : 7937,\n        \"short_ios\" : 0,\n        \"drop_ios\" : 0,\n        \"slat_ns\" : {\n          \"min\" : 0,\n          \"max\" : 0,\n          \"mean\" : 0.000000,\n          \"stddev\" : 0.000000,\n          \"N\" : 0\n        },\n        \"clat_ns\" : {\n          \"min\" : 34822,\n          \"max\" : 53867148,\n          \"mean\" : 294700.587376,\n          \"stddev\" : 983135.269616,\n          \"N\" : 7937,\n          \"percentile\" : {\n            \"1.000000\" : 58112,\n            \"5.000000\" : 61184,\n            \"10.000000\" : 64768,\n            \"20.000000\" : 77312,\n            \"30.000000\" : 154624,\n            \"40.000000\" : 242688,\n            \"50.000000\" : 276480,\n            \"60.000000\" : 309248,\n            \"70.000000\" : 346112,\n            \"80.000000\" : 366592,\n            \"90.000000\" : 391168,\n            \"95.000000\" : 456704,\n            \"99.000000\" : 839680,\n            \"99.500000\" : 1089536,\n            \"99.900000\" : 12910592,\n            \"99.950000\" : 23199744,\n            \"99.990000\" : 53739520\n          }\n        },\n        \"lat_ns\" : {\n          \"min\" : 34841,\n          \"max\" : 53868191,\n          \"mean\" : 294776.146907,\n          \"stddev\" : 983151.878453,\n          \"N\" : 7937\n        },\n        \"bw_min\" : 524288,\n        \"bw_max\" : 2361344,\n        \"bw_agg\" : 100.000000,\n        \"bw_mean\" : 1625292.800000,\n        \"bw_dev\" : 653910.004819,\n        \"bw_samples\" : 10,\n        \"iops_min\" : 512,\n        \"iops_max\" : 2306,\n        \"iops_mean\" : 1587.200000,\n        \"iops_stddev\" : 638.583989,\n        \"iops_samples\" : 10\n      },\n      \"write\" : {\n        \"io_bytes\" : 8590983168,\n        \"io_kbytes\" : 8389632,\n        \"bw_bytes\" : 1648941107,\n        \"bw\" : 1610294,\n        \"iops\" : 1572.552783,\n        \"runtime\" : 5210,\n        \"total_ios\" : 8193,\n        \"short_ios\" : 0,\n        \"drop_ios\" : 0,\n        \"slat_ns\" : {\n          \"min\" : 0,\n          \"max\" : 0,\n          \"mean\" : 0.000000,\n          \"stddev\" : 0.000000,\n          \"N\" : 0\n        },\n        \"clat_ns\" : {\n          \"min\" : 59317,\n          \"max\" : 13544773,\n          \"mean\" : 266790.887465,\n          \"stddev\" : 256305.951226,\n          \"N\" : 8193,\n          \"percentile\" : {\n            \"1.000000\" : 70144,\n            \"5.000000\" : 93696,\n            \"10.000000\" : 112128,\n            \"20.000000\" : 142336,\n            \"30.000000\" : 160768,\n            \"40.000000\" : 209920,\n            \"50.000000\" : 268288,\n            \"60.000000\" : 296960,\n            \"70.000000\" : 337920,\n            \"80.000000\" : 354304,\n            \"90.000000\" : 378880,\n            \"95.000000\" : 423936,\n            \"99.000000\" : 782336,\n            \"99.500000\" : 995328,\n            \"99.900000\" : 1564672,\n            \"99.950000\" : 1875968,\n            \"99.990000\" : 13565952\n          }\n        },\n        \"lat_ns\" : {\n          \"min\" : 63625,\n          \"max\" : 13570521,\n          \"mean\" : 273407.291712,\n          \"stddev\" : 256944.838252,\n          \"N\" : 8193\n        },\n        \"bw_min\" : 1048576,\n        \"bw_max\" : 2361344,\n        \"bw_agg\" : 100.000000,\n        \"bw_mean\" : 1678141.800000,\n        \"bw_dev\" : 555597.479356,\n        \"bw_samples\" : 10,\n        \"iops_min\" : 1024,\n        \"iops_max\" : 2306,\n        \"iops_mean\" : 1638.800000,\n        \"iops_stddev\" : 542.566903,\n        \"iops_samples\" : 10\n      },\n      \"trim\" : {\n        \"io_bytes\" : 0,\n        \"io_kbytes\" : 0,\n        \"bw_bytes\" : 0,\n        \"bw\" : 0,\n        \"iops\" : 0.000000,\n        \"runtime\" : 0,\n        \"total_ios\" : 0,\n        \"short_ios\" : 0,\n        \"drop_ios\" : 0,\n        \"slat_ns\" : {\n          \"min\" : 0,\n          \"max\" : 0,\n          \"mean\" : 0.000000,\n          \"stddev\" : 0.000000,\n          \"N\" : 0\n        },\n        \"clat_ns\" : {\n          \"min\" : 0,\n          \"max\" : 0,\n          \"mean\" : 0.000000,\n          \"stddev\" : 0.000000,\n          \"N\" : 0\n        },\n        \"lat_ns\" : {\n          \"min\" : 0,\n          \"max\" : 0,\n          \"mean\" : 0.000000,\n          \"stddev\" : 0.000000,\n          \"N\" : 0\n        },\n        \"bw_min\" : 0,\n        \"bw_max\" : 0,\n        \"bw_agg\" : 0.000000,\n        \"bw_mean\" : 0.000000,\n        \"bw_dev\" : 0.000000,\n        \"bw_samples\" : 0,\n        \"iops_min\" : 0,\n        \"iops_max\" : 0,\n        \"iops_mean\" : 0.000000,\n        \"iops_stddev\" : 0.000000,\n        \"iops_samples\" : 0\n      },\n      \"sync\" : {\n        \"total_ios\" : 0,\n        \"lat_ns\" : {\n          \"min\" : 0,\n          \"max\" : 0,\n          \"mean\" : 0.000000,\n          \"stddev\" : 0.000000,\n          \"N\" : 0\n        }\n      },\n      \"job_runtime\" : 10225,\n      \"usr_cpu\" : 0.704156,\n      \"sys_cpu\" : 27.843521,\n      \"ctx\" : 48480,\n      \"majf\" : 0,\n      \"minf\" : 271,\n      \"iodepth_level\" : {\n        \"1\" : 100.000000,\n        \"2\" : 0.000000,\n        \"4\" : 0.000000,\n        \"8\" : 0.000000,\n        \"16\" : 0.000000,\n        \"32\" : 0.000000,\n        \">=64\" : 0.000000\n      },\n      \"iodepth_submit\" : {\n        \"0\" : 0.000000,\n        \"4\" : 100.000000,\n        \"8\" : 0.000000,\n        \"16\" : 0.000000,\n        \"32\" : 0.000000,\n        \"64\" : 0.000000,\n        \">=64\" : 0.000000\n      },\n      \"iodepth_complete\" : {\n        \"0\" : 0.000000,\n        \"4\" : 100.000000,\n        \"8\" : 0.000000,\n        \"16\" : 0.000000,\n        \"32\" : 0.000000,\n        \"64\" : 0.000000,\n        \">=64\" : 0.000000\n      },\n      \"latency_ns\" : {\n        \"2\" : 0.000000,\n        \"4\" : 0.000000,\n        \"10\" : 0.000000,\n        \"20\" : 0.000000,\n        \"50\" : 0.000000,\n        \"100\" : 0.000000,\n        \"250\" : 0.000000,\n        \"500\" : 0.000000,\n        \"750\" : 0.000000,\n        \"1000\" : 0.000000\n      },\n      \"latency_us\" : {\n        \"2\" : 0.000000,\n        \"4\" : 0.000000,\n        \"10\" : 0.000000,\n        \"20\" : 0.000000,\n        \"50\" : 0.260384,\n        \"100\" : 15.077495,\n        \"250\" : 28.233106,\n        \"500\" : 52.579045,\n        \"750\" : 2.634842,\n        \"1000\" : 0.675759\n      },\n      \"latency_ms\" : {\n        \"2\" : 0.402976,\n        \"4\" : 0.024799,\n        \"10\" : 0.018599,\n        \"20\" : 0.055797,\n        \"50\" : 0.030998,\n        \"100\" : 0.010000,\n        \"250\" : 0.000000,\n        \"500\" : 0.000000,\n        \"750\" : 0.000000,\n        \"1000\" : 0.000000,\n        \"2000\" : 0.000000,\n        \">=2000\" : 0.000000\n      },\n      \"latency_depth\" : 1,\n      \"latency_target\" : 0,\n      \"latency_target_ns\" : 0,\n      \"latency_percentile\" : 100.000000,\n      \"latency_window\" : 0,\n      \"latency_window_us\" : 0\n    }\n  ],\n  \"disk_util\" : [\n    {\n      \"name\" : \"nvme0n1\",\n      \"read_ios\" : 19719,\n      \"write_ios\" : 32767,\n      \"read_sectors\" : 10095952,\n      \"write_sectors\" : 16682576,\n      \"read_merges\" : 0,\n      \"write_merges\" : 56,\n      \"read_ticks\" : 2625,\n      \"write_ticks\" : 99985,\n      \"in_queue\" : 102650,\n      \"util\" : 88.369876\n    }\n  ]\n}\n",
+      "version": "fio-3.42"
+    },
+    {
+      "name": "sqlite-mixed",
+      "status": "ok",
+      "presets": [
+        "all",
+        "balanced",
+        "database",
+        "io"
+      ],
+      "metrics": {
+        "insert_rows_per_s": 2031452.8626632092,
+        "selects_per_s": 159.1899850410962,
+        "row_count": 100000,
+        "select_queries": 2000
+      },
+      "parameters": {
+        "row_count": 100000,
+        "select_queries": 2000
+      },
+      "duration_seconds": 12.612830275000306,
+      "command": "python-sqlite3-inline",
+      "message": "",
+      "raw_output": "",
+      "version": "SQLite 3.51.2"
+    },
+    {
+      "name": "furmark-vk",
+      "status": "ok",
+      "presets": [
+        "all",
+        "balanced",
+        "gpu",
+        "gpu-light"
+      ],
+      "metrics": {
+        "score": 1363.0,
+        "fps_avg": 22.0
+      },
+      "parameters": {
+        "demo": "furmark-vk",
+        "profile": "p1080"
+      },
+      "duration_seconds": 66.16989980600192,
+      "command": "furmark --demo furmark-vk --benchmark --no-score-box --p1080",
+      "message": "",
+      "raw_output": "[ Demo Quick Stats ]\n- demo                 : FurMark (VK) (built-in: YES)\n- renderer             : Intel(R) Graphics (ARL)\n- 3D API               : Vulkan 1.4.354\n- resolution           : 1920x1080\n- SCORE                : 1363\n- duration             : 60000 ms (60.030235 sec)\n- FPS (min/avg/max)    : 22.000000 / 22.769459 / 26.000000\n- GPU 0:  [8086-7DD1]\n\n",
+      "version": "2.10.2.0"
+    },
+    {
+      "name": "geekbench-gpu-vulkan",
+      "status": "ok",
+      "presets": [
+        "all",
+        "balanced",
+        "gpu",
+        "gpu-light"
+      ],
+      "metrics": {
+        "vulkan_score": 26846,
+        "compute_score": 26846,
+        "multicore_score": 0
+      },
+      "parameters": {
+        "mode": "gpu-vulkan",
+        "backend": "vulkan"
+      },
+      "duration_seconds": 99.71474957600003,
+      "command": "geekbench6 --compute --gpu vulkan",
+      "message": "",
+      "raw_output": "Geekbench 6.4.0 : https://www.geekbench.com/\n\nGeekbench 6 requires an active internet connection and automatically uploads \nbenchmark results to the Geekbench Browser.\n\nUpgrade to Geekbench 6 Pro to enable offline use and unlock other features:\n\n  https://store.primatelabs.com/v6\n\nEnter your Geekbench 6 Pro license using the following command line:\n\n  /nix/store/7iidkarknpsffm16laswh49d6di5ql1c-geekbench-6.4.0/bin/geekbench6 \n--unlock <email> <key>\n\nSystem Information\n  Operating System              NixOS 26.11 (Zokor)\n  Kernel                        Linux 7.2.4 x86_64\n  Model                         LENOVO 21SR006UTX\n  Motherboard                   LENOVO 21SR006UTX\n  BIOS                          LENOVO R30ET37W(1.11 )\n\nCPU Information\n  Name                          Intel(R) Core(TM) Ultra 7 255H\n  Topology                      1 Processor, 16 Cores\n  Identifier                    GenuineIntel Family 6 Model 197 Stepping 2\n  Base Frequency                5.10 GHz\n  L1 Instruction Cache          64.0 KB x 16\n  L1 Data Cache                 32.0 KB x 16\n  L2 Cache                      4.00 MB x 2\n  L3 Cache                      24.0 MB\n  Instruction Sets              sse2 sse3 pclmul fma3 sse41 aesni avx avx2 shani vaes avx-vnni\n\nMemory Information\n  Size                          30.3 GB\n\nVulkan Information\n  Device Name                   Intel(R) Graphics (ARL)\n\n\nVulkan\n  Running Background Blur\n  Running Face Detection\n  Running Horizon Detection\n  Running Edge Detection\n  Running Gaussian Blur\n  Running Feature Matching\n  Running Stereo Matching\n  Running Particle Physics\n\n\nUploading results to the Geekbench Browser. This could take a minute or two \ndepending on the speed of your internet connection.\n\n Unable to parse server response: JSON value is not an integer\n",
+      "version": "Geekbench 6.4.0 Build 603514 (rosedale-main-build eb7eea2a40)"
+    }
+  ],
+  "presets_requested": [
+    "balanced"
+  ],
+  "benchmarks_requested": [
+    "7zip-benchmark",
+    "openssl-speed",
+    "zstd-compress",
+    "stress-ng",
+    "sysbench-cpu",
+    "geekbench",
+    "sysbench-memory",
+    "fio-seq",
+    "sqlite-mixed",
+    "furmark-vk",
+    "geekbench-gpu-vulkan"
+  ]
+}

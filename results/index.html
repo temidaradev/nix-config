@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>NixOS Benchmark Runs</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; color: #1f2429; background: #fdfdfd; }
+    h1 { margin: 0 0 0.5rem; }
+    .filters { margin: 1rem 0; padding: 1rem; background: #f8f9fa; border: 1px solid #e3e3e3; border-radius: 4px; }
+    .filters h2 { margin: 0 0 0.75rem; font-size: 1rem; }
+    .filter-checkboxes { display: flex; flex-wrap: wrap; gap: 1rem; }
+    .filter-checkbox { display: inline-flex; align-items: center; gap: 0.3rem; cursor: pointer; }
+    .filter-checkbox input { cursor: pointer; }
+    table { border-collapse: collapse; width: 100%; background: #fff; border: 1px solid #d9d9d9; margin-top: 1rem; }
+    th, td { border: 1px solid #e3e3e3; padding: 0.45rem 0.6rem; text-align: left; vertical-align: top; }
+    th { background: #f4f6f8; font-weight: 700; }
+    tr:nth-child(even) { background: #fbfbfc; }
+
+    /* Category headers */
+    .category-header { background: #e8eef5; text-align: center; font-weight: 700; border-bottom: 2px solid #a0aec0; }
+    .benchmark-header { font-size: 0.85rem; }
+
+    .run-file a { color: #0b73e0; text-decoration: none; }
+    .run-file a:hover { text-decoration: underline; }
+    .run-generated { white-space: nowrap; color: #3c4650; }
+    .run-system { min-width: 16rem; }
+    .system-label { font-weight: 700; }
+    .system-meta { color: #5a646f; font-size: 0.9rem; margin-top: 0.1rem; line-height: 1.25; cursor: help; }
+    .run-presets .preset-label { color: #1f2429; font-size: 0.95rem; }
+    .cell-main { font-weight: 600; }
+    .cell-version { color: #5a646f; font-size: 0.8rem; margin-top: 0.2rem; }
+
+    /* Hidden cells/columns */
+    .hidden { display: none; }
+
+    /* Sortable headers */
+    th.sortable {
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+    }
+
+    th.sortable::after {
+      content: "";
+      position: absolute;
+      right: 0.4rem;
+      font-size: 0.7rem;
+      opacity: 0.4;
+    }
+
+    th.sortable[data-order="asc"]::after {
+      content: "▲";
+    }
+
+    th.sortable[data-order="desc"]::after {
+      content: "▼";
+    }
+  </style>
+</head>
+<body>
+  <h1>Benchmark Runs</h1>
+  <div class="filters">
+    <h2>Filter Benchmarks by Category</h2>
+    <div class="filter-checkboxes">
+      <label class="filter-checkbox"><input type="checkbox" value="cpu" checked> CPU</label><label class="filter-checkbox"><input type="checkbox" value="gpu" checked> GPU</label><label class="filter-checkbox"><input type="checkbox" value="i/o" checked> I/O</label><label class="filter-checkbox"><input type="checkbox" value="memory" checked> Memory</label>
+    </div>
+  </div>
+  <table id="benchmark-table">
+    <thead>
+      <tr class="category-row">
+        <th rowspan="2" class="sortable" data-type="text">System</th>
+        <th rowspan="2" class="sortable" data-type="text">Presets</th>
+        <th rowspan="2" class="sortable run-generated-header" data-type="date">Run Date</th>
+        <th colspan="7" class="category-header" data-category="cpu">CPU</th><th colspan="2" class="category-header" data-category="gpu">GPU</th><th colspan="1" class="category-header" data-category="i/o">I/O</th><th colspan="1" class="category-header" data-category="memory">Memory</th>
+        <th rowspan="2" class="sortable" data-type="text">Report</th>
+      </tr>
+      <tr class="benchmark-row">
+        <th class="sortable benchmark-header" data-type="text" data-category="cpu" title="Presets: all, balanced, compression, cpu &#10;Version: 7-Zip [64] 17.05 : Copyright (c) 1999-2021 Igor Pavlov : 2017-08-28 &#10;7-Zip compression benchmark &#10;Total rating (MIPS) · Higher is better">7zip-benchmark</th><th class="sortable benchmark-header" data-type="text" data-category="cpu" title="Presets: all, balanced, cpu &#10;Version: Geekbench 6.4.0 Build 603514 (rosedale-main-build eb7eea2a40) &#10;Geekbench 6 CPU benchmark &#10;CPU score · Higher is better">geekbench</th><th class="sortable benchmark-header" data-type="text" data-category="cpu" title="Presets: all, balanced, cpu, crypto &#10;Version: OpenSSL 3.6.2 7 Apr 2026 (Library: OpenSSL 3.6.2 7 Apr 2026) &#10;OpenSSL AES-256 encryption throughput &#10;AES throughput (MiB/s) · Higher is better">openssl-speed</th><th class="sortable benchmark-header" data-type="text" data-category="cpu" title="Presets: all, balanced, database, io &#10;Version: SQLite 3.51.2 &#10;SQLite insert/select mix &#10;Insert throughput (rows/s) · Higher is better">sqlite-mixed</th><th class="sortable benchmark-header" data-type="text" data-category="cpu" title="Presets: all, balanced, cpu &#10;Version: stress-ng, version 0.21.01 (gcc 15.2.0, x86_64 Linux 7.2.4) &#10;stress-ng CPU stress test &#10;Bogo-ops per second · Higher is better">stress-ng</th><th class="sortable benchmark-header" data-type="text" data-category="cpu" title="Presets: all, balanced, cpu &#10;Version: sysbench 1.0.20 &#10;sysbench CPU benchmark &#10;Events per second · Higher is better">sysbench-cpu</th><th class="sortable benchmark-header" data-type="text" data-category="cpu" title="Presets: all, balanced, compression, cpu &#10;Version: *** Zstandard CLI (64-bit) v1.5.7, by Yann Collet *** &#10;zstd compress/decompress throughput &#10;Compression throughput (MB/s) · Higher is better">zstd-compress</th><th class="sortable benchmark-header" data-type="text" data-category="gpu" title="Presets: all, balanced, gpu, gpu-light &#10;Version: 2.10.2.0 &#10;FurMark Vulkan &#10;Average FPS · Higher is better">furmark-vk</th><th class="sortable benchmark-header" data-type="text" data-category="gpu" title="Presets: all, balanced, gpu, gpu-light &#10;Version: Geekbench 6.4.0 Build 603514 (rosedale-main-build eb7eea2a40) &#10;Geekbench 6 GPU compute benchmark (Vulkan) &#10;Compute score · Higher is better">geekbench-gpu-vulkan</th><th class="sortable benchmark-header" data-type="text" data-category="i/o" title="Presets: all, balanced, io &#10;Version: fio-3.42 &#10;fio sequential read/write &#10;Seq throughput (MiB/s) · Higher is better">fio-seq</th><th class="sortable benchmark-header" data-type="text" data-category="memory" title="Presets: all, balanced, memory &#10;Version: sysbench 1.0.20 &#10;sysbench memory throughput &#10;Memory throughput (MiB/s) · Higher is better">sysbench-memory</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td class="run-system" title="CPU: Intel(R) Core(TM) Ultra 7 255H&#10;GPU: Mesa Intel(R) Graphics (ARL) (0x7dd1), Mesa Intel(R) Graphics (ARL)&#10;RAM: 30.3 GiB&#10;OS: NixOS 26.11 (Zokor) 26.11 (Zokor)&#10;Linux: 7.2.4"><div class="system-label">thinkpad (x86_64)</div><div class="system-meta">Intel(R) Core(TM) Ultra 7 255H · Mesa Intel(R) Graphics (ARL) (0x7dd1) / Mesa Intel(R) Graphics (ARL) · 30.3 GiB · NixOS 26.11 (Zokor) 26.11 (Zokor) · Linux 7.2.4</div></td><td class="run-presets"><div class="preset-label">balanced</div></td><td class="run-generated" data-sort="2026-09-11T13:09:00.149854+00:00" title="2026-09-11T13:09:00.149854+00:00">Sep 11, 2026, 13:09:00 UTC</td><td class="benchmark-cell" data-category="cpu" title="Version: 7-Zip [64] 17.05 : Copyright (c) 1999-2021 Igor Pavlov : 2017-08-28"><div class="cell-main">46722 MIPS</div><div class="cell-version">7-Zip [64] 17.05 : Copyright (c) 1999-2021 Igor Pavlov : 2017-08-28</div></td><td class="benchmark-cell" data-category="cpu" title="Version: Geekbench 6.4.0 Build 603514 (rosedale-main-build eb7eea2a40)"><div class="cell-main">single 2587, multi 11587</div><div class="cell-version">Geekbench 6.4.0 Build 603514 (rosedale-main-build eb7eea2a40)</div></td><td class="benchmark-cell" data-category="cpu" title="Version: OpenSSL 3.6.2 7 Apr 2026 (Library: OpenSSL 3.6.2 7 Apr 2026)"><div class="cell-main">1601.5 MiB/s</div><div class="cell-version">OpenSSL 3.6.2 7 Apr 2026 (Library: OpenSSL 3.6.2 7 Apr 2026)</div></td><td class="benchmark-cell" data-category="cpu" title="Version: SQLite 3.51.2"><div class="cell-main">Ins 2031453/s Sel 159/s</div><div class="cell-version">SQLite 3.51.2</div></td><td class="benchmark-cell" data-category="cpu" title="Version: stress-ng, version 0.21.01 (gcc 15.2.0, x86_64 Linux 7.2.4)"><div class="cell-main">36,189 bogo-ops/s</div><div class="cell-version">stress-ng, version 0.21.01 (gcc 15.2.0, x86_64 Linux 7.2.4)</div></td><td class="benchmark-cell" data-category="cpu" title="Version: sysbench 1.0.20"><div class="cell-main">19,788.0 events/s</div><div class="cell-version">sysbench 1.0.20</div></td><td class="benchmark-cell" data-category="cpu" title="Version: *** Zstandard CLI (64-bit) v1.5.7, by Yann Collet ***"><div class="cell-main">C 1781/D 3858 MB/s</div><div class="cell-version">*** Zstandard CLI (64-bit) v1.5.7, by Yann Collet ***</div></td><td class="benchmark-cell" data-category="gpu" title="Version: 2.10.2.0"><div class="cell-main">22.0 fps (score 1363)</div><div class="cell-version">2.10.2.0</div></td><td class="benchmark-cell" data-category="gpu" title="Version: Geekbench 6.4.0 Build 603514 (rosedale-main-build eb7eea2a40)"><div class="cell-main">26846 pts</div><div class="cell-version">Geekbench 6.4.0 Build 603514 (rosedale-main-build eb7eea2a40)</div></td><td class="benchmark-cell" data-category="i/o" title="Version: fio-3.42"><div class="cell-main">R 1582.0 / W 1572.6 MiB/s</div><div class="cell-version">fio-3.42</div></td><td class="benchmark-cell" data-category="memory" title="Version: sysbench 1.0.20"><div class="cell-main">81,351 MiB/s</div><div class="cell-version">sysbench 1.0.20</div></td><td class="run-file"><a href="20260911-130900-thinkpad.json">20260911-130900-thinkpad.json</a></td></tr>
+    </tbody>
+  </table>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const table = document.getElementById('benchmark-table');
+      const tbody = table.querySelector('tbody');
+      const filterCheckboxes = document.querySelectorAll('.filter-checkbox input');
+
+      // Collect all sortable headers from both header rows and map them to their actual column indices
+      const categoryRow = table.querySelector('thead tr.category-row');
+      const benchmarkRow = table.querySelector('thead tr.benchmark-row');
+
+      // Build a map of header elements to their actual column indices
+      const headerToColumnIndex = new Map();
+      const allSortableHeaders = [];
+
+      // Process category row (System, Presets, Run Date, Report with rowspan=2)
+      let colIndex = 0;
+      Array.from(categoryRow.children).forEach(th => {
+        const colspan = parseInt(th.getAttribute('colspan') || '1', 10);
+        const rowspan = parseInt(th.getAttribute('rowspan') || '1', 10);
+
+        if (th.classList.contains('sortable')) {
+          headerToColumnIndex.set(th, colIndex);
+          allSortableHeaders.push(th);
+        }
+
+        if (rowspan === 2) {
+          // This header spans both rows, so it occupies one column
+          colIndex++;
+        } else {
+          // This header has benchmark headers below it, skip those columns
+          colIndex += colspan;
+        }
+      });
+
+      // Process benchmark row headers
+      colIndex = 3; // Start after System, Presets, Run Date
+      Array.from(benchmarkRow.children).forEach(th => {
+        if (th.classList.contains('sortable')) {
+          headerToColumnIndex.set(th, colIndex);
+          allSortableHeaders.push(th);
+        }
+        colIndex++;
+      });
+
+      function getCellValue(row, index) {
+        const cell = row.children[index];
+        const sortValue = cell.getAttribute('data-sort');
+        return (sortValue || cell.textContent).trim();
+      }
+
+      function parseValue(value, type) {
+        if (type === 'date') {
+          const t = Date.parse(value);
+          return isNaN(t) ? 0 : t;
+        }
+
+        if (type === 'number') {
+          const m = value.match(/-?\\d+(\\.\\d+)?/);
+          if (m) return parseFloat(m[0]);
+        }
+
+        // default: text
+        return value.toLowerCase();
+      }
+
+      function sortByColumn(index, type, order) {
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        rows.sort((a, b) => {
+          const va = parseValue(getCellValue(a, index), type);
+          const vb = parseValue(getCellValue(b, index), type);
+
+          if (va < vb) return order === 'asc' ? -1 : 1;
+          if (va > vb) return order === 'asc' ? 1 : -1;
+          return 0;
+        });
+
+        rows.forEach(row => tbody.appendChild(row));
+      }
+
+      // Add click handlers to all sortable headers
+      allSortableHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+          const currentOrder = header.getAttribute('data-order') === 'asc' ? 'asc' : 'desc';
+          const newOrder = currentOrder === 'asc' ? 'desc' : 'asc';
+          const type = header.getAttribute('data-type') || 'text';
+          const columnIndex = headerToColumnIndex.get(header);
+
+          // reset other headers
+          allSortableHeaders.forEach(h => {
+            if (h !== header) h.removeAttribute('data-order');
+          });
+
+          header.setAttribute('data-order', newOrder);
+          sortByColumn(columnIndex, type, newOrder);
+        });
+      });
+
+      // Filter functionality
+      filterCheckboxes.forEach(checkbox => {
+        checkbox.addEventListener('change', () => {
+          const activeCategories = new Set();
+          filterCheckboxes.forEach(cb => {
+            if (cb.checked) activeCategories.add(cb.value);
+          });
+
+          // Show/hide category headers
+          Array.from(categoryRow.children).forEach(header => {
+            const category = header.getAttribute('data-category');
+            if (category) {
+              if (activeCategories.has(category)) {
+                header.classList.remove('hidden');
+              } else {
+                header.classList.add('hidden');
+              }
+            }
+          });
+
+          // Show/hide benchmark headers
+          Array.from(benchmarkRow.children).forEach(header => {
+            const category = header.getAttribute('data-category');
+            if (category) {
+              if (activeCategories.has(category)) {
+                header.classList.remove('hidden');
+              } else {
+                header.classList.add('hidden');
+              }
+            }
+          });
+
+          // Show/hide cells in body rows
+          const rows = tbody.querySelectorAll('tr');
+          rows.forEach(row => {
+            const cells = row.querySelectorAll('td.benchmark-cell');
+            cells.forEach(cell => {
+              const category = cell.getAttribute('data-category');
+              if (category) {
+                if (activeCategories.has(category)) {
+                  cell.classList.remove('hidden');
+                } else {
+                  cell.classList.add('hidden');
+                }
+              }
+            });
+          });
+        });
+      });
+
+      // Default sort: by Run Date column, newest first
+      const runDateHeader = allSortableHeaders.find(h => h.classList.contains('run-generated-header'));
+      if (runDateHeader) {
+        const runDateIndex = headerToColumnIndex.get(runDateHeader);
+        runDateHeader.setAttribute('data-order', 'desc');
+        sortByColumn(runDateIndex, 'date', 'desc');
+      }
+    });
+  </script>
+</body>
+</html>
