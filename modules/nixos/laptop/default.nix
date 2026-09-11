@@ -111,6 +111,11 @@ in
     };
     # Watt owns its legacy power-profile API while power-profiles-daemon is off.
     systemd.services.watt.environment.WATT_CONFIG = "/etc/watt.toml";
+    # The config reaches watt through WATT_CONFIG rather than the unit itself,
+    # so editing the rules leaves the unit byte-identical and switch-to-
+    # configuration never restarts the daemon: it keeps serving the rules it
+    # parsed at boot. Tie the restart to the config's store path explicitly.
+    systemd.services.watt.restartTriggers = [ config.environment.etc."watt.toml".source ];
 
     # The kernel and firmware both rewrite the MMIO RAPL limit, so reapply the
     # requested policy continuously. This also owns the TCC offset, which
