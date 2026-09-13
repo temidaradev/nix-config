@@ -10,20 +10,48 @@ Singleton {
     readonly property string recDir: Quickshell.env("HOME") + "/Videos/Recordings"
     property var recent: []                   // last screenshots, newest first
     property bool recording: rec.running
+    property bool selecting: sel.running       // region picker open, not recording yet
     property int recSeconds: 0
+    property string recFile: ""
     property var colors: []                   // picked hex colours, newest first
 
     function shotArea() { Quickshell.execDetached(["niri-screenshot"]) }
     function shotWindow() { Quickshell.execDetached(["niri", "msg", "action", "screenshot-window"]) }
     function shotScreen() { Quickshell.execDetached(["niri", "msg", "action", "screenshot-screen"]) }
 
+    // Region picking is its own process. Folded into the recorder as
+    // `sh -c "g=$(slurp); exec wf-recorder"` the stop button was dead until slurp
+    // returned: SIGINT landed on a shell blocked in a command substitution.
+    Process {
+        id: sel
+        command: ["slurp"]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const g = text.trim()
+                if (g === "") return                  // cancelled
+                root.recFile = root.recDir + "/" + Qt.formatDateTime(new Date(), "yyyy-MM-dd_HH-mm-ss") + ".mp4"
+                // exec, so this Process's pid *is* wf-recorder and signal() reaches it
+                rec.command = ["sh", "-c", "mkdir -p \"$(dirname \"$2\")\"; exec wf-recorder -g \"$1\" -f \"$2\"", "_", g, root.recFile]
+                root.recSeconds = 0
+                rec.running = true
+            }
+        }
+    }
+
     Process {
         id: rec
-        command: ["sh", "-c", "mkdir -p '" + root.recDir + "'; g=$(slurp) || exit 0; exec wf-recorder -g \"$g\" -f '" + root.recDir + "/'$(date +%Y-%m-%d_%H-%M-%S).mp4"]
-        onRunningChanged: if (!running) { root.recSeconds = 0; Quickshell.execDetached(["notify-send", "-a", "Recorder", "Recording saved", root.recDir]) }
+        onExited: code => {
+            root.recSeconds = 0
+            if (code === 0) Quickshell.execDetached(["notify-send", "-a", "Recorder", "Recording saved", root.recFile])
+            else Quickshell.execDetached(["notify-send", "-a", "Recorder", "-u", "critical", "Recording failed", "wf-recorder exited with " + code])
+        }
     }
     Timer { interval: 1000; repeat: true; running: rec.running; onTriggered: root.recSeconds++ }
-    function toggleRecord() { if (rec.running) rec.signal(2); else rec.running = true }
+    function toggleRecord() {
+        if (rec.running) rec.signal(2)              // SIGINT: wf-recorder finalises the mp4
+        else if (sel.running) sel.signal(15)        // a second click cancels a pending pick
+        else sel.running = true
+    }
 
     Process {
         id: pick

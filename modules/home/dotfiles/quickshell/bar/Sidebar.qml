@@ -266,8 +266,8 @@ PanelWindow {
                             Shortcut { glyph: "󰩭"; label: "Area shot"; onClicked: { Launcher.sidebarOpen = false; Capture.shotArea() } }
                             Shortcut { glyph: "󰖯"; label: "Window"; onClicked: { Launcher.sidebarOpen = false; Capture.shotWindow() } }
                             Shortcut { glyph: "󰍹"; label: "Screen"; onClicked: { Launcher.sidebarOpen = false; Capture.shotScreen() } }
-                            Shortcut { glyph: Capture.recording ? "󰙦" : "󰑊"; label: Capture.recording ? Math.floor(Capture.recSeconds / 60) + ":" + (Capture.recSeconds % 60 < 10 ? "0" : "") + Capture.recSeconds % 60 : "Record"; on: Capture.recording
-                                onClicked: { if (!Capture.recording) Launcher.sidebarOpen = false; Capture.toggleRecord() } }
+                            Shortcut { glyph: Capture.recording ? "󰙦" : (Capture.selecting ? "󰩭" : "󰑊"); label: Capture.recording ? Math.floor(Capture.recSeconds / 60) + ":" + (Capture.recSeconds % 60 < 10 ? "0" : "") + Capture.recSeconds % 60 : (Capture.selecting ? "Select" : "Record"); on: Capture.recording
+                                onClicked: { if (!Capture.recording && !Capture.selecting) Launcher.sidebarOpen = false; Capture.toggleRecord() } }
                             Shortcut { glyph: "󰈊"; label: "Colour"; onClicked: { Launcher.sidebarOpen = false; Capture.pickColor() } }
                             Shortcut { glyph: "󰸉"; label: "Wallpaper"; onClicked: Launcher.toggleWallpaper() }
                             Shortcut { glyph: "󰌾"; label: "Lock"; onClicked: { Launcher.sidebarOpen = false; Lock.lock() } }
