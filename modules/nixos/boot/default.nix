@@ -14,6 +14,9 @@
     };
 
     grub.enable = false;
-    systemd-boot.enable = true;
+    systemd-boot = {
+      enable = true;
+      configurationLimit = 3;
+    };
   };
 }

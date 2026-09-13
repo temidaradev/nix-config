@@ -37,6 +37,8 @@ in
     # niri + its Quickshell shell (see quickshell/README.md)
     "niri/config.kdl".source = ./niri/config.kdl;
     "niri/host.kdl".source = if builtins.pathExists (./niri + "/host-${hostName}.kdl") then (./niri + "/host-${hostName}.kdl") else ./niri/host-temidaradev.kdl;
+    "powerdevilrc".source = ./powerdevilrc;
+
     "niri/wallpaper.png".source = ./niri/wallpaper.png;
     "swappy/config".source = ./niri/swappy;
     "quickshell".source = quickshellDir;

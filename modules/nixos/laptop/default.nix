@@ -33,6 +33,32 @@ let
       sleep "$interval"
     done
   '';
+
+  wait-for-charge-thresholds = pkgs.writeShellScript "wait-for-charge-thresholds" ''
+    set -u
+    end=/sys/class/power_supply/BAT0/charge_control_end_threshold
+    waited=0
+
+    while [ ! -e "$end" ]; do
+      if [ "$waited" -ge 60 ]; then
+        echo "timed out waiting for '$end'; starting watt anyway" >&2
+        exit 0
+      fi
+      waited=$((waited + 1))
+      sleep 0.5
+    done
+  '';
+
+  lid-closed = pkgs.writeShellScript "lid-closed" ''
+    for state in /proc/acpi/button/lid/*/state; do
+      [ -r "$state" ] || continue
+      read -r _ position < "$state" || continue
+      if [ "$position" = closed ]; then
+        exit 0
+      fi
+    done
+    exit 1
+  '';
 in
 
 {
@@ -98,13 +124,10 @@ in
           audio.timeout-seconds = 10;
         }
         {
-          # Battery longevity: keep the 64Wh pack between 40 and 80 percent.
           name = "charge-thresholds";
           priority = 1;
-          # Only BAT0 exposes charge-control files on this machine; the AC and
-          # USB-C power supplies reject threshold writes and would stop Watt.
           power.for = [ "BAT0" ];
-          power.charge-threshold-start = 40;
+          power.charge-threshold-start = 79;
           power.charge-threshold-end = 80;
         }
       ];
@@ -116,6 +139,11 @@ in
     # configuration never restarts the daemon: it keeps serving the rules it
     # parsed at boot. Tie the restart to the config's store path explicitly.
     systemd.services.watt.restartTriggers = [ config.environment.etc."watt.toml".source ];
+
+    systemd.services.watt.serviceConfig.ExecStartPre = wait-for-charge-thresholds;
+    systemd.services.watt.serviceConfig.RestartSec = 5;
+    systemd.services.watt.startLimitIntervalSec = 300;
+    systemd.services.watt.startLimitBurst = 10;
 
     # The kernel and firmware both rewrite the MMIO RAPL limit, so reapply the
     # requested policy continuously. This also owns the TCC offset, which
@@ -152,6 +180,24 @@ in
     hardware.firmware = [ pkgs.sof-firmware ];     # Senary SN6147 codec runs on SOF
     services.hardware.bolt.enable = true;          # Thunderbolt 4 authorisation
     services.fprintd.enable = true;                # touch reader in the power button
+
+    security.pam.services =
+      let
+        skipFprintd = service: control: {
+          rules.auth.lid-closed-skips-fprintd = {
+            inherit control;
+            order = config.security.pam.services.${service}.rules.auth.fprintd.order - 1;
+            modulePath = "${config.security.pam.package}/lib/security/pam_exec.so";
+            args = [ "quiet" "${lid-closed}" ];
+          };
+        };
+      in
+      lib.genAttrs
+        [ "sudo" "su" "systemd-run0" "polkit-1" "login" "swaylock" ]
+        (service: skipFprintd service "[success=1 default=ignore]")
+      // {
+        kde-fingerprint = skipFprintd "kde-fingerprint" "[success=die default=ignore]";
+      };
     services.fwupd.enable = true;
     hardware.sensor.iio.enable = true;
     boot.kernelModules = [ "kvm-intel" ];
