@@ -137,6 +137,12 @@
         # (nvf defaults this to false, which lets the tree stay half-width).
         actions.open_file.resize_window = true;
         filters.dotfiles = false;
+        # Required for renderer.highlight_git below; nvf leaves this off.
+        git = {
+          enable = true;
+          show_on_dirs = true;
+          show_on_open_dirs = true;
+        };
         renderer = {
           root_folder_label = false;
           # Match NvChad: color changed files and their parent directories.
