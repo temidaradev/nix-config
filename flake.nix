@@ -40,6 +40,7 @@
       overlays = [
         (final: prev: {
           avrdude = prev.avrdude.override { docSupport = false; };
+          terminal-wakatime = final.callPackage ./modules/shared/pkgs/terminal-wakatime.nix { };
         })
       ];
 

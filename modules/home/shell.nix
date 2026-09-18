@@ -104,6 +104,7 @@ let
     eval "$(zoxide init zsh --cmd cd)"
     source <(fzf --zsh)
     eval "$(direnv hook zsh)"
+    eval "$(${pkgs.terminal-wakatime}/bin/terminal-wakatime init)"
 
     # Must be sourced last
     source ${pkgs.zsh-syntax-highlighting}/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
@@ -121,6 +122,7 @@ in
       fzf
       tealdeer
       glow
+      terminal-wakatime
     ];
 
     files.".zshrc".text = zshrc;

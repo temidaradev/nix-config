@@ -135,6 +135,6 @@
     "dark": "Gruvbox Dark Soft",
   },
   "auto_install_extensions": {
-    "wakatime": true
+    "hackatime": true
   },
 }
