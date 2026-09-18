@@ -5,3 +5,23 @@ output "eDP-1" {
     scale 1.0
     position x=0 y=0
 }
+
+// 60 Hz has too few frames to carry a spring without stepping, so the
+// workspace and column movements switch instantly instead.
+animations {
+    slowdown 1.0
+    window-open {
+        duration-ms 130
+        curve "ease-out-quad"
+    }
+    window-close {
+        duration-ms 110
+        curve "ease-out-quad"
+    }
+    workspace-switch {
+        off
+    }
+    horizontal-view-movement {
+        off
+    }
+}

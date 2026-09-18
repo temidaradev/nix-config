@@ -1,8 +1,8 @@
-{ ... }:
+{ config, ... }:
 
 {
   hardware.bluetooth = {
     enable = true;
-    powerOnBoot = true;
+    powerOnBoot = config.temidaradev.role == "desktop";
   };
 }

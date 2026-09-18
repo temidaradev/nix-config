@@ -298,6 +298,8 @@ in
       HandlePowerKeyLongPress = "poweroff";
     };
 
+    networking.modemmanager.enable = false;        # no WWAN in this machine
+
     # --- hardware ---
     hardware.firmware = [ pkgs.sof-firmware ];     # Senary SN6147 codec runs on SOF
     services.hardware.bolt.enable = true;          # Thunderbolt 4 authorisation
@@ -357,8 +359,8 @@ in
     # Let the shell change the backlight without root.
     services.udev.extraRules = ''
       SUBSYSTEM=="power_supply", ATTR{online}=="?*", RUN+="${pkgs.systemd}/bin/systemctl --no-block start wifi-powersave-sync.service"
-      ACTION=="add", SUBSYSTEM=="pci", DRIVERS=="nvme|iwlwifi|e1000e|xhci_hcd|intel-lpss|mei_me", ATTR{power/control}="auto"
-      ACTION=="add", SUBSYSTEM=="pci", DRIVERS=="e1000e", ATTR{power/autosuspend_delay_ms}="1000"
+      ACTION=="add|bind", SUBSYSTEM=="pci", ENV{DRIVER}=="nvme|iwlwifi|e1000e|xhci_hcd|intel-lpss|mei_me", ATTR{power/control}="auto"
+      ACTION=="add|bind", SUBSYSTEM=="pci", ENV{DRIVER}=="e1000e", ATTR{power/autosuspend_delay_ms}="1000"
       ACTION=="add", SUBSYSTEM=="backlight", RUN+="${pkgs.coreutils}/bin/chgrp video /sys/class/backlight/%k/brightness", RUN+="${pkgs.coreutils}/bin/chmod g+w /sys/class/backlight/%k/brightness"
       ACTION=="add", SUBSYSTEM=="leds", KERNEL=="*kbd_backlight", RUN+="${pkgs.coreutils}/bin/chgrp video /sys/class/leds/%k/brightness", RUN+="${pkgs.coreutils}/bin/chmod g+w /sys/class/leds/%k/brightness"
     '';

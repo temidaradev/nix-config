@@ -2,6 +2,7 @@ import QtQuick
 import Quickshell
 import Quickshell.Io
 import qs
+import qs.services
 
 // cava bars; only runs while `active` so it costs nothing when hidden.
 Item {
@@ -36,7 +37,7 @@ Item {
                 radius: 1
                 color: viz.color
                 opacity: 0.35 + 0.65 * modelData / 100
-                Behavior on height { NumberAnimation { duration: 40 } }
+                Behavior on height { enabled: !Settings.s.appearance.reducedMotion; NumberAnimation { duration: 40 } }
             }
         }
     }

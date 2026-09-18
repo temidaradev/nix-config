@@ -99,7 +99,7 @@ PanelWindow {
                         text: marquee.full
                         SequentialAnimation on x {
                             id: scroll
-                            running: marquee.overflow && !nowPlaying.hovered
+                            running: marquee.overflow && !nowPlaying.hovered && !Settings.s.appearance.reducedMotion
                             loops: Animation.Infinite
                             PauseAnimation { duration: 2000 }
                             NumberAnimation { from: 0; to: marquee.width - label.implicitWidth - 12; duration: Math.max(1000, (label.implicitWidth - marquee.width) * 25); easing.type: Easing.Linear }
@@ -116,7 +116,7 @@ PanelWindow {
                     anchors.left: parent.left; anchors.leftMargin: 8
                     width: (parent.width - 16) * nowPlaying.progress
                     height: 2; radius: 1; color: Theme.accent
-                    Behavior on width { NumberAnimation { duration: 800; easing.type: Easing.Linear } }
+                    Behavior on width { enabled: !Settings.s.appearance.reducedMotion; NumberAnimation { duration: 800; easing.type: Easing.Linear } }
                 }
                 Rectangle {
                     parent: nowPlaying

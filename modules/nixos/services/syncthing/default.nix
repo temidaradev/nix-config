@@ -1,8 +1,8 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   services.syncthing = {
-    enable = true;
+    enable = config.temidaradev.role == "desktop";
     user = "temidaradev";
     group = "users";
     dataDir = "/home/temidaradev";

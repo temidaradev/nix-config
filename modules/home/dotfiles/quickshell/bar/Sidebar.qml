@@ -37,7 +37,7 @@ PanelWindow {
         { id: "power",         glyph: "󰁹", label: "Power" }
     ]
     function open(t) { tab = t }
-    onVisibleChanged: if (visible) { Clipboard.refresh(); Capture.refresh(); Power.refresh(); Network.refresh(); ScreenTime.flush() }
+    onVisibleChanged: if (visible) { Clipboard.refresh(); Capture.refresh(); Power.refresh(); Network.refresh(); Brightness.refresh(); ScreenTime.flush() }
     Timer { interval: 4000; repeat: true; running: win.visible; onTriggered: Capture.refresh() }
 
     // ---- pipewire ----

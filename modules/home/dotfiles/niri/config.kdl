@@ -11,6 +11,10 @@ input {
     touchpad {
         tap
         natural-scroll
+        // libinput's clickpad default is button-areas, which makes the
+        // bottom-middle strip a middle click. clickfinger goes by finger
+        // count instead: 1 left, 2 right, 3 middle.
+        click-method "clickfinger"
     }
     mouse {
         accel-profile "flat"
@@ -99,23 +103,8 @@ spawn-at-startup "niri-gtk-settings"
 spawn-at-startup "wl-paste" "--type" "text" "--watch" "cliphist" "store"
 spawn-at-startup "wl-paste" "--type" "image" "--watch" "cliphist" "store"
 
-animations {
-    slowdown 1.0
-    window-open {
-        duration-ms 160
-        curve "ease-out-expo"
-    }
-    window-close {
-        duration-ms 140
-        curve "ease-out-quad"
-    }
-    workspace-switch {
-        spring damping-ratio=1.0 stiffness=1000 epsilon=0.0001
-    }
-    horizontal-view-movement {
-        spring damping-ratio=1.0 stiffness=800 epsilon=0.0001
-    }
-}
+// `animations` is a single-node section, so it lives per host in host.kdl:
+// the 60 Hz laptop panel gets instant switches, the 180 Hz desktop springs.
 
 // Blurred wallpaper from the shell shown behind workspaces in the overview.
 layer-rule {
@@ -166,8 +155,19 @@ binds {
     XF86AudioMute        allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
     XF86AudioMicMute     allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
     XF86AudioPlay        allow-when-locked=true { spawn "playerctl" "play-pause"; }
+    XF86AudioPause       allow-when-locked=true { spawn "playerctl" "pause"; }
+    XF86AudioStop        allow-when-locked=true { spawn "playerctl" "stop"; }
     XF86AudioNext        allow-when-locked=true { spawn "playerctl" "next"; }
     XF86AudioPrev        allow-when-locked=true { spawn "playerctl" "previous"; }
+    XF86AudioForward     allow-when-locked=true { spawn "playerctl" "position" "5+"; }
+    XF86AudioRewind      allow-when-locked=true { spawn "playerctl" "position" "5-"; }
+
+    // Carried over from Plasma's [mediacontrol] shortcuts. These shadow the
+    // same combos inside applications: Ctrl+BracketLeft is what a terminal
+    // sends for Escape, and Ctrl+P is the palette in Zed and VS Code.
+    Ctrl+P            { spawn "playerctl" "play-pause"; }
+    Ctrl+BracketRight { spawn "playerctl" "next"; }
+    Ctrl+BracketLeft  { spawn "playerctl" "previous"; }
 
     // Laptop keys (no-ops on the desktop)
     XF86MonBrightnessUp   allow-when-locked=true { spawn "sh" "-c" "brightnessctl set 5%+ && qs ipc call brightness osd"; }

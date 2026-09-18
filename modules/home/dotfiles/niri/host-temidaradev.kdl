@@ -3,3 +3,21 @@ output "DP-3" {
     mode "2560x1440@180.001"
     variable-refresh-rate on-demand=true
 }
+
+animations {
+    slowdown 1.0
+    window-open {
+        duration-ms 160
+        curve "ease-out-expo"
+    }
+    window-close {
+        duration-ms 140
+        curve "ease-out-quad"
+    }
+    workspace-switch {
+        spring damping-ratio=1.0 stiffness=1000 epsilon=0.0001
+    }
+    horizontal-view-movement {
+        spring damping-ratio=1.0 stiffness=800 epsilon=0.0001
+    }
+}

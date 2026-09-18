@@ -41,9 +41,7 @@ in
 
   # plasma6 and niri both set this at the same priority; niri wins on the
   # SDDM login screen, Plasma stays selectable in the session menu.
-  # Desktop logs into niri; the laptop stays on Plasma for now (niri remains in
-  # the SDDM session menu on both).
-  services.displayManager.defaultSession = lib.mkForce (if config.temidaradev.role == "laptop" then "plasma" else "niri");
+  services.displayManager.defaultSession = lib.mkForce "niri";
 
   environment.systemPackages = with pkgs; [
     quickshell

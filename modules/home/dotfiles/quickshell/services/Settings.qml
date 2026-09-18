@@ -9,7 +9,7 @@ Singleton {
     id: root
 
     readonly property var builtin: ({
-        appearance: { accent: "#3daee9", accentFromWallpaper: false, panelOpacity: 0.95, barHeight: 36, radius: 4, font: "JetBrainsMono Nerd Font", fontSize: 10 },
+        appearance: { accent: "#3daee9", accentFromWallpaper: false, panelOpacity: 0.95, barHeight: 36, radius: 4, font: "JetBrainsMono Nerd Font", fontSize: 10, reducedMotion: false },
         bar: { tray: true, layout: true, volume: true, bluetooth: true, battery: true, cpu: true, memory: true, temps: true, disk: true, network: true,
                notifications: true, control: true, sidebar: true, nowPlaying: true, windowTitle: true, workspaceIcons: true, marqueeWidth: 220, clockFormat: "HH:mm", dateFormat: "ddd d MMM" },
         pinned: ["org.kde.dolphin", "zen-beta", "code", "dev.zed.Zed", "discord", "moe.kopuz.kopuz", "com.mitchellh.ghostty", "steam", "thunderbird", "org.jellyfin.JellyfinDesktop"],

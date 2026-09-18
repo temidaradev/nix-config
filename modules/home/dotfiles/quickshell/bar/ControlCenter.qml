@@ -13,6 +13,7 @@ BarPopup {
     visible: Launcher.controlOpen
     panelWidth: 400
     onDismissed: Launcher.hideControl()
+    onVisibleChanged: if (visible) Brightness.refresh()
 
     readonly property PwNode sink: Pipewire.defaultAudioSink
     readonly property PwNode source: Pipewire.defaultAudioSource
@@ -33,8 +34,9 @@ BarPopup {
         stdout: StdioCollector {
             onStreamFinished: win.connections = text.trim().split("\n").filter(l => l !== "").map(l => {
                 const [name, type, device] = l.split(":")
-                return { name, type: (type || "").replace(/^802-11-wireless$/, "wifi").replace(/^802-3-ethernet$/, "ethernet"), device }
-            })
+                return { name, type: (type || "").replace(/^802-11-wireless$/, "wifi").replace(/^802-3-ethernet$/, "ethernet"), device: device || "" }
+            }).filter(c => c.type !== "loopback" && c.type !== "bridge"
+                && !c.device.startsWith("docker") && !c.device.startsWith("br-") && !c.device.startsWith("vmnet"))
         }
     }
     Process {
@@ -164,11 +166,12 @@ BarPopup {
 
     Section { text: "Display"; visible: Brightness.present }
     VolSlider {
+        id: bri
         visible: Brightness.present
         glyph: "󰃠"; node: null
         Component.onCompleted: value = Brightness.level
-        Connections { target: Brightness; function onLevelChanged() { if (!pressed) value = Brightness.level } }
-        onMoved: Brightness.set(value)
+        Connections { target: Brightness; function onLevelChanged() { if (!bri.pressed) bri.value = Brightness.level } }
+        onMoved: Brightness.set(bri.value)
     }
 
     Section { text: "Sound" }

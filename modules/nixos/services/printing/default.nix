@@ -1,5 +1,5 @@
-{ config, pkgs, ... }:
+{ config, lib, pkgs, ... }:
 
 {
-  services.printing.enable = true;
+  services.printing.enable = config.temidaradev.role == "desktop";
 }
