@@ -87,7 +87,10 @@ in
     requisite = [ "graphical-session.target" ];
     wantedBy = [ "niri.service" ];
     path = sessionPath;
-    environment.QT_QPA_PLATFORM = "wayland";
+    environment = {
+      QT_QPA_PLATFORM = "wayland";
+      QT_QPA_PLATFORMTHEME = "kde";
+    };
     serviceConfig = {
       Type = "exec";
       ExecStart = "${pkgs.quickshell}/bin/qs";

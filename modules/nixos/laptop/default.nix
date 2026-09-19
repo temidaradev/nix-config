@@ -312,7 +312,7 @@ in
             inherit control;
             order = config.security.pam.services.${service}.rules.auth.fprintd.order - 1;
             modulePath = "${config.security.pam.package}/lib/security/pam_exec.so";
-            args = [ "quiet" "${lid-closed}" ];
+            args = [ "quiet" "quiet_log" "${lid-closed}" ];
           };
         };
       in

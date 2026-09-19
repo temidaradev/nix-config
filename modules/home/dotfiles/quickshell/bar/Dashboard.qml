@@ -182,9 +182,9 @@ BarPopup {
         }
 
         Tile { glyph: "󰻠"; label: "CPU"; value: Math.round(SysStats.cpu) + "%"; sub: Math.round(SysStats.temp) + " °C  ·  " + SysStats.cores + " cores"
-            Sparkline { anchors.bottom: parent.bottom; width: parent.width; height: 18; data: SysStats.cpuHist } }
+            Sparkline { anchors.bottom: parent.bottom; width: parent.width; height: 18; values: SysStats.cpuHist } }
         Tile { glyph: "󰍛"; label: "Memory"; accent: Theme.green; value: SysStats.fmtBytes(SysStats.memUsed, 1); sub: "of " + SysStats.fmtBytes(SysStats.memTotal, 0) + "  ·  " + Math.round(tiles.memPct) + "%"
-            Sparkline { anchors.bottom: parent.bottom; width: parent.width; height: 18; data: SysStats.memHist; color: Theme.green } }
+            Sparkline { anchors.bottom: parent.bottom; width: parent.width; height: 18; values: SysStats.memHist; color: Theme.green } }
         Tile { glyph: "󰢮"; label: "GPU"; accent: Theme.yellow; value: SysStats.gpuTemp > 0 ? Math.round(SysStats.gpuTemp) + " °C" : "n/a"; sub: SysStats.gpuTotal > 0 ? SysStats.fmtBytes(SysStats.gpuTotal, 0) + " VRAM" : "Arc B580"
             Bar { pct: SysStats.gpuTemp; accent: Theme.yellow } }
         Tile { glyph: "󰋊"; label: "Disk  /"; value: (tiles.rootDisk ? tiles.rootDisk.pct : 0) + "%"; sub: tiles.rootDisk ? SysStats.fmtBytes(tiles.rootDisk.used, 0) + " of " + SysStats.fmtBytes(tiles.rootDisk.size, 0) : ""

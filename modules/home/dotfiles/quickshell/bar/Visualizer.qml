@@ -23,6 +23,7 @@ Item {
     }
 
     Row {
+        id: row
         anchors.fill: parent
         spacing: 2
         readonly property int n: Math.max(1, viz.bars.length)
@@ -31,7 +32,7 @@ Item {
             Rectangle {
                 required property int modelData
                 required property int index
-                width: (viz.width - 2 * (parent.n - 1)) / parent.n
+                width: Math.max(1, (viz.width - row.spacing * (row.n - 1)) / row.n)
                 height: Math.max(2, viz.height * modelData / 100)
                 anchors.bottom: parent.bottom
                 radius: 1

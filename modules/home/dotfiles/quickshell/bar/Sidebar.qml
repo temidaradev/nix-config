@@ -409,10 +409,10 @@ PanelWindow {
                             Gauge { width: parent.width / 3; size: 80; value: SysStats.gpuTemp; label: "GPU  " + Math.round(SysStats.gpuTemp) + "°"; center: SysStats.gpu > 0 ? Math.round(SysStats.gpu) + "%" : "–"; color: Theme.yellow } }
                         Row { width: parent.width; spacing: 8
                             Dim { text: "CPU"; width: 36; anchors.verticalCenter: parent.verticalCenter }
-                            Sparkline { width: parent.width - 44; height: 36; data: SysStats.cpuHist } }
+                            Sparkline { width: parent.width - 44; height: 36; values: SysStats.cpuHist } }
                         Row { width: parent.width; spacing: 8
                             Dim { text: "MEM"; width: 36; anchors.verticalCenter: parent.verticalCenter }
-                            Sparkline { width: parent.width - 44; height: 36; data: SysStats.memHist; color: Theme.green } }
+                            Sparkline { width: parent.width - 44; height: 36; values: SysStats.memHist; color: Theme.green } }
                         KV { k: "Memory"; v: SysStats.fmtBytes(SysStats.memUsed) + " / " + SysStats.fmtBytes(SysStats.memTotal) }
                         KV { k: "Swap"; v: SysStats.fmtBytes(SysStats.swapUsed, 0) + " / " + SysStats.fmtBytes(SysStats.swapTotal, 0) }
                         KV { k: "Network"; v: "󰁅 " + SysStats.fmtRate(SysStats.rx) + "   󰁝 " + SysStats.fmtRate(SysStats.tx) }

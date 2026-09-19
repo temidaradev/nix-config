@@ -80,7 +80,7 @@ let
     # `nh switch` anywhere -> rebuild this flake
     nh() {
       if [[ "$1" == "switch" ]]; then
-        command nh darwin switch ~/Projects/nix-config "''${@:2}"
+        command nh ${if pkgs.stdenv.hostPlatform.isDarwin then "darwin" else "os"} switch "''${NH_FLAKE:-$HOME/.dotfiles}" "''${@:2}"
       else
         command nh "$@"
       fi

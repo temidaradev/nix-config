@@ -29,11 +29,18 @@ BarPopup {
                 border.color: active ? Theme.accent : (ma.containsMouse ? "#66ffffff" : "transparent"); border.width: 2
                 clip: true
                 Image {
+                    id: thumb
                     anchors.fill: parent; anchors.margins: 2
                     source: "file://" + modelData
                     fillMode: Image.PreserveAspectCrop
                     asynchronous: true; smooth: true; mipmap: true
                     sourceSize: Qt.size(360, 202)
+                }
+                Text {
+                    visible: thumb.status === Image.Error
+                    anchors.centerIn: parent
+                    text: "󰋔"
+                    color: Theme.red; font.family: Theme.font; font.pointSize: 20
                 }
                 Text {
                     anchors.left: parent.left; anchors.right: parent.right; anchors.bottom: parent.bottom
@@ -43,7 +50,7 @@ BarPopup {
                     color: Theme.fg; style: Text.Outline; styleColor: "#aa000000"
                     font.family: Theme.font; font.pointSize: Theme.smallSize - 2
                 }
-                MouseArea { id: ma; anchors.fill: parent; hoverEnabled: true; onClicked: Wallpaper.set(modelData) }
+                MouseArea { id: ma; anchors.fill: parent; hoverEnabled: true; onClicked: if (thumb.status !== Image.Error) Wallpaper.set(modelData) }
             }
         }
     }

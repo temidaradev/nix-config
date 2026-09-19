@@ -4,7 +4,7 @@
   users.users.temidaradev = {
     isNormalUser = true;
     description = "temidaradev";
-    extraGroups = [ "networkmanager" "wheel" "docker" "plugdev" "input" ];
+    extraGroups = [ "networkmanager" "wheel" "docker" "plugdev" "input" "uinput" ];
     shell = pkgs.zsh;
   };
 

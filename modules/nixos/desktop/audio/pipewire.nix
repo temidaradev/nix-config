@@ -16,6 +16,13 @@
     # no need to redefine it in your config for now)
     #media-session.enable = true;
 
+    extraConfig.pipewire."92-hires" = {
+      "context.properties" = {
+        "default.clock.rate" = 192000;
+        "default.clock.allowed-rates" = [ 192000 ];
+      };
+    };
+
     wireplumber.extraConfig.bluetoothEnhancements = {
       "monitor.bluez.properties" = {
         "bluez5.codecs" = [ "ldac" "aac" "sbc" ];

@@ -169,13 +169,20 @@ PanelWindow {
                 height: parent.height - 36 - 44 - 16
                 clip: true
                 model: win.results
-                currentIndex: win.current
-                highlightMoveDuration: 0
                 boundsBehavior: Flickable.StopAtBounds
                 reuseItems: true
                 cacheBuffer: 400
-                flickDeceleration: 6000
+                flickDeceleration: 2500
                 maximumFlickVelocity: 6000
+
+                WheelHandler {
+                    property real rowStep: 42 * 3
+                    onWheel: e => {
+                        const d = e.pixelDelta.y !== 0 ? e.pixelDelta.y : e.angleDelta.y / 120 * rowStep
+                        const max = Math.max(0, list.contentHeight - list.height)
+                        list.contentY = Math.max(0, Math.min(max, list.contentY - d))
+                    }
+                }
 
                 delegate: Rectangle {
                     required property var modelData
@@ -204,7 +211,7 @@ PanelWindow {
                         id: hover
                         anchors.fill: parent
                         hoverEnabled: true
-                        onPositionChanged: win.current = index
+                        onPositionChanged: if (!list.moving) win.current = index
                         onClicked: { win.current = index; win.submit() }
                     }
                 }

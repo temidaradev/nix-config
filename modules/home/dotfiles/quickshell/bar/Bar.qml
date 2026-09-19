@@ -190,7 +190,7 @@ PanelWindow {
             BarButton {   // cpu sparkline
                 visible: Settings.s.bar.cpu
                 BarText { text: "󰻠"; color: Theme.accent; font.pointSize: 12 }
-                Sparkline { data: SysStats.cpuHist }
+                Sparkline { values: SysStats.cpuHist }
                 BarText { text: Math.round(SysStats.cpu) + "%"; font.pointSize: Theme.smallSize; width: 30; horizontalAlignment: Text.AlignRight }
                 onClicked: Launcher.toggleDash(nowPlaying.mapToItem(null, 0, 0).x + nowPlaying.width / 2)
             }
@@ -198,7 +198,7 @@ PanelWindow {
             BarButton {   // memory sparkline
                 visible: Settings.s.bar.memory
                 BarText { text: "󰍛"; color: Theme.green; font.pointSize: 12 }
-                Sparkline { data: SysStats.memHist; color: Theme.green }
+                Sparkline { values: SysStats.memHist; color: Theme.green }
                 BarText { text: Math.round(SysStats.memUsed / SysStats.memTotal * 100 || 0) + "%"; font.pointSize: Theme.smallSize; width: 30; horizontalAlignment: Text.AlignRight }
                 onClicked: Launcher.toggleDash(nowPlaying.mapToItem(null, 0, 0).x + nowPlaying.width / 2)
             }

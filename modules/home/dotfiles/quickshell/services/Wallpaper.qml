@@ -31,6 +31,7 @@ Singleton {
     FileView {
         id: state
         path: root.stateFile
+        printErrors: false
         watchChanges: true
         onFileChanged: reload()
         onLoaded: { const t = text().trim(); if (t !== "") root.current = t }
@@ -39,14 +40,14 @@ Singleton {
 
     Process {
         id: scan
-        command: ["sh", "-c", "mkdir -p '" + root.dir + "'; find '" + root.dir + "' -maxdepth 1 -type f \\( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.webp' \\) | sort"]
+        command: ["sh", "-c", 'mkdir -p "$1"; find "$1" -maxdepth 1 -type f -size +0 \\( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \\) | sort', "sh", root.dir]
         stdout: StdioCollector { onStreamFinished: root.available = [Theme.wallpaper].concat(text.trim().split("\n").filter(l => l !== "")) }
     }
     function rescan() { scan.running = true }
     Component.onCompleted: rescan()
 
     function set(path) {
-        Quickshell.execDetached(["sh", "-c", "mkdir -p '" + stateDir + "' && printf '%s' '" + path + "' > '" + stateFile + "'"])
+        Quickshell.execDetached(["sh", "-c", 'mkdir -p "$1" && printf %s "$2" > "$1/wallpaper"', "sh", stateDir, path])
         current = path
     }
 }
