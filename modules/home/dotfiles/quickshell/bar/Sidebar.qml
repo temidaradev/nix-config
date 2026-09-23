@@ -300,7 +300,8 @@ PanelWindow {
                             ListRow { required property var modelData; glyph: modelData.image ? "󰋩" : "󰅍"; label: modelData.image ? "Image" : modelData.text; height: 28
                                 onClicked: { Clipboard.copy(modelData); Launcher.sidebarOpen = false } }
                         }
-                        Dim { visible: Clipboard.items.length === 0; text: "Clipboard history is empty" }                    }
+                        Dim { visible: Clipboard.items.length === 0; text: "Clipboard history is empty" }
+                    }
                 }
 
                 // ================= MEDIA =================
