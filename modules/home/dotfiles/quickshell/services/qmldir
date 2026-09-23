@@ -18,3 +18,4 @@ singleton ScreenTime 1.0 ScreenTime.qml
 singleton SysInfo 1.0 SysInfo.qml
 singleton Network 1.0 Network.qml
 singleton Idle 1.0 Idle.qml
+singleton Jev 1.0 Jev.qml

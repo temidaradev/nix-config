@@ -70,6 +70,69 @@ Singleton {
         return (make || "").replace(/,?\s+(Inc\.?|Corporation|Corp\.?|Co\.,? Ltd\.?|Ltd\.?|Electronics.*|Technology.*)$/i, "").trim()
     }
 
+    function uniq(xs) { return xs.map(s => (s || "").trim()).filter((s, i, a) => s !== "" && a.indexOf(s) === i) }
+    function options(cands, none) {
+        const c = { none }
+        for (const s of cands) c[s] = "Show the text \"" + s + "\""
+        return c
+    }
+    function chosen(a) { return a && a.choice !== "none" ? a.choice : "" }
+
+    function describeHost(kv, p) {
+        const ok = (f, fallback) => p && (f in p) ? p[f].noul >= 0.5 : fallback
+        const version = ok("hostVersion", !junk(kv.hostVersion) && kv.hostVersion.length > 4)
+        const name = ok("hostName", !junk(kv.hostName))
+        const vendor = ok("sysVendor", !!kv.sysVendor && !junk(kv.sysVendor))
+        root.bios = kv.bios && ok("bios", !junk(kv.bios.split(" (")[0])) ? kv.bios : ""
+        root.host = version ? kv.hostVersion : name ? (vendor ? kv.sysVendor + " " : "") + kv.hostName : kv.board
+    }
+    function askHost(kv) {
+        const fields = {}
+        for (const f of ["hostVersion", "hostName", "sysVendor"]) if (kv[f]) fields[f] = kv[f]
+        if (kv.bios) fields.bios = kv.bios.split(" (")[0]
+        const q = {}
+        const placeholder = "rather than an unfilled firmware placeholder such as \"To Be Filled By O.E.M.\", \"System Product Name\", \"Default string\" or \"0\""
+        if (fields.hostVersion) q.hostVersion = { type: "noul", instructions: "Does `fields.hostVersion` (DMI product_version) name the computer's product model, such as \"ThinkPad X1 Carbon Gen 11\", " + placeholder + " or a bare revision number like \"1.0\"?" }
+        if (fields.hostName) q.hostName = { type: "noul", instructions: "Is `fields.hostName` (DMI product_name) a real product name or machine-type code set by the manufacturer, " + placeholder + "?" }
+        if (fields.sysVendor) q.sysVendor = { type: "noul", instructions: "Is `fields.sysVendor` (DMI sys_vendor) a real manufacturer name, " + placeholder + "?" }
+        if (fields.bios) q.bios = { type: "noul", instructions: "Is `fields.bios` (DMI bios_version) a real firmware version string, " + placeholder + "?" }
+        if (Object.keys(q).length === 0) return
+        Jev.ask("dmi:v1:" + JSON.stringify(fields), { fields }, q, a => { if (a) describeHost(kv, a) })
+    }
+
+    function askGpu(i, vendor, device, n) {
+        if (!device) return
+        const vs = vendorShort(vendor)
+        const brackets = (device.match(/\[[^\]]+\]/g) || []).map(b => b.slice(1, -1))
+        const code = device.replace(/\s*\[[^\]]*\]/g, "").trim()
+        const withVendor = s => s.toLowerCase().startsWith(vs.toLowerCase()) ? s : vs + " " + s
+        const names = uniq([n.name].concat(brackets.map(withVendor), [code ? vs + " " + code : "", vs + " Graphics"]))
+        const shorts = uniq([n.short].concat(brackets, [code, vs + " Graphics"]))
+        const about = "`device` is the lspci device string of a GPU made by `vendor`: a chip codename, then marketing names in brackets, sometimes several sibling models joined by slashes, or a generic \"Graphics\" label."
+        Jev.ask("gpu:v1:" + vendor + "|" + device, { vendor, device }, {
+            name: { type: "choice", instructions: about + " Which label names this GPU best in a system-information panel?", criteria: options(names, "None of these names the GPU") },
+            short: { type: "choice", instructions: about + " Which label is the best compact name for this GPU in a narrow status bar?", criteria: options(shorts, "None of these names the GPU") }
+        }, a => {
+            if (!a) return
+            root.gpus = root.gpus.map((g, j) => j !== i ? g : Object.assign({}, g, { name: chosen(a.name) || g.name, short: chosen(a.short) || g.short }))
+        })
+    }
+
+    function askDisplay(i, o, name, suffix) {
+        const make = displayName(o.make)
+        const cands = uniq([name, (o.make || "") + " " + (o.model || ""), make + " " + (o.model || ""), o.model, make, o.name])
+        Jev.ask("display:v1:" + o.make + "|" + o.model + "|" + o.name, { make: o.make, model: o.model, connector: o.name }, {
+            name: {
+                type: "choice",
+                instructions: "`make` and `model` come from a monitor's EDID and may be a registered company name, a hex product code or \"Unknown\"; `connector` is the output port. Which label best names this monitor in a system-information panel?",
+                criteria: options(cands, "None of these names the monitor")
+            }
+        }, a => {
+            const pick = chosen(a && a.name)
+            if (pick) root.displays = root.displays.map((d, j) => j !== i ? d : Object.assign({}, d, { name: pick + suffix }))
+        })
+    }
+
     Process {
         running: true
         command: ["sh", "-c", `
@@ -124,9 +187,8 @@ Singleton {
                 for (const k of ["os", "kernel", "board", "shell", "wm", "memory", "rootDisk", "locale", "session", "user"])
                     if (kv[k] !== undefined) root[k] = kv[k]
                 root.packages = parseInt(kv.packages) || 0
-                root.bios = kv.bios && !junk(kv.bios.split(" (")[0]) ? kv.bios : ""
-                root.host = !junk(kv.hostVersion) && kv.hostVersion.length > 4 ? kv.hostVersion
-                          : !junk(kv.hostName) ? ((kv.sysVendor && !junk(kv.sysVendor) ? kv.sysVendor + " " : "") + kv.hostName) : kv.board
+                root.describeHost(kv, null)
+                root.askHost(kv)
 
                 root.cpu = cleanCpu(kv.cpu || "")
                 root.cpuShort = root.cpu.replace(/^(Intel|AMD)\s+/, "")
@@ -142,15 +204,18 @@ Singleton {
                 if (mhz > 0) parts.push("up to " + (mhz / 1000).toFixed(1) + " GHz")
                 root.cpuDetail = parts.join("  ·  ")
 
+                const raw = []
                 const gs = gpuLines.map(l => {
                     const [driver, boot, hwmon, ...rest] = l.split("|")
                     const q = (rest.join("|").match(/"[^"]*"/g) || []).map(s => s.slice(1, -1))
                     const n = gpuNames(q[1] || "", q[2] || "")
+                    raw.push({ vendor: q[1] || "", device: q[2] || "", n })
                     return { name: n.name, short: n.short, driver: driver || "", boot: boot === "1", hwmon: hwmon === "1", primary: false }
                 })
                 const primary = gs.find(g => g.hwmon) ?? gs.find(g => g.boot) ?? gs[0]
                 if (primary) primary.primary = true
                 root.gpus = gs
+                raw.forEach((r, i) => root.askGpu(i, r.vendor, r.device, r.n))
             }
         }
     }
@@ -162,7 +227,8 @@ Singleton {
         stdout: StdioCollector {
             onStreamFinished: {
                 try {
-                    root.displays = Object.values(JSON.parse(text)).filter(o => o.current_mode !== null && o.current_mode !== undefined).map(o => {
+                    const outs = Object.values(JSON.parse(text)).filter(o => o.current_mode !== null && o.current_mode !== undefined)
+                    root.displays = outs.map(o => {
                         const m = o.modes[o.current_mode]
                         const [w, h] = o.physical_size || [0, 0]
                         const inches = w > 0 && h > 0 ? Math.sqrt(w * w + h * h) / 25.4 : 0
@@ -176,8 +242,10 @@ Singleton {
                         if (o.logical && o.logical.scale !== 1) sub.push("scale " + o.logical.scale)
                         if (o.vrr_enabled) sub.push("VRR")
                         sub.push(o.name)
-                        return { name: name + (inches > 0 ? "  " + inches.toFixed(1) + "″" : ""), sub: sub.join("  ·  ") }
+                        const suffix = inches > 0 ? "  " + inches.toFixed(1) + "″" : ""
+                        return { name: name + suffix, sub: sub.join("  ·  "), base: name, suffix, builtin }
                     })
+                    root.displays.forEach((d, i) => { if (!d.builtin) root.askDisplay(i, outs[i], d.base, d.suffix) })
                 } catch (e) { root.displays = [] }
             }
         }
