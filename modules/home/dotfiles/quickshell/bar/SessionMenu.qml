@@ -81,10 +81,5 @@ PanelWindow {
                 }
             }
         }
-        Text {
-            anchors.horizontalCenter: parent.horizontalCenter
-            text: "L · S · E · R · P   or arrows + Enter   ·   Esc to close"
-            color: "#66ffffff"; font.family: Theme.font; font.pointSize: Theme.smallSize - 1
-        }
     }
 }

@@ -32,7 +32,7 @@ Singleton {
 
     readonly property bool watched: Launcher.dashOpen || Launcher.sidebarOpen || Launcher.tempOpen || Launcher.diskOpen || ["cpu", "memory", "network"].indexOf(Launcher.menu) >= 0
     readonly property bool sampling: !Lock.locked && !Idle.screensOff
-    readonly property int interval: watched || !Battery.saving ? 1000 : 4000
+    readonly property int interval: watched || !Battery.saving ? 1000 : 10000
 
     function fmtBytes(b, digits) {
         const d = digits === undefined ? 1 : digits
