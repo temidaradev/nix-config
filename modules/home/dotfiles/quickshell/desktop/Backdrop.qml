@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
 import qs
@@ -15,20 +14,11 @@ PanelWindow {
     color: "#3d4a63"
 
     Image {
-        id: img
         anchors.fill: parent
-        source: "file://" + Wallpaper.current
+        source: Wallpaper.blurred !== "" ? "file://" + Wallpaper.blurred : ""
         fillMode: Image.PreserveAspectCrop
         asynchronous: true
-        visible: false
-    }
-    MultiEffect {
-        anchors.fill: parent
-        source: img
-        blurEnabled: true
-        blur: 0.8
-        blurMax: 48
-        brightness: -0.25
-        saturation: -0.2
+        smooth: true
+        cache: false
     }
 }

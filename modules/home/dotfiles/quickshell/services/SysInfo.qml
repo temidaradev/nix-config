@@ -9,8 +9,14 @@ Singleton {
     property string os: ""
     property string kernel: ""
     property string cpu: ""
-    property string gpu: ""
-    property string gpuDriver: ""
+    property string cpuShort: ""
+    property string cpuDetail: ""
+    property int threads: 0
+    property var gpus: []
+    readonly property var primaryGpu: gpus.find(g => g.primary) ?? gpus[0] ?? null
+    readonly property string gpu: primaryGpu?.name ?? ""
+    readonly property string gpuShort: primaryGpu?.short ?? "GPU"
+    readonly property string gpuDriver: primaryGpu?.driver ?? ""
     property string host: ""
     property string board: ""
     property string bios: ""
@@ -21,8 +27,48 @@ Singleton {
     property string locale: ""
     property string session: ""
     property string user: ""
-    property string display: ""
+    property var displays: []
     property int packages: 0
+
+    function junk(s) { return !s || /to be filled|system product|system version|default string|not applicable|not specified|^none$|^0+$/i.test(s.trim()) }
+
+    function cleanCpu(s) {
+        return s.replace(/\((R|TM)\)/gi, "").replace(/\s+@.*$/, "").replace(/\s+\d+-Core Processor/i, "")
+            .replace(/\b(CPU|Processor)\b/g, "").replace(/\s+/g, " ").trim()
+    }
+
+    function expand(list) {
+        const out = []
+        for (const part of (list || "").split(",")) {
+            const [a, b] = part.split("-").map(Number)
+            if (isNaN(a)) continue
+            for (let i = a; i <= (isNaN(b) ? a : b); i++) out.push(i)
+        }
+        return out
+    }
+
+    function vendorShort(v) {
+        if (/intel/i.test(v)) return "Intel"
+        if (/nvidia/i.test(v)) return "NVIDIA"
+        if (/amd|ati|advanced micro/i.test(v)) return "AMD"
+        if (/^0x/.test(v)) return ({ "0x8086": "Intel", "0x10de": "NVIDIA", "0x1002": "AMD" })[v] ?? v
+        return v.split(/\s+/)[0]
+    }
+
+    function gpuNames(vendor, device) {
+        const vs = vendorShort(vendor)
+        const brackets = (device.match(/\[[^\]]+\]/g) || []).map(b => b.slice(1, -1))
+        const code = device.replace(/\s*\[[^\]]*\]/g, "").trim()
+        const model = brackets.length ? brackets[brackets.length - 1] : ""
+        if (model === "" || /^((intel|amd)\s+)?graphics$/i.test(model))
+            return { name: vs + " Graphics" + (code ? " (" + code + ")" : ""), short: code || vs + " Graphics" }
+        const name = model.toLowerCase().startsWith(vs.toLowerCase()) ? model : vs + " " + model
+        return { name, short: model.includes("/") ? (code || model) : model }
+    }
+
+    function displayName(make) {
+        return (make || "").replace(/,?\s+(Inc\.?|Corporation|Corp\.?|Co\.,? Ltd\.?|Ltd\.?|Electronics.*|Technology.*)$/i, "").trim()
+    }
 
     Process {
         running: true
@@ -30,19 +76,33 @@ Singleton {
             . /etc/os-release 2>/dev/null
             echo "os=$PRETTY_NAME"
             echo "kernel=$(uname -r)"
-            echo "cpu=$(grep -m1 'model name' /proc/cpuinfo | cut -d: -f2 | sed 's/^ *//; s/ *[0-9]*-Core Processor//; s/(R)//g; s/(TM)//g')"
-            gpu=""
-            if command -v lspci >/dev/null; then gpu=$(lspci 2>/dev/null | grep -iE 'vga|3d|display' | head -1 | sed 's/.*: //; s/ (rev.*//; s/Corporation //')
-            else for c in /sys/class/drm/card?; do v=$(cat $c/device/vendor 2>/dev/null); d=$(cat $c/device/device 2>/dev/null); [ -n "$v" ] && gpu="pci $v:$d"; done; fi
-            echo "gpu=$gpu"
-            for c in /sys/class/drm/card?; do drv=$(basename "$(readlink $c/device/driver 2>/dev/null)"); [ -n "$drv" ] && echo "gpuDriver=$drv"; done
-            echo "host=$(cat /sys/devices/virtual/dmi/id/product_version 2>/dev/null || cat /sys/devices/virtual/dmi/id/product_name 2>/dev/null)"
-            echo "board=$(cat /sys/devices/virtual/dmi/id/board_vendor 2>/dev/null) $(cat /sys/devices/virtual/dmi/id/board_name 2>/dev/null)"
-            echo "bios=$(cat /sys/devices/virtual/dmi/id/bios_version 2>/dev/null) ($(cat /sys/devices/virtual/dmi/id/bios_date 2>/dev/null))"
+            echo "cpu=$(grep -m1 'model name' /proc/cpuinfo | cut -d: -f2)"
+            echo "threads=$(nproc --all)"
+            echo "maxFreq=$(cat /sys/devices/system/cpu/cpu[0-9]*/cpufreq/cpuinfo_max_freq 2>/dev/null | sort -n | tail -1)"
+            echo "pcpus=$(cat /sys/devices/cpu_core/cpus 2>/dev/null)"
+            echo "ecpus=$(cat /sys/devices/cpu_atom/cpus 2>/dev/null)"
+            grep -H . /sys/devices/system/cpu/cpu[0-9]*/topology/core_id /sys/devices/system/cpu/cpu[0-9]*/topology/physical_package_id 2>/dev/null | sed 's/^/topo=/'
+            if command -v lspci >/dev/null; then
+                lspci -mm -D 2>/dev/null | grep -E '"(VGA compatible controller|3D controller|Display controller)"' | while IFS= read -r l; do
+                    s=\${l%% *}; d=/sys/bus/pci/devices/$s
+                    echo "gpu=$(basename "$(readlink $d/driver)" 2>/dev/null)|$(cat $d/boot_vga 2>/dev/null)|$([ -d $d/hwmon ] && echo 1)|$l"
+                done
+            else
+                for c in /sys/class/drm/card[0-9]; do
+                    d=$(readlink -f $c/device); [ -r $d/vendor ] || continue
+                    echo "gpu=$(basename "$(readlink $d/driver)")|$(cat $d/boot_vga 2>/dev/null)|$([ -d $d/hwmon ] && echo 1)|x \\"Display\\" \\"$(cat $d/vendor)\\" \\"Device $(cat $d/device)\\""
+                done
+            fi
+            dmi=/sys/devices/virtual/dmi/id
+            echo "hostVersion=$(cat $dmi/product_version 2>/dev/null)"
+            echo "hostName=$(cat $dmi/product_name 2>/dev/null)"
+            echo "sysVendor=$(cat $dmi/sys_vendor 2>/dev/null)"
+            echo "board=$(cat $dmi/board_vendor 2>/dev/null) $(cat $dmi/board_name 2>/dev/null)"
+            echo "bios=$(cat $dmi/bios_version 2>/dev/null) ($(cat $dmi/bios_date 2>/dev/null))"
             echo "shell=quickshell $(qs --version 2>/dev/null | head -1 | grep -oE '[0-9]+(\\.[0-9]+)+' | head -1)"
             echo "wm=$(niri --version 2>/dev/null | sed 's/ (.*//')"
             echo "memory=$(awk '/^MemTotal/{printf "%.1f GiB", $2/1048576}' /proc/meminfo)"
-            echo "rootDisk=$(df -h / 2>/dev/null | awk 'NR==2{print $3" / "$2" ("$5")"}')"
+            echo "rootDisk=$(df -h --output=fstype,used,size,pcent / 2>/dev/null | awk 'NR==2{print $2" of "$3" used ("$4")  ·  "$1}')"
             echo "locale=$LANG"
             echo "session=$XDG_SESSION_TYPE / $XDG_CURRENT_DESKTOP"
             echo "user=$USER@$(hostname)"
@@ -50,32 +110,77 @@ Singleton {
         `]
         stdout: StdioCollector {
             onStreamFinished: {
+                const kv = {}, topo = {}, gpuLines = []
                 for (const l of text.split("\n")) {
                     const i = l.indexOf("="); if (i < 0) continue
                     const k = l.slice(0, i), v = l.slice(i + 1).trim()
-                    if (k === "packages") root.packages = parseInt(v) || 0
-                    else if (root.hasOwnProperty(k)) root[k] = v
+                    if (k === "topo") {
+                        const m = v.match(/cpu(\d+)\/topology\/(\w+):(\d+)/)
+                        if (m) (topo[m[1]] = topo[m[1]] || {})[m[2]] = m[3]
+                    } else if (k === "gpu") gpuLines.push(v)
+                    else kv[k] = v
                 }
+
+                for (const k of ["os", "kernel", "board", "shell", "wm", "memory", "rootDisk", "locale", "session", "user"])
+                    if (kv[k] !== undefined) root[k] = kv[k]
+                root.packages = parseInt(kv.packages) || 0
+                root.bios = kv.bios && !junk(kv.bios.split(" (")[0]) ? kv.bios : ""
+                root.host = !junk(kv.hostVersion) && kv.hostVersion.length > 4 ? kv.hostVersion
+                          : !junk(kv.hostName) ? ((kv.sysVendor && !junk(kv.sysVendor) ? kv.sysVendor + " " : "") + kv.hostName) : kv.board
+
+                root.cpu = cleanCpu(kv.cpu || "")
+                root.cpuShort = root.cpu.replace(/^(Intel|AMD)\s+/, "")
+                root.threads = parseInt(kv.threads) || Object.keys(topo).length
+                const core = c => topo[c] ? topo[c].physical_package_id + ":" + topo[c].core_id : "cpu" + c
+                const cores = new Set(Object.keys(topo).map(core)).size || root.threads
+                const p = new Set(expand(kv.pcpus).map(core)).size, e = new Set(expand(kv.ecpus).map(core)).size
+                const lp = cores - p - e
+                const parts = []
+                parts.push(p > 0 && e > 0 ? p + "P + " + e + "E" + (lp > 0 ? " + " + lp + " LP-E" : "") + " cores" : cores + " cores")
+                if (root.threads !== cores) parts.push(root.threads + " threads")
+                const mhz = parseInt(kv.maxFreq) / 1000
+                if (mhz > 0) parts.push("up to " + (mhz / 1000).toFixed(1) + " GHz")
+                root.cpuDetail = parts.join("  ·  ")
+
+                const gs = gpuLines.map(l => {
+                    const [driver, boot, hwmon, ...rest] = l.split("|")
+                    const q = (rest.join("|").match(/"[^"]*"/g) || []).map(s => s.slice(1, -1))
+                    const n = gpuNames(q[1] || "", q[2] || "")
+                    return { name: n.name, short: n.short, driver: driver || "", boot: boot === "1", hwmon: hwmon === "1", primary: false }
+                })
+                const primary = gs.find(g => g.hwmon) ?? gs.find(g => g.boot) ?? gs[0]
+                if (primary) primary.primary = true
+                root.gpus = gs
             }
         }
     }
 
-    // Display: model and the current mode, from niri.
     Process {
+        id: outputs
         running: true
         command: ["niri", "msg", "-j", "outputs"]
         stdout: StdioCollector {
             onStreamFinished: {
                 try {
-                    const outs = JSON.parse(text)
-                    root.display = Object.values(outs).map(o => {
-                        const m = o.current_mode !== null && o.current_mode !== undefined ? o.modes[o.current_mode] : null
-                        const mode = m ? m.width + "x" + m.height + " @ " + Math.round(m.refresh_rate / 1000) + " Hz" : "off"
-                        const scale = o.logical && o.logical.scale !== 1 ? "  ×" + o.logical.scale : ""
-                        return (o.model || o.name) + "  " + mode + scale
-                    }).join("\n")
-                } catch (e) { root.display = "" }
+                    root.displays = Object.values(JSON.parse(text)).filter(o => o.current_mode !== null && o.current_mode !== undefined).map(o => {
+                        const m = o.modes[o.current_mode]
+                        const [w, h] = o.physical_size || [0, 0]
+                        const inches = w > 0 && h > 0 ? Math.sqrt(w * w + h * h) / 25.4 : 0
+                        const builtin = /^(eDP|LVDS|DSI)/.test(o.name)
+                        const badModel = !o.model || /^0x[0-9a-f]+$/i.test(o.model) || /unknown/i.test(o.model)
+                        const make = root.displayName(o.make)
+                        const name = builtin ? "Built-in display"
+                                   : badModel ? (make || o.name)
+                                   : (make && !o.model.toLowerCase().startsWith(make.toLowerCase()) ? make + " " : "") + o.model
+                        const sub = [m.width + "×" + m.height + " @ " + Math.round(m.refresh_rate / 1000) + " Hz"]
+                        if (o.logical && o.logical.scale !== 1) sub.push("scale " + o.logical.scale)
+                        if (o.vrr_enabled) sub.push("VRR")
+                        sub.push(o.name)
+                        return { name: name + (inches > 0 ? "  " + inches.toFixed(1) + "″" : ""), sub: sub.join("  ·  ") }
+                    })
+                } catch (e) { root.displays = [] }
             }
         }
     }
+    function refreshDisplays() { outputs.running = true }
 }

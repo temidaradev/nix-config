@@ -12,7 +12,7 @@
     radius = 4;
     font = "JetBrainsMono Nerd Font";
     fontSize = 10;
-    reducedMotion = laptop;    # stops the continuously-running animations
+    reducedMotion = "auto";    # true | false | "auto": off on AC, on while running on battery
   };
 
   bar = {
@@ -50,6 +50,14 @@
   dashboard = { visualizer = !laptop; };   # cava bars in the media card (runs only while it is open)
 
   osd = { timeoutMs = 1500; bottomMargin = 90; };
+
+  idle = {
+    ac = if laptop
+      then { dim = 300; lock = 600; screenOff = 630; suspend = 0; }
+      else { dim = 0; lock = 900; screenOff = 960; suspend = 0; };
+    battery = { dim = 120; lock = 240; screenOff = 270; suspend = 900; };
+    lockedScreenOff = 30;
+  };
 
   notifications = { timeoutMs = 6000; maxPopups = 5; };
 

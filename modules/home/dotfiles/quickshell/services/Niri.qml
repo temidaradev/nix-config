@@ -14,6 +14,10 @@ Singleton {
     property int layoutIdx: 0
     readonly property string layout: layoutNames.length > layoutIdx ? shortLayout(layoutNames[layoutIdx]) : ""
 
+    readonly property string focusedOutput: workspaces.find(w => w.is_focused)?.output ?? ""
+    property var wsApps: ({})
+    property string _wsSig: ""
+
     property var _win: ({})
     property string hostname: "nixos"
     Process { running: true; command: ["hostname"]; stdout: StdioCollector { onStreamFinished: root.hostname = text.trim() } }
@@ -28,6 +32,14 @@ Singleton {
         const arr = Object.values(_win)
         arr.sort((a, b) => a.id - b.id)
         windows = arr
+        const m = {}
+        for (const w of arr) {
+            if (!w.app_id) continue
+            const l = m[w.workspace_id] = m[w.workspace_id] || []
+            if (l.length < 4 && l.indexOf(w.app_id) < 0) l.push(w.app_id)
+        }
+        const sig = JSON.stringify(m)
+        if (sig !== _wsSig) { _wsSig = sig; wsApps = m }
     }
 
     function action(...args) {

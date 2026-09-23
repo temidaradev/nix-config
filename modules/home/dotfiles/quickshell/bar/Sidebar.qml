@@ -37,8 +37,8 @@ PanelWindow {
         { id: "power",         glyph: "󰁹", label: "Power" }
     ]
     function open(t) { tab = t }
-    onVisibleChanged: if (visible) { Clipboard.refresh(); Capture.refresh(); Power.refresh(); Network.refresh(); Brightness.refresh(); ScreenTime.flush() }
-    Timer { interval: 4000; repeat: true; running: win.visible; onTriggered: Capture.refresh() }
+    Component.onCompleted: { Clipboard.refresh(); Capture.refresh(); Power.refresh(); Brightness.refresh(); ScreenTime.flush() }
+    Timer { interval: 4000; repeat: true; running: win.tab === "home"; onTriggered: Capture.refresh() }
 
     // ---- pipewire ----
     readonly property var nodes: Pipewire.nodes.values.filter(n => n.audio)
@@ -55,7 +55,6 @@ PanelWindow {
     readonly property var adapter: Bluetooth.defaultAdapter
     readonly property var btKnown: adapter ? Bluetooth.devices.values.filter(d => d.paired || d.connected).sort((a, b) => (b.connected - a.connected)) : []
     readonly property var btFound: adapter ? Bluetooth.devices.values.filter(d => !d.paired && !d.connected && d.name && d.name !== "") : []
-    Binding { target: Network; property: "active"; value: win.visible }
 
     property int stRange: 1
 
@@ -77,10 +76,14 @@ PanelWindow {
         Column { id: inner; anchors.left: parent.left; anchors.right: parent.right; anchors.top: parent.top; anchors.margins: 10; spacing: 6 }
     }
     component KV: Row {
-        property string k; property string v
-        width: parent.width
-        Dim { width: parent.width * 0.4; text: k; font.pointSize: Theme.smallSize }
-        Label { width: parent.width * 0.6; horizontalAlignment: Text.AlignRight; elide: v.includes("\n") ? Text.ElideNone : Text.ElideMiddle; wrapMode: v.includes("\n") ? Text.WordWrap : Text.NoWrap; text: v; font.pointSize: Theme.smallSize }
+        property string k; property string v; property string sub: ""
+        width: parent.width; spacing: 12
+        Dim { width: 84; text: k; font.pointSize: Theme.smallSize; elide: Text.ElideRight }
+        Column {
+            width: parent.width - 96; spacing: 1
+            Label { width: parent.width; text: v; wrapMode: Text.Wrap; font.pointSize: Theme.smallSize }
+            Dim { visible: sub !== ""; width: parent.width; text: sub; wrapMode: Text.Wrap }
+        }
     }
     component SmallButton: BarButton {
         property string label
@@ -374,39 +377,67 @@ PanelWindow {
                         }
                     }
                     Row { spacing: 6
-                        SmallButton { label: "pavucontrol"; onClicked: { Launcher.sidebarOpen = false; Quickshell.execDetached(["pavucontrol"]) } } }
+                        SmallButton { label: "pavucontrol"; onClicked: { Launcher.sidebarOpen = false; Apps.spawn(["pavucontrol"]) } } }
                 }
 
                 // ================= SYSTEM =================
                 Column {
                     visible: win.tab === "system"
                     width: parent.width; spacing: 8
+                    Component.onCompleted: SysInfo.refreshDisplays()
                     Heading { text: "System" }
                     Card {
-                        KV { k: "User"; v: SysInfo.user }
-                        KV { k: "Host"; v: SysInfo.host }
-                        KV { k: "Board"; v: SysInfo.board }
-                        KV { k: "BIOS"; v: SysInfo.bios }
+                        Row {
+                            width: parent.width; spacing: 12
+                            IconImage { anchors.verticalCenter: parent.verticalCenter; implicitSize: 44; source: Quickshell.iconPath("nix-snowflake", "computer") }
+                            Column {
+                                anchors.verticalCenter: parent.verticalCenter; width: parent.width - 56; spacing: 2
+                                Label { width: parent.width; elide: Text.ElideRight; text: SysInfo.os; font.bold: true }
+                                Dim { width: parent.width; elide: Text.ElideRight; text: "Linux " + SysInfo.kernel + (SysInfo.packages > 0 ? "  ·  " + SysInfo.packages + " store paths" : "") }
+                                Dim { width: parent.width; elide: Text.ElideRight; text: SysInfo.user + "  ·  up " + SysStats.uptime }
+                            }
+                        }
+                    }
+                    Section { text: "Hardware" }
+                    Card {
+                        spacing: 10
+                        KV { k: "Device"; v: SysInfo.host; sub: SysInfo.board !== SysInfo.host ? SysInfo.board : "" }
+                        KV { k: "CPU"; v: SysInfo.cpu; sub: SysInfo.cpuDetail }
+                        Repeater {
+                            model: SysInfo.gpus
+                            KV { required property var modelData; required property int index
+                                k: SysInfo.gpus.length > 1 ? "GPU " + (index + 1) : "GPU"
+                                v: modelData.name; sub: modelData.driver ? "driver: " + modelData.driver : "" }
+                        }
+                        KV { k: "Memory"; v: SysInfo.memory; sub: SysStats.swapTotal > 0 ? SysStats.fmtBytes(SysStats.swapTotal, 1) + " swap" : "" }
+                        KV { k: "Storage"; v: SysInfo.rootDisk; sub: "/" }
+                        Repeater {
+                            model: SysInfo.displays
+                            KV { required property var modelData; required property int index
+                                k: SysInfo.displays.length > 1 ? "Display " + (index + 1) : "Display"
+                                v: modelData.name; sub: modelData.sub }
+                        }
+                        KV { visible: SysInfo.bios !== ""; k: "Firmware"; v: SysInfo.bios }
+                    }
+                    Section { text: "Software" }
+                    Card {
+                        spacing: 10
                         KV { k: "OS"; v: SysInfo.os }
                         KV { k: "Kernel"; v: SysInfo.kernel }
-                        KV { k: "Packages"; v: SysInfo.packages > 0 ? SysInfo.packages + " (nix)" : "…" }
-                        KV { k: "Session"; v: SysInfo.session }
-                        KV { k: "WM"; v: SysInfo.wm }
+                        KV { k: "Packages"; v: SysInfo.packages > 0 ? SysInfo.packages + " (nix store paths)" : "…" }
+                        KV { k: "Desktop"; v: SysInfo.wm; sub: SysInfo.session }
                         KV { k: "Shell"; v: SysInfo.shell }
-                        KV { k: "CPU"; v: SysInfo.cpu + "  ·  " + SysStats.cores + " threads" }
-                        KV { k: "GPU"; v: SysInfo.gpu + (SysInfo.gpuDriver ? "  (" + SysInfo.gpuDriver + ")" : "") }
-                        KV { k: "Memory"; v: SysInfo.memory }
-                        KV { k: "Disk /"; v: SysInfo.rootDisk }
-                        KV { k: "Display"; v: SysInfo.display }
                         KV { k: "Locale"; v: SysInfo.locale }
-                        KV { k: "Uptime"; v: SysStats.uptime }
                     }
                     Section { text: "Live" }
                     Card {
+                        spacing: 8
                         Row { width: parent.width
-                            Gauge { width: parent.width / 3; size: 80; value: SysStats.cpu; label: "CPU  " + Math.round(SysStats.temp) + "°"; center: Math.round(SysStats.cpu) + "%" }
+                            readonly property bool gpuLive: SysStats.gpuTemp > 0 || SysStats.gpu > 0
+                            Gauge { width: parent.width / 3; size: 80; value: SysStats.cpu; label: "CPU" + (SysStats.temp > 0 ? "  " + Math.round(SysStats.temp) + "°" : ""); center: Math.round(SysStats.cpu) + "%" }
                             Gauge { width: parent.width / 3; size: 80; value: SysStats.memTotal > 0 ? SysStats.memUsed / SysStats.memTotal * 100 : 0; label: "Memory"; color: Theme.green }
-                            Gauge { width: parent.width / 3; size: 80; value: SysStats.gpuTemp; label: "GPU  " + Math.round(SysStats.gpuTemp) + "°"; center: SysStats.gpu > 0 ? Math.round(SysStats.gpu) + "%" : "–"; color: Theme.yellow } }
+                            Gauge { visible: parent.gpuLive; width: parent.width / 3; size: 80; value: SysStats.gpu > 0 ? SysStats.gpu : SysStats.gpuTemp; label: "GPU" + (SysStats.gpuTemp > 0 ? "  " + Math.round(SysStats.gpuTemp) + "°" : ""); center: SysStats.gpu > 0 ? Math.round(SysStats.gpu) + "%" : Math.round(SysStats.gpuTemp) + "°"; color: Theme.yellow }
+                            Gauge { visible: !parent.gpuLive; width: parent.width / 3; size: 80; value: SysStats.swapTotal > 0 ? SysStats.swapUsed / SysStats.swapTotal * 100 : 0; label: "Swap"; color: Theme.yellow } }
                         Row { width: parent.width; spacing: 8
                             Dim { text: "CPU"; width: 36; anchors.verticalCenter: parent.verticalCenter }
                             Sparkline { width: parent.width - 44; height: 36; values: SysStats.cpuHist } }
@@ -421,7 +452,7 @@ PanelWindow {
                     Card {
                         Repeater { model: SysStats.disks
                             DiskRow { required property var modelData; disk: modelData; width: parent.width } }
-                        KV { visible: SysStats.nvmeTemp > 0; k: "NVMe temperature"; v: Math.round(SysStats.nvmeTemp) + " °C" }
+                        KV { visible: SysStats.nvmeTemp > 0; k: "NVMe temp"; v: Math.round(SysStats.nvmeTemp) + " °C" }
                     }
                     Section { text: "NixOS" }
                     Card {
@@ -472,7 +503,7 @@ PanelWindow {
                                 onActionClicked: Network.disconnect(modelData.connection) } }
                     }
                     Row { spacing: 6
-                        SmallButton { label: "Edit connections"; onClicked: { Launcher.sidebarOpen = false; Quickshell.execDetached(["nm-connection-editor"]) } } }
+                        SmallButton { label: "Edit connections"; onClicked: { Launcher.sidebarOpen = false; Apps.spawn(["nm-connection-editor"]) } } }
                 }
 
                 // ================= BLUETOOTH =================
@@ -660,6 +691,11 @@ PanelWindow {
                             onMoved: Brightness.set(value)
                             Connections { target: Brightness; function onLevelChanged() { if (!bri.pressed) bri.value = Brightness.level } }
                         }
+                    }
+                    Section { text: "Idle" }
+                    Card {
+                        ToggleRow { label: "Stay awake"; sub: Idle.inhibit ? "Dimming, locking and sleep are paused" : "Pauses idle dimming, locking and sleep"; on: Idle.inhibit; onToggled: v => Idle.inhibit = v }
+                        KV { k: !Battery.present ? "Timeouts" : Battery.saving ? "On battery" : "Plugged in"; v: [Idle.cur.dim > 0 ? "dim " + Idle.fmt(Idle.cur.dim) : "", "lock " + Idle.fmt(Idle.cur.lock), "screen off " + Idle.fmt(Idle.cur.screenOff), Idle.cur.suspend > 0 ? "sleep " + Idle.fmt(Idle.cur.suspend) : ""].filter(s => s !== "").join("  ·  ") }
                     }
                     Section { text: Power.watt ? "Policy (watt)" : "Profile" }
                     Card {

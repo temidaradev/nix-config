@@ -7,6 +7,7 @@ import Quickshell.Services.UPower
 Singleton {
     id: root
     readonly property var dev: UPower.displayDevice
+    readonly property var battery: UPower.devices.values.find(d => d.isLaptopBattery) ?? null
     readonly property bool present: dev !== null && dev.isLaptopBattery && dev.isPresent
     readonly property int pct: present ? Math.round(dev.percentage * 100) : 0
     readonly property bool charging: present && (dev.state === UPowerDeviceState.Charging || dev.state === UPowerDeviceState.PendingCharge)
@@ -14,6 +15,7 @@ Singleton {
     readonly property bool onAc: charging || full || (present && UPower.onBattery === false)
     readonly property real timeLeft: present ? (charging ? dev.timeToFull : dev.timeToEmpty) : 0   // seconds
     readonly property bool low: present && !onAc && pct <= 15
+    readonly property bool saving: present && !onAc
 
     readonly property string glyph: {
         if (!present) return ""

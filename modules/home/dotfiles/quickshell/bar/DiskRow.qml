@@ -32,5 +32,5 @@ Item {
             }
         }
     }
-    MouseArea { anchors.fill: parent; onClicked: if (row.disk) Quickshell.execDetached(["dolphin", row.disk.mount]) }
+    MouseArea { anchors.fill: parent; onClicked: if (row.disk) Apps.spawn(["dolphin", row.disk.mount]) }
 }

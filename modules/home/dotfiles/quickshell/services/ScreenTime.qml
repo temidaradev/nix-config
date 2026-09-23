@@ -10,11 +10,41 @@ Singleton {
     id: root
     readonly property string dir: Quickshell.env("HOME") + "/.local/state/quickshell"
     readonly property string file: dir + "/screentime.json"
-    property var data: ({})            // { "yyyy-MM-dd": { app_id: seconds } }
+    property var data: ({})
     property bool dirty: false
-    property int version: 0            // bump to refresh bindings cheaply
+    property int version: 0
+
+    readonly property bool counting: !Lock.locked && !Idle.away && !Idle.screensOff
+    readonly property string focusedApp: {
+        const w = Niri.windows.find(w => w.id === Niri.focusedWindow)
+        return w ? (w.app_id || "unknown") : ""
+    }
+    property string app: ""
+    property real since: 0
 
     function today() { return Qt.formatDate(new Date(), "yyyy-MM-dd") }
+
+    function add(app, from, to) {
+        while (from < to) {
+            const d = new Date(from)
+            const midnight = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1).getTime()
+            const end = Math.min(to, midnight)
+            const key = Qt.formatDate(d, "yyyy-MM-dd")
+            if (!data[key]) data[key] = {}
+            data[key][app] = (data[key][app] || 0) + Math.round((end - from) / 1000)
+            from = end
+        }
+        dirty = true
+    }
+
+    function settle(until) {
+        const now = until ?? Date.now()
+        if (app !== "" && since > 0 && now > since) add(app, since, now)
+        app = counting ? focusedApp : ""
+        since = Date.now()
+    }
+    onFocusedAppChanged: settle()
+    onCountingChanged: settle(Idle.away ? Math.max(since, Date.now() - Idle.awaySec * 1000) : undefined)
 
     FileView {
         id: fv
@@ -25,22 +55,11 @@ Singleton {
     Process { command: ["mkdir", "-p", root.dir]; running: true }
 
     Timer {
-        interval: 1000; running: !Lock.locked; repeat: true
-        onTriggered: {
-            const w = Niri.windows.find(w => w.id === Niri.focusedWindow)
-            if (!w) return
-            const app = w.app_id || "unknown"
-            const d = root.today()
-            if (!root.data[d]) root.data[d] = {}
-            root.data[d][app] = (root.data[d][app] || 0) + 1
-            root.dirty = true
-        }
-    }
-    Timer {
-        interval: 30000; running: true; repeat: true
+        interval: 300000; running: true; repeat: true
         onTriggered: root.flush()
     }
     function flush() {
+        settle()
         if (!dirty) return
         const cutoff = new Date(); cutoff.setDate(cutoff.getDate() - 14)
         for (const d in data) if (new Date(d + "T00:00:00") < cutoff) delete data[d]
@@ -48,8 +67,12 @@ Singleton {
         dirty = false
         version++
     }
+    Connections {
+        target: Lock
+        function onLockedChanged() { if (Lock.locked) root.flush() }
+    }
+    Component.onDestruction: flush()
 
-    // [{app, seconds}] for the last `days` days, largest first
     function usage(days) {
         version
         const out = {}
@@ -61,7 +84,6 @@ Singleton {
         }
         return Object.keys(out).map(app => ({ app, seconds: out[app] })).sort((a, b) => b.seconds - a.seconds)
     }
-    // per-day totals for the last `days` days, oldest first: [{date, seconds}]
     function daily(days) {
         version
         const out = []
@@ -78,5 +100,5 @@ Singleton {
         const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60)
         return h > 0 ? h + "h " + m + "m" : m + "m"
     }
-    function reset() { data = {}; dirty = true; flush() }
+    function reset() { data = {}; app = ""; since = 0; dirty = true; flush() }
 }

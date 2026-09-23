@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Wayland
 import Quickshell.Widgets
 import Quickshell.Services.Pipewire
+import Quickshell.Bluetooth
 import qs
 import qs.services
 
@@ -13,7 +14,7 @@ PanelWindow {
     color: Theme.panelBg
     WlrLayershell.namespace: "qs-bar"
 
-    SystemClock { id: clock; precision: SystemClock.Seconds }
+    SystemClock { id: clock; precision: /s/.test(Settings.s.bar.clockFormat + Settings.s.bar.dateFormat) ? SystemClock.Seconds : SystemClock.Minutes }
 
     readonly property PwNode sink: Pipewire.defaultAudioSink
     PwObjectTracker { objects: [bar.sink] }
@@ -30,6 +31,7 @@ PanelWindow {
         anchors.fill: parent
         anchors.leftMargin: 4
         anchors.rightMargin: 4
+        HoverHandler { onHoveredChanged: if (hovered) Launcher.pointerScreen = bar.screen }
 
         // ---------------- left ----------------
         Row {
@@ -99,7 +101,7 @@ PanelWindow {
                         text: marquee.full
                         SequentialAnimation on x {
                             id: scroll
-                            running: marquee.overflow && !nowPlaying.hovered && !Settings.s.appearance.reducedMotion
+                            running: marquee.overflow && !nowPlaying.hovered && !Theme.reducedMotion
                             loops: Animation.Infinite
                             PauseAnimation { duration: 2000 }
                             NumberAnimation { from: 0; to: marquee.width - label.implicitWidth - 12; duration: Math.max(1000, (label.implicitWidth - marquee.width) * 25); easing.type: Easing.Linear }
@@ -116,7 +118,6 @@ PanelWindow {
                     anchors.left: parent.left; anchors.leftMargin: 8
                     width: (parent.width - 16) * nowPlaying.progress
                     height: 2; radius: 1; color: Theme.accent
-                    Behavior on width { enabled: !Settings.s.appearance.reducedMotion; NumberAnimation { duration: 800; easing.type: Easing.Linear } }
                 }
                 Rectangle {
                     parent: nowPlaying
@@ -139,15 +140,18 @@ PanelWindow {
 
             BarButton {   // keyboard layout
                 visible: Settings.s.bar.layout
+                menu: "layout"
                 BarText { text: Niri.layout || "us"; font.bold: true }
-                onClicked: Niri.nextLayout()
+                onClicked: e => e.button === Qt.LeftButton ? pop() : Niri.nextLayout()
+                onWheel: e => Niri.action("switch-layout", e.angleDelta.y > 0 ? "prev" : "next")
             }
 
             BarButton {   // volume
                 visible: Settings.s.bar.volume
+                menu: "volume"
                 BarText { text: bar.muted ? "󰖁" : (bar.volume < 0.01 ? "󰕿" : bar.volume < 0.5 ? "󰖀" : "󰕾"); font.pointSize: 12 }
                 onClicked: e => {
-                    if (e.button === Qt.LeftButton) Launcher.toggleControl()
+                    if (e.button === Qt.LeftButton) pop()
                     else if (bar.sink?.audio) bar.sink.audio.muted = !bar.sink.audio.muted
                 }
                 onWheel: e => {
@@ -159,19 +163,26 @@ PanelWindow {
 
             BarButton {   // bluetooth
                 visible: Settings.s.bar.bluetooth
-                BarText { text: "󰂯"; font.pointSize: 12 }
-                onClicked: Launcher.toggleControl()
+                id: btBtn
+                menu: "bluetooth"
+                readonly property var adapter: Bluetooth.defaultAdapter
+                readonly property bool on: adapter?.enabled ?? false
+                readonly property bool linked: on && Bluetooth.devices.values.some(d => d.connected)
+                BarText { text: !btBtn.on ? "󰂲" : btBtn.linked ? "󰂱" : "󰂯"; color: btBtn.on ? Theme.fg : Theme.fgDim; font.pointSize: 12 }
+                onClicked: e => { if (e.button === Qt.RightButton && adapter) adapter.enabled = !adapter.enabled; else pop() }
             }
 
             BarButton {   // laptop battery (only on laptops)
                 visible: Battery.present
+                menu: "battery"
                 BarText { text: Battery.glyph; color: Battery.low ? Theme.red : (Battery.charging ? Theme.green : Theme.fg); font.pointSize: 12 }
                 BarText { text: Battery.pct + "%"; font.pointSize: Theme.smallSize; color: Battery.low ? Theme.red : Theme.fg }
-                onClicked: Launcher.toggleControl()
+                onClicked: pop()
             }
 
             BarButton {   // peripheral batteries (only when something reports one)
                 visible: Settings.s.bar.battery && Devices.all.length > 0
+                menu: "devices"
                 Repeater {
                     model: Devices.all
                     Row {
@@ -182,25 +193,27 @@ PanelWindow {
                         BarText { text: modelData.pct + "%"; font.pointSize: Theme.smallSize }
                     }
                 }
-                onClicked: Launcher.toggleDash(nowPlaying.mapToItem(null, 0, 0).x + nowPlaying.width / 2)
+                onClicked: pop()
             }
 
             Sep {}
 
             BarButton {   // cpu sparkline
                 visible: Settings.s.bar.cpu
+                menu: "cpu"
                 BarText { text: "󰻠"; color: Theme.accent; font.pointSize: 12 }
                 Sparkline { values: SysStats.cpuHist }
                 BarText { text: Math.round(SysStats.cpu) + "%"; font.pointSize: Theme.smallSize; width: 30; horizontalAlignment: Text.AlignRight }
-                onClicked: Launcher.toggleDash(nowPlaying.mapToItem(null, 0, 0).x + nowPlaying.width / 2)
+                onClicked: pop()
             }
 
             BarButton {   // memory sparkline
                 visible: Settings.s.bar.memory
+                menu: "memory"
                 BarText { text: "󰍛"; color: Theme.green; font.pointSize: 12 }
                 Sparkline { values: SysStats.memHist; color: Theme.green }
                 BarText { text: Math.round(SysStats.memUsed / SysStats.memTotal * 100 || 0) + "%"; font.pointSize: Theme.smallSize; width: 30; horizontalAlignment: Text.AlignRight }
-                onClicked: Launcher.toggleDash(nowPlaying.mapToItem(null, 0, 0).x + nowPlaying.width / 2)
+                onClicked: pop()
             }
 
             BarButton {   // temperatures
@@ -226,6 +239,7 @@ PanelWindow {
 
             BarButton {   // network speed
                 visible: Settings.s.bar.network
+                menu: "network"
                 Column {
                     anchors.verticalCenter: parent.verticalCenter
                     spacing: -2
@@ -236,7 +250,7 @@ PanelWindow {
                         BarText { text: "󰁝"; color: Theme.accent; font.pointSize: 7 }
                         BarText { text: SysStats.fmtRate(SysStats.tx); font.pointSize: 7 } }
                 }
-                onClicked: Launcher.toggleControl()
+                onClicked: pop()
             }
 
             Sep {}

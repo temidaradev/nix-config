@@ -2,6 +2,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Services.Mpris
+import qs.services
 
 // Picks the "interesting" MPRIS player: the one chosen in the popup if still
 // alive, else a playing one, else the first one.
@@ -33,8 +34,8 @@ Singleton {
 
     // MPRIS doesn't push position updates; poll while something plays.
     Timer {
-        interval: 1000; repeat: true
-        running: root.player !== null && root.playing
+        interval: Launcher.dashOpen || Launcher.sidebarOpen || !Battery.saving ? 1000 : 5000; repeat: true
+        running: root.player !== null && root.playing && !Idle.screensOff && !Lock.locked
         onTriggered: root.player.positionChanged()
     }
 }

@@ -15,7 +15,6 @@ BarPopup {
 
     property var stack: []                          // submenu handles
     readonly property var handle: stack.length > 0 ? stack[stack.length - 1] : (Launcher.trayItem ? Launcher.trayItem.menu : null)
-    onVisibleChanged: if (visible) stack = []
 
     QsMenuOpener { id: opener; menu: menu.handle }
 

@@ -12,7 +12,6 @@ BarPopup {
     panelWidth: 760
     anchorX: Launcher.dashAnchorX
     onDismissed: Launcher.dashOpen = false
-    onVisibleChanged: if (visible) calendar.reset()
 
     readonly property MprisPlayer p: Media.player
     readonly property real length: p && p.length > 0 ? p.length : 0
@@ -178,15 +177,16 @@ BarPopup {
             anchors.bottom: parent.bottom
             width: parent.width; height: 5; radius: 3; color: Theme.bg3
             Rectangle { width: parent.width * Math.min(1, pct / 100); height: parent.height; radius: 3; color: accent
-                Behavior on width { NumberAnimation { duration: 400 } } }
+                Behavior on width { enabled: !Theme.reducedMotion; NumberAnimation { duration: 400 } } }
         }
 
-        Tile { glyph: "󰻠"; label: "CPU"; value: Math.round(SysStats.cpu) + "%"; sub: Math.round(SysStats.temp) + " °C  ·  " + SysStats.cores + " cores"
+        Tile { glyph: "󰻠"; label: "CPU"; value: Math.round(SysStats.cpu) + "%"; sub: (SysStats.temp > 0 ? Math.round(SysStats.temp) + " °C · " : "") + SysInfo.threads + " threads"
             Sparkline { anchors.bottom: parent.bottom; width: parent.width; height: 18; values: SysStats.cpuHist } }
         Tile { glyph: "󰍛"; label: "Memory"; accent: Theme.green; value: SysStats.fmtBytes(SysStats.memUsed, 1); sub: "of " + SysStats.fmtBytes(SysStats.memTotal, 0) + "  ·  " + Math.round(tiles.memPct) + "%"
             Sparkline { anchors.bottom: parent.bottom; width: parent.width; height: 18; values: SysStats.memHist; color: Theme.green } }
-        Tile { glyph: "󰢮"; label: "GPU"; accent: Theme.yellow; value: SysStats.gpuTemp > 0 ? Math.round(SysStats.gpuTemp) + " °C" : "n/a"; sub: SysStats.gpuTotal > 0 ? SysStats.fmtBytes(SysStats.gpuTotal, 0) + " VRAM" : "Arc B580"
-            Bar { pct: SysStats.gpuTemp; accent: Theme.yellow } }
+        Tile { glyph: "󰢮"; label: "GPU"; accent: Theme.yellow; value: SysStats.gpu > 0 ? Math.round(SysStats.gpu) + "%" : SysStats.gpuTemp > 0 ? Math.round(SysStats.gpuTemp) + " °C" : "—"
+            sub: SysInfo.gpuShort + (SysStats.gpuTotal > 0 ? "  ·  " + SysStats.fmtBytes(SysStats.gpuTotal, 0) : "")
+            Bar { pct: SysStats.gpu > 0 ? SysStats.gpu : SysStats.gpuTemp; accent: Theme.yellow } }
         Tile { glyph: "󰋊"; label: "Disk  /"; value: (tiles.rootDisk ? tiles.rootDisk.pct : 0) + "%"; sub: tiles.rootDisk ? SysStats.fmtBytes(tiles.rootDisk.used, 0) + " of " + SysStats.fmtBytes(tiles.rootDisk.size, 0) : ""
             Bar { pct: tiles.rootDisk ? tiles.rootDisk.pct : 0 } }
         Tile { glyph: "󰛳"; label: "Network"; value: "󰁅 " + SysStats.fmtRate(SysStats.rx); sub: "󰁝 " + SysStats.fmtRate(SysStats.tx)

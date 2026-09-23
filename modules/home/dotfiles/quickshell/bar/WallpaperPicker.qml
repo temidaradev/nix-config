@@ -8,7 +8,7 @@ BarPopup {
     visible: Launcher.wallpaperOpen
     panelWidth: 560
     onDismissed: Launcher.wallpaperOpen = false
-    onVisibleChanged: if (visible) Wallpaper.rescan()
+    Component.onCompleted: Wallpaper.rescan()
 
     Row {
         width: parent.width

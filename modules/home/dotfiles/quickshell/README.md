@@ -4,12 +4,13 @@ Plasma-flavoured shell. Started by the `quickshell-niri` user service (see
 modules/nixos/desktop/window-managers/niri.nix), which only runs in niri sessions.
 
 ```
-shell.qml       entry point: one of each window per screen
+shell.qml       entry point: bar and wallpaper per screen, popups created on demand
 Theme.qml       colours, font, bar height
 services/       singletons
   Niri          niri IPC event stream: windows, workspaces, keyboard layout
-  SysStats      cpu / mem / net from scripts/sysstats.sh
-  Crypto        SOL/USD ticker
+  SysStats      cpu / mem / net / temps, read in-process from /proc and /sys
+  SysInfo       hardware and software facts for the System tab
+  Idle          dim, lock, screens off and sleep on inactivity; lock before suspend
   Media         MPRIS player selection
   Launcher      which popup is open + `qs ipc` handlers
   Notifs        notification daemon (popups + history)

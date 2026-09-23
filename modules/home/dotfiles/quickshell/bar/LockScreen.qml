@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.Effects
 import Quickshell
 import Quickshell.Wayland
 import Quickshell.Services.Pam
@@ -39,19 +38,23 @@ WlSessionLock {
         }
 
         Image {
-            id: wall
             anchors.fill: parent
-            source: "file://" + Wallpaper.current
+            visible: Wallpaper.blurred !== ""
+            source: visible ? "file://" + Wallpaper.blurred : ""
             fillMode: Image.PreserveAspectCrop
             asynchronous: true
-            visible: false
+            smooth: true
         }
-        MultiEffect {
+        Image {
             anchors.fill: parent
-            source: wall
-            blurEnabled: true; blur: 0.9; blurMax: 64
-            brightness: -0.3; saturation: -0.1
+            visible: Wallpaper.blurred === ""
+            source: visible ? "file://" + Wallpaper.current : ""
+            sourceSize: Qt.size(Math.max(1, surface.width / 10), Math.max(1, surface.height / 10))
+            fillMode: Image.PreserveAspectCrop
+            asynchronous: true
+            smooth: true
         }
+        Rectangle { anchors.fill: parent; color: "#40000000" }
 
         Column {
             anchors.centerIn: parent

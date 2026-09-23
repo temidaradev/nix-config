@@ -9,7 +9,7 @@ Singleton {
     id: root
 
     readonly property var builtin: ({
-        appearance: { accent: "#3daee9", accentFromWallpaper: false, panelOpacity: 0.95, barHeight: 36, radius: 4, font: "JetBrainsMono Nerd Font", fontSize: 10, reducedMotion: false },
+        appearance: { accent: "#3daee9", accentFromWallpaper: false, panelOpacity: 0.95, barHeight: 36, radius: 4, font: "JetBrainsMono Nerd Font", fontSize: 10, reducedMotion: "auto" },
         bar: { tray: true, layout: true, volume: true, bluetooth: true, battery: true, cpu: true, memory: true, temps: true, disk: true, network: true,
                notifications: true, control: true, sidebar: true, nowPlaying: true, windowTitle: true, workspaceIcons: true, marqueeWidth: 220, clockFormat: "HH:mm", dateFormat: "ddd d MMM" },
         pinned: ["org.kde.dolphin", "zen-beta", "code", "dev.zed.Zed", "discord", "moe.kopuz.kopuz", "com.mitchellh.ghostty", "steam", "thunderbird", "org.jellyfin.JellyfinDesktop"],
@@ -17,6 +17,7 @@ Singleton {
         dashboard: { visualizer: true },
         osd: { timeoutMs: 1500, bottomMargin: 90 },
         notifications: { timeoutMs: 6000, maxPopups: 5 },
+        idle: { ac: { dim: 0, lock: 600, screenOff: 660, suspend: 0 }, battery: { dim: 120, lock: 300, screenOff: 330, suspend: 900 }, lockedScreenOff: 30 },
         wallpaper: ""
     })
     property var nix: ({})

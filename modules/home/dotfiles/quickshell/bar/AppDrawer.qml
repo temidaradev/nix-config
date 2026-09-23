@@ -75,7 +75,7 @@ PanelWindow {
                 return -1
             }
             return all.map(e => ({ e, s: score(e) })).filter(x => x.s >= 0).sort((a, b) => a.s - b.s)
-                .map(x => ({ icon: Quickshell.iconPath(x.e.icon, "application-x-executable"), title: x.e.name, sub: x.e.genericName || x.e.comment || "", run: () => x.e.execute() }))
+                .map(x => ({ icon: Quickshell.iconPath(x.e.icon, "application-x-executable"), title: x.e.name, sub: x.e.genericName || x.e.comment || "", run: () => Apps.launch(x.e) }))
         }
         case "providers":
             return providers.filter(p => query.length <= 1 || p.title.includes(query.slice(0, 5))).map(p => ({ glyph: p.glyph, title: p.title, sub: p.sub, keep: true, run: () => { search.text = p.key === "calc" ? "=" : p.key === "run" ? ":" : "/" + p.key + " " } }))
@@ -101,12 +101,12 @@ PanelWindow {
             return [{ glyph: "󰃬", title: arg === "" ? "Type an expression" : (calcResult || "…"), sub: arg === "" ? "e.g. =2^10, =5 km in mi, =100 usd to eur" : "Enter copies the result",
                       run: () => { if (calcResult !== "") Quickshell.execDetached(["sh", "-c", "printf %s " + JSON.stringify(calcResult) + " | wl-copy"]) } }]
         case "run":
-            return [{ glyph: "󰆍", title: arg === "" ? "Type a command" : arg, sub: "Enter runs it in a shell", run: () => { if (arg !== "") Quickshell.execDetached(["sh", "-c", arg]) } }]
+            return [{ glyph: "󰆍", title: arg === "" ? "Type a command" : arg, sub: "Enter runs it in a shell", run: () => { if (arg !== "") Apps.spawn(["sh", "-c", arg]) } }]
         }
         return []
     }
 
-    onVisibleChanged: if (visible) { current = 0; calcResult = ""; search.text = ""; search.forceActiveFocus() }
+    Component.onCompleted: search.forceActiveFocus()
     onQueryChanged: { current = 0; if (mode === "calc") calcDebounce.restart(); else calcResult = "" }
     function submit() {
         const r = results[current]

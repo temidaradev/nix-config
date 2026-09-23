@@ -17,7 +17,7 @@ PanelWindow {
     WlrLayershell.keyboardFocus: visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
     property int current: 0
-    onVisibleChanged: if (visible) { current = 0; keys.forceActiveFocus() }
+    Component.onCompleted: keys.forceActiveFocus()
 
     readonly property var actions: [
         { glyph: "󰌾", label: "Lock",     run: () => { Launcher.sessionOpen = false; Lock.lock() } },

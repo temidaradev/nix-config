@@ -26,7 +26,7 @@ Item {
                 centerX: g.size / 2; centerY: g.size / 2; radiusX: g.size / 2 - 4; radiusY: radiusX
                 startAngle: 90
                 sweepAngle: -Math.max(0, Math.min(100, g.value)) * 3.6
-                Behavior on sweepAngle { NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
+                Behavior on sweepAngle { enabled: !Theme.reducedMotion; NumberAnimation { duration: 400; easing.type: Easing.OutCubic } }
             }
         }
         Text { anchors.centerIn: parent; text: g.center; color: Theme.fg; font.family: Theme.font; font.pointSize: Theme.smallSize }

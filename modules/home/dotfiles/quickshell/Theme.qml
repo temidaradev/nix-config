@@ -27,6 +27,7 @@ Singleton {
 
     readonly property int barHeight: a.barHeight
     readonly property int radius: a.radius
+    readonly property bool reducedMotion: a.reducedMotion === "auto" ? Battery.saving : a.reducedMotion === true
 
     readonly property string wallpaper: Settings.s.wallpaper !== "" ? Settings.s.wallpaper : Quickshell.env("HOME") + "/.config/niri/wallpaper.png"
 }

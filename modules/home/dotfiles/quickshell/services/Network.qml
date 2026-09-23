@@ -2,11 +2,14 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import qs.services
 
 // NetworkManager state via nmcli. Polls only while `active` (a panel is open).
 Singleton {
     id: root
-    property bool active: false
+    readonly property bool active: Launcher.sidebarOpen || Launcher.controlOpen || Launcher.menu === "network"
+    property bool _rescan: true
+    onActiveChanged: if (active) _rescan = true
     property var devices: []      // [{name, type, state, connection, ip4}]
     property var wifi: []         // [{inUse, ssid, signal, freq, band, secure}]
     readonly property bool hasWifi: devices.some(d => d.type === "wifi")
@@ -35,7 +38,7 @@ Singleton {
     }
     Process {
         id: scan
-        command: ["nmcli", "-t", "-f", "IN-USE,SSID,SIGNAL,FREQ,SECURITY", "device", "wifi", "list"]
+        command: ["nmcli", "-t", "-f", "IN-USE,SSID,SIGNAL,FREQ,SECURITY", "device", "wifi", "list", "--rescan", root._rescan ? "auto" : "no"]
         stdout: StdioCollector {
             onStreamFinished: {
                 const seen = {}
@@ -50,9 +53,11 @@ Singleton {
     }
     Timer {
         interval: 5000; repeat: true; running: root.active; triggeredOnStart: true
-        onTriggered: { dev.running = true; if (root.hasWifi) scan.running = true }
+        onTriggered: root.refresh()
     }
-    function refresh() { dev.running = true; if (hasWifi) scan.running = true }
+    function scanWifi() { if (!scan.running) { scan.running = true; _rescan = false } }
+    function refresh() { dev.running = true; if (hasWifi) scanWifi() }
+    onHasWifiChanged: if (active && hasWifi) scanWifi()
     function connect(ssid) { Quickshell.execDetached(["sh", "-c", "nmcli device wifi connect '" + ssid.replace(/'/g, "'\\''") + "' || nm-connection-editor"]) }
     function disconnect(name) { Quickshell.execDetached(["nmcli", "connection", "down", name]) }
     function toggleWifi(on) { Quickshell.execDetached(["nmcli", "radio", "wifi", on ? "on" : "off"]) }

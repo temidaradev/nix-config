@@ -17,7 +17,7 @@ Singleton {
     function set(p) { Quickshell.execDetached(["powerprofilesctl", "set", p]); profile = p }
 
     function term(title, cmd) {
-        Quickshell.execDetached(["ghostty", "--title=" + title, "-e", "sh", "-c", cmd + "; echo; echo '--- done, press enter ---'; read _"])
+        Apps.spawn(["ghostty", "--title=" + title, "-e", "sh", "-c", cmd + "; echo; echo '--- done, press enter ---'; read _"])
     }
     function rebuild() { term("nixos rebuild", "cd " + flake + " && nh os switch . && systemctl --user restart quickshell-niri") }
     function update() { term("flake update", "cd " + flake + " && nix flake update && git diff --stat") }

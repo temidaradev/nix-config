@@ -13,7 +13,7 @@ BarPopup {
     visible: Launcher.controlOpen
     panelWidth: 400
     onDismissed: Launcher.hideControl()
-    onVisibleChanged: if (visible) Brightness.refresh()
+    Component.onCompleted: Brightness.refresh()
 
     readonly property PwNode sink: Pipewire.defaultAudioSink
     readonly property PwNode source: Pipewire.defaultAudioSource
@@ -23,45 +23,13 @@ BarPopup {
     readonly property var btDevices: adapter ? Bluetooth.devices.values.filter(d => d.paired || d.connected) : []
     readonly property var btConnected: btDevices.filter(d => d.connected)
 
-    property var connections: []      // active nm connections
-    property var wifi: []             // scanned networks
-    property bool hasWifi: false
+    readonly property var connections: Network.devices
+        .filter(d => d.state === "connected" && d.connection && d.type !== "bridge" && d.type !== "loopback"
+            && !d.name.startsWith("docker") && !d.name.startsWith("br-") && !d.name.startsWith("vmnet") && !d.name.startsWith("veth"))
+        .map(d => ({ name: d.connection, type: d.type, device: d.name }))
+    readonly property var wifi: Network.wifi
+    readonly property bool hasWifi: Network.hasWifi
     property string expanded: ""      // "bt" | "net" | ""
-
-    Process {
-        id: nm
-        command: ["nmcli", "-t", "-f", "NAME,TYPE,DEVICE", "connection", "show", "--active"]
-        stdout: StdioCollector {
-            onStreamFinished: win.connections = text.trim().split("\n").filter(l => l !== "").map(l => {
-                const [name, type, device] = l.split(":")
-                return { name, type: (type || "").replace(/^802-11-wireless$/, "wifi").replace(/^802-3-ethernet$/, "ethernet"), device: device || "" }
-            }).filter(c => c.type !== "loopback" && c.type !== "bridge"
-                && !c.device.startsWith("docker") && !c.device.startsWith("br-") && !c.device.startsWith("vmnet"))
-        }
-    }
-    Process {
-        id: wifiDev
-        command: ["nmcli", "-t", "-f", "TYPE", "device"]
-        stdout: StdioCollector { onStreamFinished: win.hasWifi = text.includes("wifi") }
-    }
-    Process {
-        id: wifiScan
-        command: ["nmcli", "-t", "-f", "IN-USE,SSID,SIGNAL,SECURITY", "device", "wifi", "list"]
-        stdout: StdioCollector {
-            onStreamFinished: {
-                const seen = {}
-                win.wifi = text.trim().split("\n").filter(l => l !== "").map(l => {
-                    const [inUse, ssid, signal, sec] = l.split(":")
-                    return { inUse: inUse === "*", ssid, signal: parseInt(signal) || 0, secure: (sec || "") !== "" }
-                }).filter(w => w.ssid !== "" && !seen[w.ssid] && (seen[w.ssid] = true)).sort((a, b) => b.signal - a.signal)
-            }
-        }
-    }
-    Timer {
-        interval: 5000; repeat: true; running: win.visible; triggeredOnStart: true
-        onTriggered: { nm.running = true; wifiDev.running = true; if (win.expanded === "net" && win.hasWifi) wifiScan.running = true }
-    }
-    onExpandedChanged: if (expanded === "net" && hasWifi) wifiScan.running = true
 
     function run(cmd) { Quickshell.execDetached(cmd) }
     function runAndClose(cmd) { Quickshell.execDetached(cmd); Launcher.hideControl() }
@@ -209,6 +177,11 @@ BarPopup {
             onExpand: win.expanded = win.expanded === "net" ? "" : "net"
         }
         Toggle {
+            glyph: Idle.inhibit ? "󰅶" : "󰾪"; label: "Stay awake"
+            on: Idle.inhibit; sub: on ? "No dim, lock or sleep" : "Lock after " + Idle.fmt(Idle.cur.lock)
+            onClicked: Idle.inhibit = !Idle.inhibit
+        }
+        Toggle {
             glyph: "󰸉"; label: "Wallpaper"; sub: "Pick an image"
             onClicked: Launcher.toggleWallpaper()
         }
@@ -251,7 +224,7 @@ BarPopup {
                 onClicked: win.run(["sh", "-c", "nmcli device wifi connect '" + modelData.ssid.replace(/'/g, "'\\''") + "' || nm-connection-editor"])
             }
         }
-        ListRow { glyph: "󰒓"; label: "Edit connections…"; sub: "nm-connection-editor"; onClicked: win.runAndClose(["nm-connection-editor"]) }
+        ListRow { glyph: "󰒓"; label: "Edit connections…"; sub: "nm-connection-editor"; onClicked: { Apps.spawn(["nm-connection-editor"]); Launcher.hideControl() } }
     }
 
     Section { text: "Now playing"; visible: Media.player !== null }

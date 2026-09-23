@@ -2,6 +2,7 @@ pragma Singleton
 import QtQuick
 import Quickshell
 import Quickshell.Io
+import qs.services
 
 // Open-Meteo: current conditions + 5-day forecast for a city name stored in
 // ~/.local/state/quickshell/weather-city (defaults to the timezone's city).
@@ -70,5 +71,5 @@ Singleton {
             }
         }
     }
-    Timer { interval: 15 * 60000; running: root.lat !== 0; repeat: true; onTriggered: forecast.running = true }
+    Timer { interval: (Battery.saving ? 60 : 15) * 60000; running: root.lat !== 0 && !Idle.screensOff; repeat: true; onTriggered: forecast.running = true }
 }

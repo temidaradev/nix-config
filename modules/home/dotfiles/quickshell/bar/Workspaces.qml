@@ -18,10 +18,7 @@ Row {
         BarButton {
             required property var modelData
             readonly property bool active: modelData.is_active
-            readonly property var apps: {
-                const seen = {}
-                return Niri.windows.filter(w => w.workspace_id === modelData.id && w.app_id && !seen[w.app_id] && (seen[w.app_id] = true)).slice(0, 4)
-            }
+            readonly property var apps: Niri.wsApps[modelData.id] ?? []
             padding: 8
             color: active ? Theme.accent : (hovered ? "#2affffff" : "transparent")
             BarText {
@@ -32,11 +29,11 @@ Row {
             Repeater {
                 model: Settings.s.bar.workspaceIcons ? apps : []
                 IconImage {
-                    required property var modelData
+                    required property string modelData
                     anchors.verticalCenter: parent.verticalCenter
                     implicitSize: 15
                     asynchronous: true
-                    source: Apps.icon(modelData.app_id)
+                    source: Apps.icon(modelData)
                 }
             }
             onClicked: Niri.focusWorkspace(modelData.idx)
