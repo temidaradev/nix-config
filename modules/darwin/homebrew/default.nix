@@ -6,7 +6,6 @@ let
     "gromgit/fuse"
     "osx-cross/avr"
     "pear-devs/pear"
-    "sikarugir-app/sikarugir"
   ];
 in
 {
@@ -97,7 +96,6 @@ in
       "android-platform-tools"
       "audacity"
       "cabal"
-      "cyberduck"
       "docker-desktop"
       "easy-move+resize"
       "font-hack-nerd-font"
@@ -111,11 +109,9 @@ in
       "iterm2"
       "itsycal"
       "kitty"
-      "lm-studio"
       "localsend"
       "maccy"
       "macfuse"
-      "middleclick"
       "miniforge"
       "mullvad-vpn"
       "ollama-app"
@@ -127,12 +123,10 @@ in
       "signal"
       "thonny"
       "tigervnc"
-      "unnaturalscrollwheels"
       "vlc"
       "vnc-viewer"
       "warp"
       "wine-stable"
-      "xdeck"
       "xld"
       "zulu@17"
     ];
@@ -153,7 +147,6 @@ in
       "uBlock Origin Lite" = 6745342698;
       "Unzip - RAR ZIP 7Z Unarchiver" = 1537056818;
       "WhatsApp" = 310633997;
-      "Windows App" = 1295203466;
       "Xcode" = 497799835;
     };
   };
