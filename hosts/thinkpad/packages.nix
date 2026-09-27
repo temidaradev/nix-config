@@ -115,6 +115,7 @@ with pkgs; {
     firefox
     telegram-desktop
     ghostty
+    lmstudio
     kdePackages.dolphin
   ];
 }
