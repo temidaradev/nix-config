@@ -321,6 +321,7 @@ in
         (service: skipFprintd service "[success=1 default=ignore]")
       // {
         kde-fingerprint = skipFprintd "kde-fingerprint" "[success=die default=ignore]";
+        sddm.fprintAuth = false;
       };
     services.fwupd.enable = true;
     hardware.sensor.iio.enable = true;
