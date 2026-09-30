@@ -53,7 +53,7 @@
 
   idle = {
     ac = if laptop
-      then { dim = 300; lock = 600; screenOff = 630; suspend = 0; }
+      then { dim = 0; lock = 0; screenOff = 0; suspend = 0; }
       else { dim = 0; lock = 900; screenOff = 960; suspend = 0; };
     battery = { dim = 120; lock = 240; screenOff = 270; suspend = 900; };
     lockedScreenOff = 30;

@@ -363,6 +363,7 @@ in
       ACTION=="add|bind", SUBSYSTEM=="pci", ENV{DRIVER}=="e1000e", ATTR{power/autosuspend_delay_ms}="1000"
       ACTION=="add", SUBSYSTEM=="backlight", RUN+="${pkgs.coreutils}/bin/chgrp video /sys/class/backlight/%k/brightness", RUN+="${pkgs.coreutils}/bin/chmod g+w /sys/class/backlight/%k/brightness"
       ACTION=="add", SUBSYSTEM=="leds", KERNEL=="*kbd_backlight", RUN+="${pkgs.coreutils}/bin/chgrp video /sys/class/leds/%k/brightness", RUN+="${pkgs.coreutils}/bin/chmod g+w /sys/class/leds/%k/brightness"
+      ACTION=="add", SUBSYSTEM=="drm", KERNEL=="card[0-9]*", DRIVERS=="i915", ATTR{engine/rcs0/preempt_timeout_ms}="30000", ATTR{engine/ccs0/preempt_timeout_ms}="30000"
     '';
     users.users.temidaradev.extraGroups = [ "video" "input" ];
   };
