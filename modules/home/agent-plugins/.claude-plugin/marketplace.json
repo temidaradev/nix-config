@@ -8,9 +8,9 @@
   },
   "plugins": [
     {
-      "name": "gliner-decide",
-      "source": "./gliner-decide",
-      "description": "Local GLiNER2.5-Decide text classifier over MCP"
+      "name": "kev-decide",
+      "source": "./kev-decide",
+      "description": "Local Kev-4B decision model over MCP"
     }
   ]
 }

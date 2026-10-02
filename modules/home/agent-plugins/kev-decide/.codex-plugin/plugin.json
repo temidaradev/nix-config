@@ -1,0 +1,13 @@
+{
+  "name": "kev-decide",
+  "version": "0.1.0",
+  "description": "Local Kev-4B decisions (choices, yes/no probabilities and ordinal scores) exposed as MCP tools",
+  "author": { "name": "temidaradev" },
+  "mcpServers": "./codex.mcp.json",
+  "interface": {
+    "displayName": "Kev-4B Decide",
+    "shortDescription": "Local decision model",
+    "category": "Developer Tools",
+    "capabilities": ["Read"]
+  }
+}

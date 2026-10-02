@@ -3,8 +3,8 @@
   "interface": { "displayName": "Dotfiles" },
   "plugins": [
     {
-      "name": "gliner-decide",
-      "source": { "source": "local", "path": "./gliner-decide" },
+      "name": "kev-decide",
+      "source": { "source": "local", "path": "./kev-decide" },
       "policy": { "installation": "AVAILABLE", "authentication": "ON_USE" },
       "category": "Developer Tools"
     }

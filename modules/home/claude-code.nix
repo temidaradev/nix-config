@@ -90,7 +90,7 @@ in
         };
 
         enabledPlugins."typesafe@typesafe-ai" = true;
-        enabledPlugins."gliner-decide@dotfiles" = true;
+        enabledPlugins."kev-decide@dotfiles" = true;
 
         env.DISABLE_TELEMETRY = "1";
         env.DISABLE_ERROR_REPORTING = "1";
