@@ -1,0 +1,13 @@
+{
+  "name": "gliner-decide",
+  "version": "0.1.0",
+  "description": "Local GLiNER2.5-Decide classifier (intent, sentiment, priority, routing, yes/no) exposed as MCP tools",
+  "author": { "name": "temidaradev" },
+  "mcpServers": "./codex.mcp.json",
+  "interface": {
+    "displayName": "GLiNER Decide",
+    "shortDescription": "Local text classifier",
+    "category": "Developer Tools",
+    "capabilities": ["Read"]
+  }
+}

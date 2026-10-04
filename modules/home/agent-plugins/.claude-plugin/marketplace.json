@@ -1,0 +1,16 @@
+{
+  "name": "dotfiles",
+  "owner": {
+    "name": "temidaradev"
+  },
+  "metadata": {
+    "description": "Personal agent plugins from dotfiles"
+  },
+  "plugins": [
+    {
+      "name": "gliner-decide",
+      "source": "./gliner-decide",
+      "description": "Local GLiNER2.5-Decide text classifier over MCP"
+    }
+  ]
+}
