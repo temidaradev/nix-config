@@ -41,6 +41,14 @@
         (final: prev: {
           avrdude = prev.avrdude.override { docSupport = false; };
           terminal-wakatime = final.callPackage ./modules/shared/pkgs/terminal-wakatime.nix { };
+        } // lib.optionalAttrs (prev.stdenv.hostPlatform.isLinux && prev.stdenv.hostPlatform.isx86_64) {
+          # Remove once trunk's bundled libdeflate supports GCC 16 (evex512 was removed).
+          trunk = prev.trunk.overrideAttrs (old: {
+            env = (old.env or { }) // {
+              # cc-rs prefers this target-specific setting over the Rust hooks' HOST_CC.
+              CC_x86_64_unknown_linux_gnu = "${prev.gcc15}/bin/cc";
+            };
+          });
         })
       ];
 
