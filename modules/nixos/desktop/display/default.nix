@@ -56,7 +56,16 @@ in
     wayland.enable = true;
     theme = "sddm-astronaut-theme";
     extraPackages = gruvbox-sddm.propagatedBuildInputs;
+    settings.Users.RememberLastSession = false;
   };
+
+  # SDDM prefers its saved session over services.displayManager.defaultSession.
+  # Clear an existing choice so the configured default is selected on startup.
+  systemd.services.display-manager.preStart = ''
+    if [ -f /var/lib/sddm/state.conf ]; then
+      ${pkgs.gnused}/bin/sed -i '/^Session=/d' /var/lib/sddm/state.conf
+    fi
+  '';
 
   environment.systemPackages = with pkgs; [
     gruvbox-sddm
