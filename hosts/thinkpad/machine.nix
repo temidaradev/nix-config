@@ -14,6 +14,11 @@ in
   system.stateVersion = "26.05";
   temidaradev.role = "laptop";
 
+  services.tailscale = {
+    enable = true;
+    openFirewall = true;
+  };
+
   environment.systemPackages = packages.system ++ shared ++ [
     flakeInputs.helium.packages.${system}.default
     flakeInputs.kopuz.packages.${system}.default
