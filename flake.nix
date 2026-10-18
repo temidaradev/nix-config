@@ -41,6 +41,14 @@
         (final: prev: {
           avrdude = prev.avrdude.override { docSupport = false; };
           terminal-wakatime = final.callPackage ./modules/shared/pkgs/terminal-wakatime.nix { };
+        } // lib.optionalAttrs prev.stdenv.hostPlatform.isDarwin {
+          # Remove once nixpkgs uses the platform's library extension in Bear's install hook.
+          bear = prev.bear.overrideAttrs (old: {
+            postInstall = builtins.replaceStrings
+              [ "libexec.so" ]
+              [ "libexec${prev.stdenv.hostPlatform.extensions.sharedLibrary}" ]
+              old.postInstall;
+          });
         } // lib.optionalAttrs (prev.stdenv.hostPlatform.isLinux && prev.stdenv.hostPlatform.isx86_64) {
           # Remove once trunk's bundled libdeflate supports GCC 16 (evex512 was removed).
           trunk = prev.trunk.overrideAttrs (old: {
