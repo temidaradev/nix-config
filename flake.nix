@@ -50,6 +50,40 @@
               old.postInstall;
           });
         } // lib.optionalAttrs (prev.stdenv.hostPlatform.isLinux && prev.stdenv.hostPlatform.isx86_64) {
+          # patchelf 0.19.2 corrupts vmnet-natd's ELF layout, crashing the loader.
+          # Keep VMware on the patcher used by the previous working package.
+          vmware-workstation = prev.vmware-workstation.overrideAttrs (old: {
+            nativeBuildInputs = [
+              (prev.patchelf.overrideAttrs {
+                version = "0.15.2";
+                src = prev.fetchurl {
+                  url = "https://github.com/NixOS/patchelf/releases/download/0.15.2/patchelf-0.15.2.tar.bz2";
+                  hash = "sha256-F3RfVkFZyOIo/EEtplogSLhGxLa0Igt3y/IkFuAvLXw=";
+                };
+              })
+            ] ++ (old.nativeBuildInputs or [ ]);
+          });
+
+          # speechd's configure needs a native Python interpreter under strictDeps.
+          # Match Calibre's Python so its speechd bindings are built and importable.
+          calibre = prev.calibre.override {
+            speechd-minimal = prev.speechd-minimal.overrideAttrs (old: {
+              nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ final.python314 ];
+            });
+          };
+
+          # Remove once pyopenjtalk-plus accepts Cython's type-error wording.
+          pythonPackagesExtensions = prev.pythonPackagesExtensions ++ [
+            (_pythonFinal: pythonPrev: {
+              pyopenjtalk-plus = pythonPrev.pyopenjtalk-plus.overridePythonAttrs (old: {
+                postPatch = (old.postPatch or "") + ''
+                  substituteInPlace tests/test_frontend.py \
+                    --replace-fail 'match="must be str"' 'match="must be str|Expected str, got int"'
+                '';
+              });
+            })
+          ];
+
           # Remove once trunk's bundled libdeflate supports GCC 16 (evex512 was removed).
           trunk = prev.trunk.overrideAttrs (old: {
             env = (old.env or { }) // {
