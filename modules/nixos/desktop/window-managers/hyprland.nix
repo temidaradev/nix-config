@@ -1,7 +1,16 @@
 { config, lib, pkgs, system, flakeInputs, ... }:
 
 let
-  caelestia = flakeInputs.caelestia-shell.packages.${system}.with-cli;
+  caelestia-cli = flakeInputs.caelestia-shell.inputs.caelestia-cli.packages.${system}.default.overrideAttrs (old: {
+    # Upstream's version fallback is a shell variable under structuredAttrs.
+    # Export it so hatch-vcs can build the source archive without Git metadata.
+    preBuild = ''
+      export SETUPTOOLS_SCM_PRETEND_VERSION
+    '' + (old.preBuild or "");
+  });
+  caelestia = flakeInputs.caelestia-shell.packages.${system}.with-cli.override {
+    inherit caelestia-cli;
+  };
 in
 {
   programs.hyprland = {
