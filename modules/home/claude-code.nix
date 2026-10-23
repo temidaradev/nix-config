@@ -90,8 +90,6 @@ in
         };
 
         enabledPlugins."typesafe@typesafe-ai" = true;
-        enabledPlugins."kev-decide@dotfiles" = true;
-
         env.DISABLE_TELEMETRY = "1";
         env.DISABLE_ERROR_REPORTING = "1";
         env.CLAUDE_CODE_DISABLE_FEEDBACK_SURVEY = "1";

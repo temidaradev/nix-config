@@ -17,11 +17,6 @@ in
   boot.kernelParams = [ "amd_pstate=active" ];
   powerManagement.cpuFreqGovernor = "performance";
 
-  hardware.openrazer = {
-    enable = true;
-    users = [ "temidaradev" ];
-  };
-
   environment.systemPackages = packages.system ++ shared ++ [
     flakeInputs.helium.packages.${system}.default
     flakeInputs.kopuz.packages.${system}.default
