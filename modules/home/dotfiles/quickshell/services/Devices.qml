@@ -30,7 +30,13 @@ Singleton {
         const names = {}
         const out = upower.slice()
         for (const d of out) names[d.name.toLowerCase()] = true
+        const buds = Buds.connected && Buds.level >= 0
+        if (buds) {
+            names[Buds.state.name.toLowerCase()] = true
+            out.unshift({ key: "buds", name: Buds.state.name, pct: Buds.level, glyph: "󱡏", charging: Buds.charging })
+        }
         for (const d of bluetooth) if (!names[d.name.toLowerCase()]) out.push(d)
         return out
     }
+    readonly property bool hasBuds: all.some(d => d.key === "buds")
 }

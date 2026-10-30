@@ -56,6 +56,7 @@ in
     libqalculate         # "=" calculator in the launcher
     imagemagick          # accent-from-wallpaper
     libnotify            # notify-send, lands in the shell's notification daemon
+    cmf-buds
     curl
     pciutils             # lspci, for the GPU name in the system tab
     grim

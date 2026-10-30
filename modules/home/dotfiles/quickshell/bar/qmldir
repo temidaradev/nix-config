@@ -38,6 +38,8 @@ VolumePopup 1.0 VolumePopup.qml
 BluetoothPopup 1.0 BluetoothPopup.qml
 BatteryPopup 1.0 BatteryPopup.qml
 DevicesPopup 1.0 DevicesPopup.qml
+BudsPopup 1.0 BudsPopup.qml
+DotText 1.0 DotText.qml
 CpuPopup 1.0 CpuPopup.qml
 MemoryPopup 1.0 MemoryPopup.qml
 NetworkPopup 1.0 NetworkPopup.qml

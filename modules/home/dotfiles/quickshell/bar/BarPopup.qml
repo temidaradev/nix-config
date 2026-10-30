@@ -20,6 +20,9 @@ PanelWindow {
     property real anchorX: -1            // centre the panel on this x; -1 = right edge
     property bool anchorRight: anchorX < 0
     property int padding: 12
+    property color panelColor: Theme.panelBg
+    property color panelBorder: Theme.cardBorder
+    property real panelRadius: 6
     default property alias content: content.data
     signal dismissed
 
@@ -31,9 +34,9 @@ PanelWindow {
         height: win.panelHeight
         y: Theme.barHeight + 4
         x: win.anchorRight ? win.width - width - 4 : Math.max(4, Math.min(win.width - width - 4, win.anchorX - width / 2))
-        radius: 6
-        color: Theme.panelBg
-        border.color: Theme.cardBorder; border.width: 1
+        radius: win.panelRadius
+        color: win.panelColor
+        border.color: win.panelBorder; border.width: 1
         MouseArea { anchors.fill: parent }
 
         Column {

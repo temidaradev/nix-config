@@ -181,8 +181,10 @@ PanelWindow {
             }
 
             BarButton {   // peripheral batteries (only when something reports one)
+                id: devBtn
                 visible: Settings.s.bar.battery && Devices.all.length > 0
                 menu: "devices"
+                color: Launcher.menu === "devices" || Launcher.menu === "buds" ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
                 Repeater {
                     model: Devices.all
                     Row {
@@ -193,7 +195,10 @@ PanelWindow {
                         BarText { text: modelData.pct + "%"; font.pointSize: Theme.smallSize }
                     }
                 }
-                onClicked: pop()
+                onClicked: e => {
+                    if (Devices.hasBuds && e.button === Qt.LeftButton) Launcher.toggleMenu("buds", devBtn.mapToItem(null, 0, 0).x + devBtn.width / 2)
+                    else pop()
+                }
             }
 
             Sep {}
