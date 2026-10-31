@@ -40,6 +40,7 @@ BatteryPopup 1.0 BatteryPopup.qml
 DevicesPopup 1.0 DevicesPopup.qml
 BudsPopup 1.0 BudsPopup.qml
 SonyPopup 1.0 SonyPopup.qml
+AirPodsPopup 1.0 AirPodsPopup.qml
 DotText 1.0 DotText.qml
 CpuPopup 1.0 CpuPopup.qml
 MemoryPopup 1.0 MemoryPopup.qml

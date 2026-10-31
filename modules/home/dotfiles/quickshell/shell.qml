@@ -7,7 +7,7 @@ import qs.services
 
 ShellRoot {
     // singletons that must exist even before a window references them
-    Component.onCompleted: { Settings.s; Notifs.count; Wallpaper.current; Buds.connected; Sony.connected; Mouse.connected; Devices.all; Battery.present; Brightness.present; Lock.locked; Idle.away; ScreenTime.version }
+    Component.onCompleted: { Settings.s; Notifs.count; Wallpaper.current; Buds.connected; Sony.connected; Mouse.connected; AirPods.connected; Devices.all; Battery.present; Brightness.present; Lock.locked; Idle.away; ScreenTime.version }
 
     LockScreen {}
 
@@ -40,6 +40,7 @@ ShellRoot {
     LazyLoader { active: Launcher.menu === "devices"; DevicesPopup { screen: Launcher.screen } }
     LazyLoader { active: Launcher.menu === "buds"; BudsPopup { screen: Launcher.screen } }
     LazyLoader { active: Launcher.menu === "sony"; SonyPopup { screen: Launcher.screen } }
+    LazyLoader { active: Launcher.menu === "airpods"; AirPodsPopup { screen: Launcher.screen } }
     LazyLoader { active: Launcher.menu === "cpu"; CpuPopup { screen: Launcher.screen } }
     LazyLoader { active: Launcher.menu === "memory"; MemoryPopup { screen: Launcher.screen } }
     LazyLoader { active: Launcher.menu === "network"; NetworkPopup { screen: Launcher.screen } }

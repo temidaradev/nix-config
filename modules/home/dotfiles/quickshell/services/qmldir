@@ -22,3 +22,4 @@ singleton Jev 1.0 Jev.qml
 singleton Buds 1.0 Buds.qml
 singleton Sony 1.0 Sony.qml
 singleton Mouse 1.0 Mouse.qml
+singleton AirPods 1.0 AirPods.qml

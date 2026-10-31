@@ -191,7 +191,7 @@ PanelWindow {
                 id: devBtn
                 visible: Settings.s.bar.battery && Devices.all.some(d => !d.key.startsWith("mouse:"))
                 menu: "devices"
-                color: ["devices", "buds", "sony"].includes(Launcher.menu) ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
+                color: ["devices", "buds", "sony", "airpods"].includes(Launcher.menu) ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
                 Repeater {
                     model: Devices.all.filter(d => !d.key.startsWith("mouse:"))
                     Row {
@@ -207,6 +207,7 @@ PanelWindow {
                     if (e.button !== Qt.LeftButton) pop()
                     else if (Devices.hasBuds) Launcher.toggleMenu("buds", x)
                     else if (Devices.hasSony) Launcher.toggleMenu("sony", x)
+                    else if (Devices.hasAirPods) Launcher.toggleMenu("airpods", x)
                     else pop()
                 }
             }

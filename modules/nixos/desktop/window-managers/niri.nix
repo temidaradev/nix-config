@@ -59,6 +59,7 @@ in
     cmf-buds
     sony-xm5
     mouse-battery
+    airpods
     curl
     pciutils             # lspci, for the GPU name in the system tab
     grim

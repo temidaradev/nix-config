@@ -44,6 +44,7 @@
           cmf-buds = final.callPackage ./modules/shared/pkgs/cmf-buds { };
           sony-xm5 = final.callPackage ./modules/shared/pkgs/sony-xm5 { };
           mouse-battery = final.callPackage ./modules/shared/pkgs/mouse-battery { };
+          airpods = final.callPackage ./modules/shared/pkgs/airpods { };
         } // lib.optionalAttrs prev.stdenv.hostPlatform.isDarwin {
           # Remove once nixpkgs uses the platform's library extension in Bear's install hook.
           bear = prev.bear.overrideAttrs (old: {
