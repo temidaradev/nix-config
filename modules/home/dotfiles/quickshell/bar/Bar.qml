@@ -134,7 +134,7 @@ PanelWindow {
             readonly property real fullWidth: width + (cpuSpark.visible ? 0 : cpuSpark.width + 4) + (memSpark.visible ? 0 : memSpark.width + 4) + (netBtn.visible || !Settings.s.bar.network ? 0 : netBtn.implicitWidth + spacing)
             readonly property real room: parent.width / 2 - nowPlaying.width / 2 - 8
             property bool compact: false
-            function fit() { compact = fullWidth > room }
+            function fit() { compact = fullWidth > room - (compact ? 48 : 0) }
             onFullWidthChanged: Qt.callLater(fit)
             onRoomChanged: Qt.callLater(fit)
             anchors.right: parent.right

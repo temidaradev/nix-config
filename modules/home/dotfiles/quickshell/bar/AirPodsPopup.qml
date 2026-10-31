@@ -5,7 +5,7 @@ import qs.services
 
 // AirPods controls, styled like the other bar popups.
 BarPopup {
-    id: pop
+    id: popup
     visible: Launcher.menu === "airpods"
     anchorX: Launcher.menuAnchorX
     panelWidth: 360
@@ -99,7 +99,7 @@ BarPopup {
             Text { id: cellLabel; text: cell.label; color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 2 }
             Text {
                 anchors.right: parent.right
-                text: AirPods.state && cell.pod ? pop.podText(cell.pod) : "—"
+                text: AirPods.state && cell.pod ? popup.podText(cell.pod) : "—"
                 color: cell.pod && cell.pod.level < 20 ? Theme.red : Theme.fg
                 font.family: Theme.font; font.pointSize: Theme.smallSize - 1
             }
@@ -119,9 +119,9 @@ BarPopup {
     PopupTitle {
         glyph: "󱡏"
         glyphColor: AirPods.connected ? Theme.accent : Theme.fgDim
-        text: pop.s.name || "AirPods"
+        text: popup.s.name || "AirPods"
         sub: !AirPods.connected ? "Not connected"
-            : [pop.s.info?.model || (pop.s.model ? "0x" + pop.s.model : ""), pop.s.info?.firmware ? "FW " + pop.s.info.firmware.split(".")[0] : "", AirPods.isOutput ? "Playing here" : "Not the output"].filter(x => x).join("  ·  ")
+            : [popup.s.info?.model || (popup.s.model ? "0x" + popup.s.model : ""), popup.s.info?.firmware ? "FW " + popup.s.info.firmware.split(".")[0] : "", AirPods.isOutput ? "Playing here" : "Not the output"].filter(x => x).join("  ·  ")
         PopupButton { visible: AirPods.connected; label: "󰑐"; onClicked: AirPods.refresh() }
     }
     Text {
@@ -135,39 +135,39 @@ BarPopup {
         visible: AirPods.connected
         width: parent.width; spacing: 10
         readonly property var earText: ({ ear: "In ear", out: "Out", case: "In case" })
-        Cell { label: "Left"; pod: pop.s.left; ear: parent.earText[pop.s.leftEar] ?? "" }
-        Cell { label: "Right"; pod: pop.s.right; ear: parent.earText[pop.s.rightEar] ?? "" }
-        Cell { label: "Case"; pod: pop.s.case }
+        Cell { label: "Left"; pod: popup.s.left; ear: parent.earText[popup.s.leftEar] ?? "" }
+        Cell { label: "Right"; pod: popup.s.right; ear: parent.earText[popup.s.rightEar] ?? "" }
+        Cell { label: "Case"; pod: popup.s.case }
     }
 
     // ── Noise control
     PopupSection { visible: AirPods.connected; text: "Noise control" }
     Choice {
         visible: AirPods.connected
-        options: (pop.s.offOption === false ? [] : [["off", "Off"]]).concat([["nc", "Cancel"], ["transparency", "Transparent"], ["adaptive", "Adaptive"]])
-        current: pop.s.anc ?? ""
+        options: (popup.s.offOption === false ? [] : [["off", "Off"]]).concat([["nc", "Cancel"], ["transparency", "Transparent"], ["adaptive", "Adaptive"]])
+        current: popup.s.anc ?? ""
         onPicked: k => AirPods.setAnc(k)
     }
     Level {
-        visible: AirPods.connected && pop.s.anc === "adaptive" && pop.s.strength !== null
+        visible: AirPods.connected && popup.s.anc === "adaptive" && popup.s.strength !== null
         label: "Strength"
-        value: pop.s.strength ?? 0
+        value: popup.s.strength ?? 0
         onCommitted: v => AirPods.setStrength(v)
     }
     PopupToggle {
-        visible: AirPods.connected && pop.s.conversation !== null
+        visible: AirPods.connected && popup.s.conversation !== null
         label: "Conversation Awareness"; sub: "Lower media and let voices in when you talk"
-        on: pop.s.conversation ?? false
+        on: popup.s.conversation ?? false
         onToggled: v => AirPods.setFlag("ca", v)
     }
     PopupToggle {
-        visible: AirPods.connected && pop.s.adaptiveVolume !== null
+        visible: AirPods.connected && popup.s.adaptiveVolume !== null
         label: "Personalised Volume"; sub: "Adjust media volume to your surroundings"
-        on: pop.s.adaptiveVolume ?? false
+        on: popup.s.adaptiveVolume ?? false
         onToggled: v => AirPods.setFlag("advol", v)
     }
     PopupToggle {
-        visible: AirPods.connected && (pop.s.conversation ?? false)
+        visible: AirPods.connected && (popup.s.conversation ?? false)
         label: "Lower volume while I talk"; sub: "Done by this computer, to " + AirPods.duckTo + "% of the volume"
         on: AirPods.duck
         onToggled: v => AirPods.setDuck(v)
@@ -175,27 +175,27 @@ BarPopup {
 
     // ── Equaliser
     Item {
-        visible: AirPods.connected && pop.s.eq !== null
+        visible: AirPods.connected && popup.s.eq !== null
         width: parent.width; implicitHeight: eqHead.implicitHeight
         PopupSection { id: eqHead; text: "Equaliser" }
         PopupSwitch {
             anchors.right: parent.right; anchors.bottom: parent.bottom
             scale: 0.8; transformOrigin: Item.BottomRight
-            on: pop.s.eq?.on ?? false
+            on: popup.s.eq?.on ?? false
             onToggled: v => AirPods.setEq(v)
         }
     }
     Column {
-        visible: AirPods.connected && (pop.s.eq?.on ?? false)
+        visible: AirPods.connected && (popup.s.eq?.on ?? false)
         width: parent.width; spacing: 4
         Repeater {
             model: [["low", "Bass"], ["mid", "Mids"], ["high", "Treble"]]
             Level {
                 required property var modelData
                 label: modelData[1]
-                value: pop.s.eq?.[modelData[0]] ?? 50
+                value: popup.s.eq?.[modelData[0]] ?? 50
                 onCommitted: v => {
-                    const e = Object.assign({}, pop.s.eq, { [modelData[0]]: v })
+                    const e = Object.assign({}, popup.s.eq, { [modelData[0]]: v })
                     AirPods.setEqBands(e.low, e.mid, e.high)
                 }
             }
@@ -209,60 +209,60 @@ BarPopup {
         PopupSection { id: setHead; text: "Settings" }
         Text {
             anchors.right: parent.right; anchors.bottom: parent.bottom
-            text: pop.showSettings ? "󰅃" : "󰅀"; color: Theme.fgDim
+            text: popup.showSettings ? "󰅃" : "󰅀"; color: Theme.fgDim
             font.family: Theme.font; font.pointSize: Theme.smallSize
         }
-        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: pop.showSettings = !pop.showSettings }
+        MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: popup.showSettings = !popup.showSettings }
     }
     Column {
-        visible: AirPods.connected && pop.showSettings
+        visible: AirPods.connected && popup.showSettings
         width: parent.width; spacing: 6
-        PopupToggle { visible: pop.s.swipe !== null; label: "Volume swipe"; sub: "Swipe the stem to change volume"; on: pop.s.swipe ?? false; onToggled: v => AirPods.setFlag("swipe", v) }
-        PopupToggle { visible: pop.s.oneBud !== null; label: "Noise control with one AirPod"; on: pop.s.oneBud ?? false; onToggled: v => AirPods.setFlag("onebud", v) }
-        PopupToggle { visible: pop.s.offOption !== null; label: "Allow Off mode"; on: pop.s.offOption ?? false; onToggled: v => AirPods.setFlag("offoption", v) }
-        PopupToggle { visible: pop.s.earDetect !== null; label: "Automatic ear detection"; on: pop.s.earDetect ?? false; onToggled: v => AirPods.setFlag("eardetect", v) }
-        PopupToggle { visible: pop.s.caseTone !== null; label: "Case sounds"; on: pop.s.caseTone ?? false; onToggled: v => AirPods.setFlag("casetone", v) }
-        PopupToggle { visible: pop.s.sleepDetect !== null; label: "Sleep detection"; sub: "Pause media when you fall asleep"; on: pop.s.sleepDetect ?? false; onToggled: v => AirPods.setFlag("sleep", v) }
+        PopupToggle { visible: popup.s.swipe !== null; label: "Volume swipe"; sub: "Swipe the stem to change volume"; on: popup.s.swipe ?? false; onToggled: v => AirPods.setFlag("swipe", v) }
+        PopupToggle { visible: popup.s.oneBud !== null; label: "Noise control with one AirPod"; on: popup.s.oneBud ?? false; onToggled: v => AirPods.setFlag("onebud", v) }
+        PopupToggle { visible: popup.s.offOption !== null; label: "Allow Off mode"; on: popup.s.offOption ?? false; onToggled: v => AirPods.setFlag("offoption", v) }
+        PopupToggle { visible: popup.s.earDetect !== null; label: "Automatic ear detection"; on: popup.s.earDetect ?? false; onToggled: v => AirPods.setFlag("eardetect", v) }
+        PopupToggle { visible: popup.s.caseTone !== null; label: "Case sounds"; on: popup.s.caseTone ?? false; onToggled: v => AirPods.setFlag("casetone", v) }
+        PopupToggle { visible: popup.s.sleepDetect !== null; label: "Sleep detection"; sub: "Pause media when you fall asleep"; on: popup.s.sleepDetect ?? false; onToggled: v => AirPods.setFlag("sleep", v) }
         Text { text: "Pause media when"; color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1 }
         Choice {
             options: [["one", "One is out"], ["both", "Both are out"], ["off", "Never"]]
             current: AirPods.autoPause
             onPicked: k => AirPods.setAutoPause(k)
         }
-        Text { visible: pop.s.pressSpeed !== null; text: "Press speed"; color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1 }
+        Text { visible: popup.s.pressSpeed !== null; text: "Press speed"; color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1 }
         Choice {
-            visible: pop.s.pressSpeed !== null
+            visible: popup.s.pressSpeed !== null
             options: [["0", "Default"], ["1", "Slower"], ["2", "Slowest"]]
-            current: String(pop.s.pressSpeed)
+            current: String(popup.s.pressSpeed)
             onPicked: k => AirPods.setNumber("pressspeed", k)
         }
-        Text { visible: pop.s.holdDuration !== null; text: "Press and hold duration"; color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1 }
+        Text { visible: popup.s.holdDuration !== null; text: "Press and hold duration"; color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1 }
         Choice {
-            visible: pop.s.holdDuration !== null
+            visible: popup.s.holdDuration !== null
             options: [["0", "Default"], ["1", "Shorter"], ["2", "Shortest"]]
-            current: String(pop.s.holdDuration)
+            current: String(popup.s.holdDuration)
             onPicked: k => AirPods.setNumber("holdduration", k)
         }
-        Text { visible: (pop.s.swipe ?? false) && pop.s.swipeSpeed !== null; text: "Volume swipe length"; color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1 }
+        Text { visible: (popup.s.swipe ?? false) && popup.s.swipeSpeed !== null; text: "Volume swipe length"; color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1 }
         Choice {
-            visible: (pop.s.swipe ?? false) && pop.s.swipeSpeed !== null
+            visible: (popup.s.swipe ?? false) && popup.s.swipeSpeed !== null
             // 0 is what these AirPods report before it was ever changed
             options: [["1", "Default"], ["2", "Longer"], ["3", "Longest"]]
-            current: String(Math.max(1, pop.s.swipeSpeed ?? 1))
+            current: String(Math.max(1, popup.s.swipeSpeed ?? 1))
             onPicked: k => AirPods.setNumber("swipespeed", k)
         }
-        Text { visible: pop.s.callControl !== null; text: "During calls, press once to"; color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1 }
+        Text { visible: popup.s.callControl !== null; text: "During calls, press once to"; color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1 }
         Choice {
-            visible: pop.s.callControl !== null
+            visible: popup.s.callControl !== null
             options: [["mute", "Mute · twice ends"], ["end", "End · twice mutes"]]
-            current: pop.s.callControl ?? ""
+            current: popup.s.callControl ?? ""
             onPicked: k => AirPods.setCallControl(k)
         }
-        Text { visible: pop.s.mic !== null; text: "Microphone"; color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1 }
+        Text { visible: popup.s.mic !== null; text: "Microphone"; color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1 }
         Choice {
-            visible: pop.s.mic !== null
+            visible: popup.s.mic !== null
             options: [["0", "Automatic"], ["2", "Always left"], ["1", "Always right"]]
-            current: String(pop.s.mic)
+            current: String(popup.s.mic)
             onPicked: k => AirPods.setNumber("mic", k)
         }
         Item {
@@ -278,11 +278,11 @@ BarPopup {
                     verticalAlignment: TextInput.AlignVCenter
                     clip: true; maximumLength: 32
                     color: Theme.fg; font.family: Theme.font; font.pointSize: Theme.smallSize - 1
-                    text: pop.s.name
-                    onActiveFocusChanged: pop.renaming = activeFocus
+                    text: popup.s.name
+                    onActiveFocusChanged: popup.renaming = activeFocus
                     Keys.onReturnPressed: { AirPods.rename(text); focus = false }
-                    Keys.onEscapePressed: { text = pop.s.name; focus = false }
-                    MouseArea { anchors.fill: parent; enabled: !pop.renaming; cursorShape: Qt.IBeamCursor; onClicked: { pop.renaming = true; nameInput.forceActiveFocus() } }
+                    Keys.onEscapePressed: { text = popup.s.name; focus = false }
+                    MouseArea { anchors.fill: parent; enabled: !popup.renaming; cursorShape: Qt.IBeamCursor; onClicked: { popup.renaming = true; nameInput.forceActiveFocus() } }
                 }
             }
             PopupButton {
@@ -293,13 +293,13 @@ BarPopup {
             }
         }
         Level {
-            visible: pop.s.chime !== null
+            visible: popup.s.chime !== null
             label: "Chime volume"
-            value: pop.s.chime ?? 0
+            value: popup.s.chime ?? 0
             onCommitted: v => AirPods.setChime(v)
         }
         Column {
-            visible: pop.s.cycle !== null
+            visible: popup.s.cycle !== null
             width: parent.width; spacing: 4
             Text { text: "Press and hold cycles"; color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1 }
             Row {
@@ -308,7 +308,7 @@ BarPopup {
                     model: [[1, "Off"], [2, "Cancel"], [4, "Transparent"], [8, "Adaptive"]]
                     PopupButton {
                         required property var modelData
-                        readonly property int mask: pop.s?.cycle ?? 0
+                        readonly property int mask: popup.s?.cycle ?? 0
                         width: (parent.width - 12) / 4
                         label: modelData[1]
                         on: (mask & modelData[0]) !== 0

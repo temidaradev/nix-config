@@ -5,7 +5,7 @@ import qs.services
 
 // Sony WH-1000XM5 controls, styled like the other bar popups.
 BarPopup {
-    id: pop
+    id: popup
     visible: Launcher.menu === "sony"
     anchorX: Launcher.menuAnchorX
     panelWidth: 360
@@ -25,7 +25,7 @@ BarPopup {
     ]
     readonly property var bandLabels: ["Bass", "400", "1k", "2.5k", "6.3k", "16k"]
     readonly property var quickLabels: ({ 0: "None", 1: "Spotify" })
-    function quickLabel(code) { return pop.quickLabels[code] ?? "0x" + code.toString(16).padStart(2, "0") }
+    function quickLabel(code) { return popup.quickLabels[code] ?? "0x" + code.toString(16).padStart(2, "0") }
 
     // A row of mutually exclusive PopupButtons filling the width.
     component Choice: Row {
@@ -173,9 +173,9 @@ BarPopup {
     PopupTitle {
         glyph: "󰋋"
         glyphColor: Sony.connected ? Theme.accent : Theme.fgDim
-        text: pop.s.name || "WH-1000XM5"
+        text: popup.s.name || "WH-1000XM5"
         sub: Sony.connected
-            ? [Sony.level >= 0 ? (Sony.charging ? "󰂄 " : "") + Sony.level + "%" : "", pop.s.codec, pop.s.firmware ? "FW " + pop.s.firmware : ""].filter(x => x).join("  ·  ")
+            ? [Sony.level >= 0 ? (Sony.charging ? "󰂄 " : "") + Sony.level + "%" : "", popup.s.codec, popup.s.firmware ? "FW " + popup.s.firmware : ""].filter(x => x).join("  ·  ")
             : "Not connected"
         PopupButton { visible: Sony.connected; label: "󰑐"; onClicked: Sony.refresh() }
     }
@@ -192,55 +192,55 @@ BarPopup {
     }
 
     // ── Noise control
-    PopupSection { visible: Sony.connected && pop.s.anc !== null; text: "Noise control" }
+    PopupSection { visible: Sony.connected && popup.s.anc !== null; text: "Noise control" }
     Choice {
-        visible: Sony.connected && pop.s.anc !== null
+        visible: Sony.connected && popup.s.anc !== null
         options: [["nc", "󰋎  Cancel"], ["ambient", "󰟅  Ambient"], ["off", "Off"]]
-        current: pop.s.anc ?? ""
+        current: popup.s.anc ?? ""
         onPicked: k => Sony.setAnc(k)
     }
     Steps {
-        visible: Sony.connected && pop.s.anc === "ambient"
-        value: pop.s.ambientLevel
+        visible: Sony.connected && popup.s.anc === "ambient"
+        value: popup.s.ambientLevel
         onCommitted: v => Sony.setAmbient(v)
     }
     PopupToggle {
-        visible: Sony.connected && pop.s.anc === "ambient"
-        label: "Focus on voice"; on: pop.s.focusVoice
+        visible: Sony.connected && popup.s.anc === "ambient"
+        label: "Focus on voice"; on: popup.s.focusVoice
         onToggled: v => Sony.setFocusVoice(v)
     }
 
     // ── Equaliser
     Fold {
-        visible: Sony.connected && pop.s.eq !== null
-        text: "Equaliser"; open: pop.showBands
-        onToggle: pop.showBands = !pop.showBands
+        visible: Sony.connected && popup.s.eq !== null
+        text: "Equaliser"; open: popup.showBands
+        onToggle: popup.showBands = !popup.showBands
     }
     Flow {
-        visible: Sony.connected && pop.s.eq !== null
+        visible: Sony.connected && popup.s.eq !== null
         width: parent.width; spacing: 4
         Repeater {
-            model: pop.eqPresets
+            model: popup.eqPresets
             PopupButton {
                 required property var modelData
                 label: modelData[1]
-                on: pop.s.eq?.preset === modelData[0]
+                on: popup.s.eq?.preset === modelData[0]
                 onClicked: Sony.setEq(modelData[0])
             }
         }
     }
     Row {
-        visible: Sony.connected && pop.s.eq !== null && pop.showBands
+        visible: Sony.connected && popup.s.eq !== null && popup.showBands
         width: parent.width; spacing: 6
         Repeater {
             model: 6
             Band {
                 required property int index
-                label: pop.bandLabels[index]
-                value: index === 0 ? (pop.s.eq?.bass ?? 0) : (pop.s.eq?.bands[index - 1] ?? 0)
+                label: popup.bandLabels[index]
+                value: index === 0 ? (popup.s.eq?.bass ?? 0) : (popup.s.eq?.bands[index - 1] ?? 0)
                 onCommitted: v => {
-                    const bands = (pop.s.eq?.bands ?? [0, 0, 0, 0, 0]).slice()
-                    let bass = pop.s.eq?.bass ?? 0
+                    const bands = (popup.s.eq?.bands ?? [0, 0, 0, 0, 0]).slice()
+                    let bass = popup.s.eq?.bass ?? 0
                     if (index === 0) bass = v
                     else bands[index - 1] = v
                     Sony.setBands(bass, bands)
@@ -251,24 +251,24 @@ BarPopup {
 
     // ── Devices (multipoint)
     Item {
-        visible: Sony.connected && pop.s.multipoint !== null
+        visible: Sony.connected && popup.s.multipoint !== null
         width: parent.width; implicitHeight: mpHead.implicitHeight
         PopupSection { id: mpHead; text: "Devices" }
         PopupSwitch {
             anchors.right: parent.right; anchors.bottom: parent.bottom
             scale: 0.8; transformOrigin: Item.BottomRight
-            on: pop.s.multipoint ?? false
+            on: popup.s.multipoint ?? false
             onToggled: v => Sony.setMultipoint(v)
         }
     }
     Column {
-        visible: Sony.connected && (pop.s.multipoint ?? false)
+        visible: Sony.connected && (popup.s.multipoint ?? false)
         width: parent.width; spacing: 1
         Repeater {
-            model: (pop.s.multipoint ?? false) ? pop.s.peers : []
+            model: (popup.s.multipoint ?? false) ? popup.s.peers : []
             PopupRow {
                 required property var modelData
-                readonly property bool self: modelData.address === pop.s.localAddress
+                readonly property bool self: modelData.address === popup.s.localAddress
                 glyph: self ? "󰍹" : "󰄜"
                 label: modelData.name || modelData.address
                 sub: self ? "This computer" : modelData.connected ? "Connected" : "Paired"
@@ -281,76 +281,76 @@ BarPopup {
 
     // ── Sound quality & Speak-to-Chat
     Fold {
-        visible: Sony.connected && (pop.s.dsee !== null || pop.s.soundQuality !== null || pop.s.speakToChat !== null)
-        text: "Sound"; open: pop.showSound
-        onToggle: pop.showSound = !pop.showSound
+        visible: Sony.connected && (popup.s.dsee !== null || popup.s.soundQuality !== null || popup.s.speakToChat !== null)
+        text: "Sound"; open: popup.showSound
+        onToggle: popup.showSound = !popup.showSound
     }
     Column {
-        visible: Sony.connected && pop.showSound
+        visible: Sony.connected && popup.showSound
         width: parent.width; spacing: 6
-        PopupToggle { visible: pop.s.dsee !== null; label: "DSEE Extreme"; sub: "Upscale compressed audio"; on: pop.s.dsee ?? false; onToggled: v => Sony.setDsee(v) }
+        PopupToggle { visible: popup.s.dsee !== null; label: "DSEE Extreme"; sub: "Upscale compressed audio"; on: popup.s.dsee ?? false; onToggled: v => Sony.setDsee(v) }
         PopupToggle {
-            visible: pop.s.soundQuality !== null
+            visible: popup.s.soundQuality !== null
             label: "Prioritise sound quality"
-            sub: (pop.s.soundQuality ?? false) ? "LDAC when available" : "Prioritising stable connection"
-            on: pop.s.soundQuality ?? false
+            sub: (popup.s.soundQuality ?? false) ? "LDAC when available" : "Prioritising stable connection"
+            on: popup.s.soundQuality ?? false
             onToggled: v => Sony.setSoundQuality(v)
         }
-        PopupToggle { visible: pop.s.speakToChat !== null; label: "Speak-to-Chat"; sub: "Pause when you talk"; on: pop.s.speakToChat ?? false; onToggled: v => Sony.setSpeakToChat(v) }
+        PopupToggle { visible: popup.s.speakToChat !== null; label: "Speak-to-Chat"; sub: "Pause when you talk"; on: popup.s.speakToChat ?? false; onToggled: v => Sony.setSpeakToChat(v) }
         Choice {
-            visible: (pop.s.speakToChat ?? false) && pop.s.stcSensitivity !== null
+            visible: (popup.s.speakToChat ?? false) && popup.s.stcSensitivity !== null
             options: [["auto", "Auto"], ["high", "High"], ["low", "Low"]]
-            current: pop.s.stcSensitivity ?? ""
-            onPicked: k => Sony.setStcConfig(k, pop.s.stcTimeout ?? "standard")
+            current: popup.s.stcSensitivity ?? ""
+            onPicked: k => Sony.setStcConfig(k, popup.s.stcTimeout ?? "standard")
         }
         Choice {
-            visible: (pop.s.speakToChat ?? false) && pop.s.stcTimeout !== null
+            visible: (popup.s.speakToChat ?? false) && popup.s.stcTimeout !== null
             options: [["short", "Short"], ["standard", "Standard"], ["long", "Long"], ["off", "Never"]]
-            current: pop.s.stcTimeout ?? ""
-            onPicked: k => Sony.setStcConfig(pop.s.stcSensitivity ?? "auto", k)
+            current: popup.s.stcTimeout ?? ""
+            onPicked: k => Sony.setStcConfig(popup.s.stcSensitivity ?? "auto", k)
         }
     }
 
     // ── Settings
     Fold {
         visible: Sony.connected
-        text: "Settings"; open: pop.showSettings
-        onToggle: pop.showSettings = !pop.showSettings
+        text: "Settings"; open: popup.showSettings
+        onToggle: popup.showSettings = !popup.showSettings
     }
     Column {
-        visible: Sony.connected && pop.showSettings
+        visible: Sony.connected && popup.showSettings
         width: parent.width; spacing: 6
-        PopupToggle { visible: pop.s.pauseOnRemove !== null; label: "Pause when taken off"; on: pop.s.pauseOnRemove ?? false; onToggled: v => Sony.setPauseOnRemove(v) }
-        PopupToggle { visible: pop.s.autoOff !== null; label: "Power off when taken off"; on: pop.s.autoOff === "removed"; onToggled: v => Sony.setAutoOff(v ? "removed" : "off") }
-        PopupToggle { visible: pop.s.voiceGuide !== null; label: "Voice guidance"; on: pop.s.voiceGuide ?? false; onToggled: v => Sony.setVoiceGuide(v) }
-        PopupToggle { visible: pop.s.touchPanel !== null; label: "Touch sensor"; on: pop.s.touchPanel ?? false; onToggled: v => Sony.setTouchPanel(v) }
-        Text { visible: pop.s.ncButton !== null; text: "NC/AMB button cycles"; color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1 }
+        PopupToggle { visible: popup.s.pauseOnRemove !== null; label: "Pause when taken off"; on: popup.s.pauseOnRemove ?? false; onToggled: v => Sony.setPauseOnRemove(v) }
+        PopupToggle { visible: popup.s.autoOff !== null; label: "Power off when taken off"; on: popup.s.autoOff === "removed"; onToggled: v => Sony.setAutoOff(v ? "removed" : "off") }
+        PopupToggle { visible: popup.s.voiceGuide !== null; label: "Voice guidance"; on: popup.s.voiceGuide ?? false; onToggled: v => Sony.setVoiceGuide(v) }
+        PopupToggle { visible: popup.s.touchPanel !== null; label: "Touch sensor"; on: popup.s.touchPanel ?? false; onToggled: v => Sony.setTouchPanel(v) }
+        Text { visible: popup.s.ncButton !== null; text: "NC/AMB button cycles"; color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1 }
         Choice {
-            visible: pop.s.ncButton !== null
+            visible: popup.s.ncButton !== null
             options: [["nc_ambient_off", "NC·Amb·Off"], ["nc_ambient", "NC·Amb"], ["nc_off", "NC·Off"], ["ambient_off", "Amb·Off"]]
-            current: pop.s.ncButton ?? ""
+            current: popup.s.ncButton ?? ""
             onPicked: k => Sony.setNcButton(k)
         }
         Cycle {
-            visible: pop.s.assistant !== null
+            visible: popup.s.assistant !== null
             readonly property var choices: ["google", "alexa", "phone", "off"]
             readonly property var labels: ({ google: "Google", alexa: "Alexa", phone: "Phone", off: "Off" })
             label: "Voice assistant"; sub: "Headphones restart to apply"
-            value: labels[pop.s.assistant] ?? "—"
-            onClicked: Sony.setAssistant(choices[(choices.indexOf(pop.s.assistant) + 1) % choices.length])
+            value: labels[popup.s.assistant] ?? "—"
+            onClicked: Sony.setAssistant(choices[(choices.indexOf(popup.s.assistant) + 1) % choices.length])
         }
         Repeater {
-            model: pop.s.quick ? [["double", "Quick access · double tap"], ["triple", "Quick access · triple tap"]] : []
+            model: popup.s.quick ? [["double", "Quick access · double tap"], ["triple", "Quick access · triple tap"]] : []
             Cycle {
                 id: qRow
                 required property var modelData
-                readonly property int current: pop.s.quick[modelData[0]]
+                readonly property int current: popup.s.quick[modelData[0]]
                 readonly property var choices: [0, 1].concat(current > 1 ? [current] : [])
                 label: modelData[1]
-                value: pop.quickLabel(current)
+                value: popup.quickLabel(current)
                 onClicked: {
                     const next = choices[(choices.indexOf(current) + 1) % choices.length]
-                    const q = Object.assign({}, pop.s.quick, { [modelData[0]]: next })
+                    const q = Object.assign({}, popup.s.quick, { [modelData[0]]: next })
                     Sony.setQuick(q.double, q.triple)
                 }
             }
@@ -360,22 +360,22 @@ BarPopup {
     Row {
         spacing: 6; topPadding: 4
         PopupButton {
-            visible: Sony.connected && (pop.s.multipoint ?? false)
-            label: pop.s.pairing ? "󰂱  Pairing…" : "󰂱  Pair"
-            on: pop.s.pairing
-            onClicked: Sony.setPairing(!pop.s.pairing)
+            visible: Sony.connected && (popup.s.multipoint ?? false)
+            label: popup.s.pairing ? "󰂱  Pairing…" : "󰂱  Pair"
+            on: popup.s.pairing
+            onClicked: Sony.setPairing(!popup.s.pairing)
         }
         PopupButton {
             visible: Sony.connected
-            label: pop.confirmOff ? "󰐥  Sure?" : "󰐥  Power off"
+            label: popup.confirmOff ? "󰐥  Sure?" : "󰐥  Power off"
             danger: true; on: false
-            color: pop.confirmOff ? Theme.red : hovered ? "#2affffff" : Theme.bg2
+            color: popup.confirmOff ? Theme.red : hovered ? "#2affffff" : Theme.bg2
             onClicked: {
-                if (pop.confirmOff) { Sony.powerOff(); pop.confirmOff = false; confirmReset.stop() }
-                else { pop.confirmOff = true; confirmReset.restart() }
+                if (popup.confirmOff) { Sony.powerOff(); popup.confirmOff = false; confirmReset.stop() }
+                else { popup.confirmOff = true; confirmReset.restart() }
             }
         }
         PopupButton { label: "󰂯  Bluetooth"; onClicked: Launcher.toggleMenu("bluetooth", Launcher.menuAnchorX) }
     }
-    Timer { id: confirmReset; interval: 3000; onTriggered: pop.confirmOff = false }
+    Timer { id: confirmReset; interval: 3000; onTriggered: popup.confirmOff = false }
 }
