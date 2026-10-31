@@ -182,11 +182,11 @@ PanelWindow {
 
             BarButton {   // peripheral batteries (only when something reports one)
                 id: devBtn
-                visible: Settings.s.bar.battery && Devices.all.length > 0
+                visible: Settings.s.bar.battery && Devices.all.some(d => !d.key.startsWith("mouse:"))
                 menu: "devices"
-                color: Launcher.menu === "devices" || Launcher.menu === "buds" ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
+                color: ["devices", "buds", "sony"].includes(Launcher.menu) ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
                 Repeater {
-                    model: Devices.all
+                    model: Devices.all.filter(d => !d.key.startsWith("mouse:"))
                     Row {
                         required property var modelData
                         spacing: 3
@@ -196,8 +196,22 @@ PanelWindow {
                     }
                 }
                 onClicked: e => {
-                    if (Devices.hasBuds && e.button === Qt.LeftButton) Launcher.toggleMenu("buds", devBtn.mapToItem(null, 0, 0).x + devBtn.width / 2)
+                    const x = devBtn.mapToItem(null, 0, 0).x + devBtn.width / 2
+                    if (e.button !== Qt.LeftButton) pop()
+                    else if (Devices.hasBuds) Launcher.toggleMenu("buds", x)
+                    else if (Devices.hasSony) Launcher.toggleMenu("sony", x)
                     else pop()
+                }
+            }
+
+            Repeater {   // mouse batteries, separate from headphones
+                model: Settings.s.bar.battery ? Mouse.mice : []
+                BarButton {
+                    required property var modelData
+                    menu: "devices"
+                    BarText { text: modelData.charging ? "󰂄" : "󰍽"; color: modelData.level < 20 ? Theme.red : Theme.fg; font.pointSize: 11 }
+                    BarText { text: modelData.level + "%"; font.pointSize: Theme.smallSize }
+                    onClicked: pop()
                 }
             }
 

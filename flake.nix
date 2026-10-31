@@ -42,6 +42,8 @@
           avrdude = prev.avrdude.override { docSupport = false; };
           terminal-wakatime = final.callPackage ./modules/shared/pkgs/terminal-wakatime.nix { };
           cmf-buds = final.callPackage ./modules/shared/pkgs/cmf-buds { };
+          sony-xm5 = final.callPackage ./modules/shared/pkgs/sony-xm5 { };
+          mouse-battery = final.callPackage ./modules/shared/pkgs/mouse-battery { };
         } // lib.optionalAttrs prev.stdenv.hostPlatform.isDarwin {
           # Remove once nixpkgs uses the platform's library extension in Bear's install hook.
           bear = prev.bear.overrideAttrs (old: {

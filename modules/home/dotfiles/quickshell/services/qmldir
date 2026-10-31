@@ -20,3 +20,5 @@ singleton Network 1.0 Network.qml
 singleton Idle 1.0 Idle.qml
 singleton Jev 1.0 Jev.qml
 singleton Buds 1.0 Buds.qml
+singleton Sony 1.0 Sony.qml
+singleton Mouse 1.0 Mouse.qml

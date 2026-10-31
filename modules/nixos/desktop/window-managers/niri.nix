@@ -57,6 +57,8 @@ in
     imagemagick          # accent-from-wallpaper
     libnotify            # notify-send, lands in the shell's notification daemon
     cmf-buds
+    sony-xm5
+    mouse-battery
     curl
     pciutils             # lspci, for the GPU name in the system tab
     grim

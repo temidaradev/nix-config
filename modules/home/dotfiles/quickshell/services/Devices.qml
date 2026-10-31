@@ -35,8 +35,17 @@ Singleton {
             names[Buds.state.name.toLowerCase()] = true
             out.unshift({ key: "buds", name: Buds.state.name, pct: Buds.level, glyph: "󱡏", charging: Buds.charging })
         }
+        if (Sony.connected && Sony.level >= 0) {
+            names[Sony.state.name.toLowerCase()] = true
+            out.unshift({ key: "sony", name: Sony.state.name, pct: Sony.level, glyph: "󰋋", charging: Sony.charging })
+        }
+        for (const m of Mouse.mice) {
+            names[m.name.toLowerCase()] = true
+            out.push({ key: "mouse:" + m.id, name: m.name, pct: m.level, glyph: "󰍽", charging: m.charging })
+        }
         for (const d of bluetooth) if (!names[d.name.toLowerCase()]) out.push(d)
         return out
     }
     readonly property bool hasBuds: all.some(d => d.key === "buds")
+    readonly property bool hasSony: all.some(d => d.key === "sony")
 }
