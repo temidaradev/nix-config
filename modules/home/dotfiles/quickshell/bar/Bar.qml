@@ -130,6 +130,13 @@ PanelWindow {
 
         // ---------------- right ----------------
         Row {
+            id: rightRow
+            readonly property real fullWidth: width + (cpuSpark.visible ? 0 : cpuSpark.width + 4) + (memSpark.visible ? 0 : memSpark.width + 4) + (netBtn.visible || !Settings.s.bar.network ? 0 : netBtn.implicitWidth + spacing)
+            readonly property real room: parent.width / 2 - nowPlaying.width / 2 - 8
+            property bool compact: false
+            function fit() { compact = fullWidth > room }
+            onFullWidthChanged: Qt.callLater(fit)
+            onRoomChanged: Qt.callLater(fit)
             anchors.right: parent.right
             height: parent.height
             spacing: 2
@@ -221,7 +228,7 @@ PanelWindow {
                 visible: Settings.s.bar.cpu
                 menu: "cpu"
                 BarText { text: "󰻠"; color: Theme.accent; font.pointSize: 12 }
-                Sparkline { values: SysStats.cpuHist }
+                Sparkline { id: cpuSpark; visible: !rightRow.compact; values: SysStats.cpuHist }
                 BarText { text: Math.round(SysStats.cpu) + "%"; font.pointSize: Theme.smallSize; width: 30; horizontalAlignment: Text.AlignRight }
                 onClicked: pop()
             }
@@ -230,7 +237,7 @@ PanelWindow {
                 visible: Settings.s.bar.memory
                 menu: "memory"
                 BarText { text: "󰍛"; color: Theme.green; font.pointSize: 12 }
-                Sparkline { values: SysStats.memHist; color: Theme.green }
+                Sparkline { id: memSpark; visible: !rightRow.compact; values: SysStats.memHist; color: Theme.green }
                 BarText { text: Math.round(SysStats.memUsed / SysStats.memTotal * 100 || 0) + "%"; font.pointSize: Theme.smallSize; width: 30; horizontalAlignment: Text.AlignRight }
                 onClicked: pop()
             }
@@ -257,7 +264,8 @@ PanelWindow {
             }
 
             BarButton {   // network speed
-                visible: Settings.s.bar.network
+                id: netBtn
+                visible: Settings.s.bar.network && !rightRow.compact
                 menu: "network"
                 Column {
                     anchors.verticalCenter: parent.verticalCenter
