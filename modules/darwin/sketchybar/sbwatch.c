@@ -25,6 +25,7 @@
 #include <string.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <time.h>
 
 extern char **environ;
 
@@ -155,21 +156,36 @@ static struct battery read_battery(void) {
   return b;
 }
 
+// Monotonic elapsed time includes scheduling/IPC overhead, not just the sleep.
+static double monotonic_seconds(void) {
+  struct timespec t;
+  clock_gettime(CLOCK_MONOTONIC, &t);
+  return t.tv_sec + t.tv_nsec / 1e9;
+}
 static int watch_stats(double seconds) {
   if (seconds < 1) seconds = 1;
   uint64_t busy0 = 0, total0 = 0;
   uint32_t rx0 = 0, tx0 = 0;
   cpu_ticks(&busy0, &total0);
   net_bytes(&rx0, &tx0);
+  double previous = monotonic_seconds(), checked = previous;
   for (;;) {
-    usleep((useconds_t)(seconds * 1e6));
-    if (!sketchybar_running()) return 0;
+    struct timespec delay = { (time_t)seconds, (long)((seconds - (time_t)seconds) * 1e9) };
+    nanosleep(&delay, NULL);
+    double now = monotonic_seconds(), elapsed = now - previous;
+    if (now - checked >= 60) {
+      if (!sketchybar_running()) return 0;
+      checked = now;
+    }
     uint64_t busy, total;
     uint32_t rx, tx;
     if (!cpu_ticks(&busy, &total)) continue;
     net_bytes(&rx, &tx);
     uint64_t db = busy - busy0, dt = total - total0;
-    double rx_rate = (uint32_t)(rx - rx0) / seconds, tx_rate = (uint32_t)(tx - tx0) / seconds;
+    // Reset rather than interpreting a removed interface as counter wrap.
+    double rx_rate = rx >= rx0 && elapsed > 0 ? (rx - rx0) / elapsed : 0;
+    double tx_rate = tx >= tx0 && elapsed > 0 ? (tx - tx0) / elapsed : 0;
+    previous = now;
     busy0 = busy; total0 = total; rx0 = rx; tx0 = tx;
     struct battery b = read_battery();
 

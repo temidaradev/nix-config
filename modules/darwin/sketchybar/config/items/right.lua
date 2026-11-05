@@ -67,7 +67,8 @@ local function calendar_popup(parent, align, button)
 end
 
 local clock = right("clock", {
-  update_freq = 10,
+  update_freq = 60,
+  updates = true,
   icon = { drawing = false },
   label = { font = h.font(t.size, "Bold"), padding_left = 6, padding_right = 6 },
 })
@@ -83,7 +84,7 @@ end)
 local center_clock = sbar.add("item", "clock.center", {
   position = "center",
   drawing = false,
-  update_freq = 10,
+  updates = true,
   icon = { font = h.font(t.size), color = t.dim, padding_left = 10, padding_right = 8 },
   label = { font = h.font(t.size, "Bold"), padding_right = 10 },
 })
@@ -99,6 +100,7 @@ local function tick()
   })
 end
 clock:subscribe({ "routine", "forced", "system_woke" }, tick)
+tick()
 
 h.on_displays(function(displays)
   local builtin, external = {}, {}
@@ -244,13 +246,13 @@ local net_up = right("net.up", {
   width = 0,
   y_offset = 6,
   icon = { string = g.up, font = h.font(9), color = t.dim, padding_left = 4, padding_right = 2 },
-  label = { string = "0B", font = h.font(9), width = 28, color = t.dim, padding_right = 2 },
+  label = { string = "0B", font = h.font(10), width = 42, align = "right", color = t.dim, padding_right = 6 },
 })
 local net_down = right("net.down", {
   y_offset = -6,
   updates = true,
   icon = { string = g.down, font = h.font(9), color = t.dim, padding_left = 4, padding_right = 2 },
-  label = { string = "0B", font = h.font(9), width = 28, color = t.dim, padding_right = 2 },
+  label = { string = "0B", font = h.font(10), width = 42, align = "right", color = t.dim, padding_right = 6 },
 })
 local function rate(b)
   if b >= 1048576 then return string.format("%.1fM", b / 1048576) end
@@ -262,51 +264,56 @@ net_down:subscribe("stats_update", function(env)
   net_up:set({ label = { string = rate(tonumber(env.TX) or 0) } })
 end)
 
--- One native sampler feeds CPU, network, power draw and battery: every 5 s on
--- AC, every 15 s on battery (memory likewise slows down).
+-- A quiet surface separates telemetry from the interactive system controls.
+sbar.add("bracket", "telemetry", { "cpu", "mem", "net.up", "net.down" }, {
+  background = { color = t.surface, height = t.pill, corner_radius = t.radius },
+})
+
+-- One sampler for CPU/network/battery; shell-based memory queries run less often.
+-- Restart on wake even when the power source has not changed.
 local power = right("stats.power", { drawing = false, updates = true })
 local on_ac = nil
-power:subscribe({ "power_source_change", "forced", "system_woke" }, function()
+local function refresh_power(env)
   sbar.exec("pmset -g batt | head -1", function(out)
     local ac = tostring(out):find("AC Power") ~= nil
-    if ac == on_ac then return end
+    if ac == on_ac and env and env.SENDER == "power_source_change" then return end
     on_ac = ac
-    h.watch("stats", ac and 5 or 15)
-    mem:set({ update_freq = ac and 10 or 30 })
+    h.watch("stats", ac and 10 or 30)
+    mem:set({ update_freq = ac and 30 or 120 })
   end)
-end)
+end
+power:subscribe({ "power_source_change", "forced", "system_woke" }, refresh_power)
+power:subscribe("system_will_sleep", function() h.stop_watch("stats") end)
+refresh_power()
 
 h.sep("right")
 
----------------- battery + power draw ----------------
--- Battery % with time left (or to full) and the whole system's power draw,
--- all from `sbwatch stats`; plugging in/out updates instantly via pmset.
+---------------- battery ----------------
+-- Compact charge and current system wattage, with details on a normal click.
 local battery = right("battery", {
   updates = true,
   icon = { padding_right = 4 },
-  label = { font = h.font(t.small) },
+  label = { font = h.font(t.small, "Bold") },
+  background = { color = t.surface },
 })
-h.hover(battery)
+h.hover(battery, t.surface)
 local draw = right("power.draw", {
   updates = true,
   drawing = false,
-  icon = { string = g.bolt, color = t.dim, padding_right = 2 },
-  label = { font = h.font(t.small), color = t.dim },
+  icon = { string = g.bolt, color = t.dim, padding_right = 3 },
+  label = { font = h.font(t.small), width = 48, align = "right", color = t.dim },
 })
 h.hover(draw)
-
-local function hm(minutes)
-  return string.format("%d:%02d", math.floor(minutes / 60), minutes % 60)
-end
-
-local function show_battery(pct, ac, charging, minutes)
+draw:subscribe("mouse.clicked", function()
+  sbar.trigger("popup_open", { TARGET = "battery" })
+end)
+local function show_battery(pct, ac, charging)
   if not pct or pct < 0 then
     battery:set({ drawing = false })
     return
   end
   local low = pct < 20 and not ac
-  local extra = ""
-  if minutes and minutes > 0 then extra = " " .. hm(minutes) end
+  -- Time estimates and power draw are available in the battery popup.
   battery:set({
     drawing = true,
     icon = {
@@ -314,30 +321,27 @@ local function show_battery(pct, ac, charging, minutes)
       string = charging and g.charging or (ac and g.plug or g.battery[math.floor(pct / 10) + 1]),
       color = low and t.red or t.fg,
     },
-    label = { string = pct .. "%" .. extra, color = low and t.red or t.fg },
+    label = { string = pct .. "%", color = low and t.red or t.fg },
   })
 end
 
 battery:subscribe("stats_update", function(env)
   local ac = env.AC == "1"
-  show_battery(tonumber(env.BATT), ac, env.CHARGING == "1", tonumber(env.MINUTES))
-  local w = tonumber(env.WATTS) or -1
+  show_battery(tonumber(env.BATT), ac, env.CHARGING == "1")
+  local watts = tonumber(env.WATTS) or -1
+  local color = not ac and watts > 25 and t.amber or t.dim
   draw:set({
-    drawing = w >= 0,
-    label = { string = string.format("%.1fW", w), color = (not ac and w > 25) and t.amber or t.dim },
-    icon = { color = (not ac and w > 25) and t.amber or t.dim },
+    drawing = watts >= 0,
+    label = { string = string.format("%.1fW", watts), color = color },
+    icon = { color = color },
   })
 end)
 battery:subscribe({ "power_source_change", "forced", "system_woke" }, function()
   sbar.exec("pmset -g batt", function(out)
     out = tostring(out)
-    show_battery(tonumber(out:match("(%d+)%%")), out:find("AC Power") ~= nil, out:find("; charging;") ~= nil, nil)
+    show_battery(tonumber(out:match("(%d+)%%")), out:find("AC Power") ~= nil, out:find("; charging;") ~= nil)
   end)
 end)
-battery:subscribe("mouse.clicked", function(env)
-  if env.BUTTON == "left" then h.apple_menu("com.apple.menuextra.battery")() end
-end)
-draw:subscribe("mouse.clicked", h.apple_menu("com.apple.menuextra.battery"))
 
 h.popup(battery, 8, function(fill)
   -- Raw capacities sit inside the BatteryData dictionary as "Key"=value.
@@ -362,14 +366,15 @@ h.popup(battery, 8, function(fill)
       { icon = g.bolt, text = "Draw     " .. (load and string.format("%.1f W", load / 1000) or "-") },
       { icon = g.heart, text = "Health   " .. (health and (health .. "%") or "-"), warn = health and health < 80 },
       { icon = g.cycle, text = "Cycles   " .. (cycles or "-") },
+      { icon = g.battery[8], text = "macOS battery menu…", on_click = h.apple_menu("com.apple.menuextra.battery") },
       { icon = g.gear, text = "Battery settings…", on_click = settings("com.apple.Battery-Settings.extension") },
     })
   end)
-end, 300, "right", "right")
+end, 300, "right")
 
 ---------------- bluetooth ----------------
 local bt = right("bluetooth", {
-  update_freq = 60,
+  update_freq = 180,
   updates = true,
   icon = { padding_right = 6 },
   label = { drawing = false },
@@ -426,8 +431,8 @@ end, 300, "right")
 -- Wi-Fi (en0) first, then any wired/dock interface (en1..); updated
 -- instantly by `sbwatch net` instead of polling. (Not subscribed to
 -- SketchyBar's own wifi_change: that polls the SSID internally.)
-local NET_CMD = [[for i in en0 $(ifconfig -l | tr ' ' '\n' | grep '^en' | grep -vx en0); do ]]
-  .. [[ip=$(ipconfig getifaddr "$i") && { echo "$i"; echo "$ip"; exit; }; done; echo none]]
+local NET_CMD = [[(for i in en0 $(ifconfig -l | tr ' ' '\n' | grep '^en' | grep -vx en0); do ]]
+  .. [[ip=$(ipconfig getifaddr "$i") && { echo "$i"; echo "$ip"; exit; }; done; echo none)]]
 local wifi = right("wifi", {
   updates = true,
   icon = { padding_right = 6 },
@@ -473,14 +478,12 @@ h.popup(wifi, 7, function(fill)
         { icon = g.network, text = "Route    " .. (l[rest + 1] or "-") },
         { icon = g.router, text = "Gateway  " .. (l[rest + 2] or "-") },
         { icon = g.dns, text = "DNS      " .. (l[rest + 3] or "-") },
+        { icon = g.wifi, text = "Wi-Fi controls…", on_click = h.apple_menu("com.apple.menuextra.wifi") },
         { icon = g.gear, text = "Network settings…", on_click = settings("com.apple.Network-Settings.extension") },
       })
     end
   )
-end, 280, "right", "right")
-wifi:subscribe("mouse.clicked", function(env)
-  if env.BUTTON == "left" then h.apple_menu("com.apple.menuextra.wifi")() end
-end)
+end, 280, "right")
 
 ---------------- volume ----------------
 -- Click opens macOS's own Sound menu (output devices, and for AirPods the
@@ -580,7 +583,7 @@ local function tray_icon(name)
   return FALLBACK[name] or g.app, h.font(t.glyph), 0
 end
 
-local tray_watch = right("tray.watch", { drawing = false, updates = true, update_freq = 60 })
+local tray_watch = right("tray.watch", { drawing = false, updates = true, update_freq = 180 })
 local function scan_tray()
   sbar.exec(SBMENUS .. " -t", function(out)
     local apps, seen = {}, {}
@@ -604,7 +607,7 @@ local function scan_tray()
     end
   end)
 end
--- Rescanned every minute and on wake; not on app switches (the tray rarely
+-- Rescan every three minutes and on wake, rather than on app switches.
 -- changes then). Scan once explicitly at startup: the initial "forced"
 -- event isn't reliable for this item.
 tray_watch:subscribe({ "routine", "forced", "system_woke" }, scan_tray)

@@ -3,14 +3,15 @@
 return {
   bg          = 0xff1b1e20, -- opaque: it covers Apple's menu bar underneath
   popup       = 0xff1f2224,
-  fg          = 0xfffcfcfc,
-  dim         = 0xffa9aeb3,
-  faint       = 0xff6e7378,
+  surface     = 0xff272c30, -- quiet grouping behind telemetry and battery
+  fg          = 0xffe8ecef,
+  dim         = 0xffa4adb5,
+  faint       = 0xff737d86,
   red         = 0xffda4453,
   amber       = 0xfff6c744,
   nix         = 0xff7ebae4, -- the one splash of colour: NixOS blue
-  hover       = 0x24ffffff,
-  border      = 0x26ffffff,
+  hover       = 0x18ffffff,
+  border      = 0x1affffff,
   transparent = 0x00000000,
 
   font        = "JetBrainsMono Nerd Font",
@@ -21,5 +22,5 @@ return {
   -- covers Apple's bar exactly.
   height      = 39,
   pill        = 28,
-  radius      = 6,
+  radius      = 7,
 }

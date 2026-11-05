@@ -6,24 +6,24 @@ function M.font(size, style)
 end
 
 -- BarButton: transparent until hovered.
-function M.hover(item)
+function M.hover(item, base_color)
   item:subscribe("mouse.entered", function()
     item:set({ background = { color = t.hover } })
   end)
   item:subscribe("mouse.exited", function()
-    item:set({ background = { color = t.transparent } })
+    item:set({ background = { color = base_color or t.transparent } })
   end)
 end
 
--- Thin vertical divider between groups: a centred box-drawing glyph, so the
--- space on both sides is equal (a 1pt-wide background hugs its left item).
+-- Breathing room between groups, without a visible divider.
 function M.sep(position)
   return sbar.add("item", {
     position = position,
     padding_left = 0,
     padding_right = 0,
     icon = { drawing = false },
-    label = { string = "│", font = M.font(15), color = t.border, padding_left = 4, padding_right = 4, y_offset = 1 },
+    width = 9,
+    label = { drawing = false },
   })
 end
 
@@ -239,6 +239,9 @@ end
 
 -- (Re)start a long-running sbwatch provider. The "[s]" keeps pkill's pattern
 -- from matching the shell that runs it.
+function M.stop_watch(kind)
+  sbar.exec("pkill -f '[s]bwatch " .. kind .. "'")
+end
 function M.watch(kind, ...)
   local args = table.concat({ ... }, " ")
   sbar.exec(string.format("pkill -f '[s]bwatch %s'; nohup %s %s %s >/dev/null 2>&1 &", kind, SBWATCH, kind, args))

@@ -28,7 +28,7 @@ sbar.default({
   icon = { font = h.font(t.glyph), color = t.fg, padding_left = 6, padding_right = 4 },
   label = { font = h.font(t.size), color = t.fg, padding_left = 0, padding_right = 6 },
   background = { height = t.pill, corner_radius = t.radius, color = t.transparent },
-  scroll_texts = "on",
+  scroll_texts = "off",
 })
 
 -- Ask once for Accessibility (app menus, tray and the gear need it).
