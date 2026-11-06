@@ -169,6 +169,7 @@ static int watch_stats(double seconds) {
   cpu_ticks(&busy0, &total0);
   net_bytes(&rx0, &tx0);
   double previous = monotonic_seconds(), checked = previous;
+  char last_payload[256] = "";
   for (;;) {
     struct timespec delay = { (time_t)seconds, (long)((seconds - (time_t)seconds) * 1e9) };
     nanosleep(&delay, NULL);
@@ -198,6 +199,12 @@ static int watch_stats(double seconds) {
     snprintf(chg, sizeof chg, "CHARGING=%ld", b.charging);
     snprintf(ac, sizeof ac, "AC=%ld", b.ac);
     snprintf(mins, sizeof mins, "MINUTES=%ld", b.minutes);
+    // Avoid a subprocess and bar event when the published sample is identical.
+    char payload[256];
+    snprintf(payload, sizeof payload, "%s %s %s %s %s %s %s %s",
+             cpu, rxs, txs, watts, batt, chg, ac, mins);
+    if (strcmp(payload, last_payload) == 0) continue;
+    snprintf(last_payload, sizeof last_payload, "%s", payload);
     char *args[] = { "sketchybar", "--trigger", "stats_update", cpu, rxs, txs, watts, batt, chg, ac, mins, NULL };
     trigger_args(args);
   }

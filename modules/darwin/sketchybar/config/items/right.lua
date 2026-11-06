@@ -278,7 +278,7 @@ local function refresh_power(env)
     local ac = tostring(out):find("AC Power") ~= nil
     if ac == on_ac and env and env.SENDER == "power_source_change" then return end
     on_ac = ac
-    h.watch("stats", ac and 2 or 5)
+    h.watch("stats", ac and 1 or 3)
     mem:set({ update_freq = ac and 30 or 120 })
   end)
 end
