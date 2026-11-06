@@ -7,6 +7,7 @@ let
     "nikitabobko/tap"
     "osx-cross/avr"
     "pear-devs/pear"
+    "TheBoredTeam/boring-notch"
   ];
 in
 {
@@ -98,6 +99,7 @@ in
       "android-platform-tools"
       "audacity"
       "blender"
+      "TheBoredTeam/boring-notch/boring-notch"
       "cabal"
       "docker-desktop"
       "easy-move+resize"

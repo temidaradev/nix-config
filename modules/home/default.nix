@@ -13,6 +13,7 @@ in
     ./helix.nix
     ./tools.nix
     ./claude-code.nix
+    ./cliproxy.nix
     ./helium.nix
     ./vencord
     ./ghostty

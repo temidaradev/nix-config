@@ -27,7 +27,10 @@ inner.horizontal = 8
 inner.vertical =   8
 outer.left =       8
 outer.bottom =     8
-outer.top =        8
+# Room for SketchyBar (39pt), which covers Apple's always-shown menu bar.
+# Windows already start below that menu bar: 39pt on the notched built-in
+# screen, ~24pt elsewhere, so external screens need the other 15pt + gap.
+outer.top =        [{ monitor.'^built-in' = 8 }, 23]
 outer.right =      8
 
 [mode.main.binding]

@@ -8,6 +8,7 @@
     ./homebrew
     ./keyboard
     ./services
+    ./sketchybar
     ./system
     ./users
   ];

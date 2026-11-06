@@ -18,5 +18,9 @@ in
   system.stateVersion = 5;
   system.primaryUser = "lidldev";
 
+  # The custom top bar (modules/darwin/sketchybar). false = plain macOS menu
+  # bar; apply with `nh switch`.
+  services.sketchybar.enable = true;
+
   environment.systemPackages = packages.system ++ shared;
 }

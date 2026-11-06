@@ -21,7 +21,6 @@ in
     # yabairc/bordersrc are executed as scripts — writeScript keeps the exec bit
     "yabai/yabairc".source = pkgs.writeScript "yabairc" (builtins.readFile ./yabairc);
     "borders/bordersrc".source = pkgs.writeScript "bordersrc" (builtins.readFile ./bordersrc);
-    "sketchybar".source = ./sketchybar;
 
     "btop/btop.conf".source = ./btop.conf;
     "cava".source = ./cava;
