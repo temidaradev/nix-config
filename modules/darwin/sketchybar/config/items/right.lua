@@ -559,6 +559,8 @@ local FALLBACK = {
   ["Kopuz"] = g.music,
   ["Macs Fan Control"] = g.fan,
   ["WakaTime"] = g.timer,
+  ["eqMac"] = "\u{f1de}", -- sliders
+  ["now-playing"] = g.music,
 }
 -- Native extras already represented by dedicated widgets are not duplicated.
 local DEDICATED = {}
@@ -598,8 +600,9 @@ local function scan_tray()
         if not DEDICATED[bundle] then
           apps[#apps + 1] = {
             name = name ~= "" and name or title,
-            target = tonumber(pid) == 0 and (SBMENUS .. " -i '" .. bundle:gsub("'", "'\\''") .. "'")
-              or (SBMENUS .. " -x " .. pid .. " " .. occurrence),
+            target = bundle == "com.bitgapp.eqmac" and "open -a eqMac"
+              or (tonumber(pid) == 0 and (SBMENUS .. " -i '" .. bundle:gsub("'", "'\\''") .. "'")
+              or (SBMENUS .. " -x " .. pid .. " " .. occurrence)),
           }
         end
       end
