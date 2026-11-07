@@ -560,11 +560,10 @@ local FALLBACK = {
   ["Macs Fan Control"] = g.fan,
   ["WakaTime"] = g.timer,
   ["eqMac"] = "\u{f1de}", -- sliders
-  ["now-playing"] = g.music,
 }
--- Native extras already represented by dedicated widgets are not duplicated.
+-- Skip dedicated widgets and the unwanted native Now Playing item.
 local DEDICATED = {}
-for _, name in ipairs({ "clock", "wifi", "battery", "sound", "display", "controlcenter" }) do
+for _, name in ipairs({ "clock", "wifi", "battery", "sound", "display", "controlcenter", "now-playing" }) do
   DEDICATED["com.apple.menuextra." .. name] = true
 end
 local tray, tray_targets = {}, {}
