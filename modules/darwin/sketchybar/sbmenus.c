@@ -130,6 +130,11 @@ static bool visit_icons(AXUIElementRef el, pid_t agent, visit_fn visit, void *ct
   if (depth > 8) return false;
   char role[64];
   copy_string(el, kAXRoleAttribute, role, sizeof role);
+  // MenuBarAgent sometimes hangs an app's whole AX tree under its status item
+  // (seen with Claude.app after another app launched). Its regular menu bar
+  // -- Apple, app name, File, Edit, ... -- then reads as a run of sized
+  // AXMenuBarItems, i.e. nine phantom tray icons. Never descend into it.
+  if (!strcmp(role, "AXApplication") || !strcmp(role, "AXMenuBar")) return false;
   if (!strcmp(role, "AXButton") || !strcmp(role, "AXMenuBarItem")) {
     // Nested menu actions are also AXButtons, but have no menu-bar geometry.
     CFTypeRef value = NULL;

@@ -14,7 +14,7 @@ h.hover(nix)
 
 local MENUS = 16
 local CHAR = 7.8           -- JetBrains Mono advance at 13pt (0.6em)
-local PAD = 2 * 7 + 2      -- label padding + item padding per menu
+local PAD = 2 * 7          -- label padding (item padding adds no width)
 local NIX = 36             -- nix button width
 local NOTCH = 210          -- notch plus a little air
 
@@ -39,14 +39,18 @@ end
 -- Menus show on the active display only (like macOS); the notch limit
 -- applies only while that is the built-in screen.
 local room = math.huge
+local refresh_menus
+-- Redraw here, once room is current: moving to a notched display must drop
+-- menus that would now run under the notch.
 h.on_displays(function(displays)
   room = math.huge
   for _, d in ipairs(displays) do
     if d.active and d.builtin then room = (d.width - NOTCH) / 2 - NIX - 8 end
   end
+  if refresh_menus then refresh_menus() end
 end)
 
-local function refresh_menus()
+function refresh_menus()
   sbar.exec(SBMENUS .. " -l", function(out)
     local titles = h.lines(out)
     local used = 0

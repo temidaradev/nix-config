@@ -1,6 +1,7 @@
 -- Right, grouped like the Linux bar (right-positioned items stack leftwards,
 -- so they're added from the screen edge inwards):
---   tray | layout, volume, Wi-Fi, Bluetooth, battery | cpu, memory | gear, clock
+--   tray | layout, display, volume, Wi-Fi, Bluetooth, power draw, battery |
+--   cpu, memory | gear, clock
 local t = require("theme")
 local h = require("helpers")
 local g = require("glyphs")
@@ -52,7 +53,9 @@ local function calendar_popup(parent, align, button)
     end)
   end
   cal:subscribe("mouse.scrolled", function(env)
-    local delta = tonumber(env.INFO and env.INFO.delta or env.SCROLL_DELTA) or 0
+    -- A horizontal swipe arrives with zero vertical delta; ignore it.
+    local delta = tonumber(env.SCROLL_DELTA) or 0
+    if delta == 0 then return end
     offset = offset + (delta > 0 and -1 or 1)
     render(function() h.refresh_open(parent) end)
   end)
@@ -78,7 +81,8 @@ h.hover(clock)
 -- trackpad's two-finger swipe from the right edge opens it.
 calendar_popup(clock, "right", "left")
 clock:subscribe("mouse.clicked", function(env)
-  if env.BUTTON == "right" then sbar.trigger("popup_open", { TARGET = "clock" }) end
+  if env.BUTTON ~= "right" then return end
+  if h.is_open(clock) then h.close_popups() else sbar.trigger("popup_open", { TARGET = "clock" }) end
 end)
 
 local center_clock = sbar.add("item", "clock.center", {
@@ -278,7 +282,9 @@ local function refresh_power(env)
     local ac = tostring(out):find("AC Power") ~= nil
     if ac == on_ac and env and env.SENDER == "power_source_change" then return end
     on_ac = ac
-    h.watch("stats", ac and 1 or 3)
+    -- 2s on AC: CPU% changes nearly every sample, so a 1s sampler defeats
+    -- sbwatch's dedupe and forks a trigger every second.
+    h.watch("stats", ac and 2 or 3)
     mem:set({ update_freq = ac and 30 or 120 })
   end)
 end
@@ -502,7 +508,9 @@ volume:subscribe("mouse.clicked", h.apple_menu("com.apple.menuextra.sound"))
 -- instead of one osascript per tick.
 local pending, scroll_gen = 0, 0
 volume:subscribe("mouse.scrolled", function(env)
-  local d = tonumber(env.INFO and env.INFO.delta or env.SCROLL_DELTA) or 0
+  -- A horizontal swipe arrives with zero vertical delta; ignore it.
+  local d = tonumber(env.SCROLL_DELTA) or 0
+  if d == 0 then return end
   pending = pending + (d > 0 and 5 or -5)
   scroll_gen = scroll_gen + 1
   local mine = scroll_gen

@@ -44,6 +44,8 @@ local open_popup = nil
 local hover_gen = 0
 local popup_gen = 0
 
+function M.is_open(parent) return open_popup == parent end
+
 function M.close_popups()
   popup_gen = popup_gen + 1
   if open_popup then open_popup:set({ popup = { drawing = false } }) end
