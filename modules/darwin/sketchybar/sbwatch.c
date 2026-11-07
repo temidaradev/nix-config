@@ -26,6 +26,9 @@
 #include <sys/wait.h>
 #include <unistd.h>
 #include <time.h>
+#include <limits.h>
+#include <math.h>
+#import <AppKit/AppKit.h>
 
 extern char **environ;
 
@@ -87,6 +90,25 @@ static int watch_net(void) {
   return 0;
 }
 
+// App lifecycle notifications avoid polling Accessibility on every focus change.
+static int watch_apps(void) {
+  @autoreleasepool {
+    NSNotificationCenter *center = NSWorkspace.sharedWorkspace.notificationCenter;
+    for (NSString *name in @[NSWorkspaceDidLaunchApplicationNotification,
+                             NSWorkspaceDidTerminateApplicationNotification]) {
+      [center addObserverForName:name object:nil queue:NSOperationQueue.mainQueue
+                      usingBlock:^(NSNotification *note) {
+        (void)note;
+        trigger("tray_change", NULL);
+      }];
+    }
+    CFRunLoopTimerRef alive = CFRunLoopTimerCreate(NULL, CFAbsoluteTimeGetCurrent() + 60,
+                                                  60, 0, 0, net_alive, NULL);
+    CFRunLoopAddTimer(CFRunLoopGetCurrent(), alive, kCFRunLoopDefaultMode);
+    CFRunLoopRun();
+  }
+  return 0;
+}
 // ---- stats ----
 
 static bool cpu_ticks(uint64_t *busy, uint64_t *total) {
@@ -150,6 +172,14 @@ static struct battery read_battery(void) {
     b.minutes = (t > 0 && t < 65535) ? t : -1;
     CFTypeRef tele = CFDictionaryGetValue(props, CFSTR("PowerTelemetryData"));
     if (tele && CFGetTypeID(tele) == CFDictionaryGetTypeID()) b.milliwatts = dict_long(tele, "SystemLoad", -1);
+    if (!b.ac) {
+      // Signed mA and mV yield mW. SystemLoad can retain the last AC sample.
+      long current = dict_long(props, "InstantAmperage", LONG_MIN);
+      if (current == LONG_MIN) current = dict_long(props, "Amperage", LONG_MIN);
+      long voltage = dict_long(props, "Voltage", 0);
+      b.milliwatts = current != LONG_MIN && voltage > 0
+        ? (long)(fabs((double)current) * voltage / 1000.0) : -1;
+    }
     CFRelease(props);
   }
   IOObjectRelease(svc);
@@ -212,7 +242,8 @@ static int watch_stats(double seconds) {
 
 int main(int argc, char **argv) {
   if (argc >= 2 && strcmp(argv[1], "net") == 0) return watch_net();
+  if (argc >= 2 && strcmp(argv[1], "apps") == 0) return watch_apps();
   if (argc >= 3 && strcmp(argv[1], "stats") == 0) return watch_stats(atof(argv[2]));
-  fprintf(stderr, "usage: %s net | stats SECONDS\n", argv[0]);
+  fprintf(stderr, "usage: %s net | apps | stats SECONDS\n", argv[0]);
   return 1;
 }

@@ -30,7 +30,7 @@ let
     mkdir -p $out/bin
     $CC -O2 -Wall -framework ApplicationServices -framework AppKit -framework Carbon ${./sbmenus.c} -o $out/bin/sbmenus
     $CC -O2 -Wall -framework ApplicationServices -framework CoreText -framework ImageIO ${./sbcal.c} -o $out/bin/sbcal
-    $CC -O2 -Wall -framework CoreFoundation -framework SystemConfiguration -framework IOKit ${./sbwatch.c} -o $out/bin/sbwatch
+    $CC -x objective-c -fblocks -O2 -Wall -framework AppKit -framework CoreFoundation -framework SystemConfiguration -framework IOKit ${./sbwatch.c} -o $out/bin/sbwatch
   '';
 in
 lib.mkIf config.services.sketchybar.enable {

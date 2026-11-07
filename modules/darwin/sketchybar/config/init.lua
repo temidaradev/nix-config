@@ -37,6 +37,7 @@ sbar.exec(SBMENUS .. " --prompt")
 sbar.add("event", "popup_open")
 sbar.add("event", "network_change") -- from `sbwatch net`
 sbar.add("event", "stats_update")   -- from `sbwatch stats`
+sbar.add("event", "tray_change") -- app launch/quit notifications
 
 require("items.left")
 require("items.right")
@@ -44,6 +45,7 @@ require("items.right")
 local displays = sbar.add("item", "displays.watch", { drawing = false, updates = true })
 displays:subscribe({ "display_change", "system_woke", "front_app_switched", "forced" }, h.refresh_displays)
 h.watch("net")
+h.watch("apps")
 
 sbar.end_config()
 

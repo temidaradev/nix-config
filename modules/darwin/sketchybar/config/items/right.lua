@@ -607,8 +607,14 @@ local function scan_tray()
     end
   end)
 end
--- Rescan every three minutes and on wake, rather than on app switches.
--- changes then). Scan once explicitly at startup: the initial "forced"
--- event isn't reliable for this item.
+-- App launch/quit events are debounced so Accessibility can settle first.
+local tray_generation = 0
+tray_watch:subscribe("tray_change", function()
+  tray_generation = tray_generation + 1
+  local generation = tray_generation
+  sbar.delay(0.5, function()
+    if generation == tray_generation then scan_tray() end
+  end)
+end)
 tray_watch:subscribe({ "routine", "forced", "system_woke" }, scan_tray)
 sbar.delay(1, scan_tray)
