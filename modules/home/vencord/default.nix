@@ -167,43 +167,21 @@ let
   # linked declaratively instead. Linux keeps using the wrapper via its .desktop
   # entry and needs none of this.
   #
-  # The list matches nixpkgs' own staging script; a module missing from it is
-  # simply not linked, which shows up as the same splash-screen hang.
-  discordModuleNames = [
-    "discord_cloudsync"
-    "discord_desktop_core"
-    "discord_dispatch"
-    "discord_erlpack"
-    "discord_game_utils"
-    "discord_intents"
-    "discord_krisp"
-    "discord_modules"
-    "discord_notifications"
-    "discord_rpc"
-    "discord_spellcheck"
-    "discord_utils"
-    "discord_voice"
-    "discord_webauthn"
-    "discord_zstd"
-  ];
-
-  bundleModules = "${discord}/Applications/Discord.app/Contents/Resources/modules";
+  # Keep the parent writable: Discord creates pending/ during startup even
+  # with module updates disabled. Only the packaged module entries are linked.
+  bundleModules = "${discord}/share/discord/modules";
   modulesDir = "${discordDir}/${discord.version}/modules";
-
-  # Symlinks, matching what nixpkgs' staging script creates: Discord only reads
-  # these, and pointing at the store keeps them in step with the package.
-  moduleLinks = lib.listToAttrs (
-    map (m: {
-      name = "${modulesDir}/${m}";
-      value.source = "${bundleModules}/${m}";
-    }) discordModuleNames
-  );
-
-  installedJsonFile = pkgs.writeText "discord-installed.json" (
-    builtins.toJSON (
-      lib.listToAttrs (map (m: { name = m; value.installedVersion = 1; }) discordModuleNames)
-    )
-  );
+  discordModuleNames = [
+    "discord_cloudsync" "discord_desktop_core" "discord_dispatch"
+    "discord_erlpack" "discord_game_utils" "discord_intents" "discord_krisp"
+    "discord_modules" "discord_ndi" "discord_notifications" "discord_rpc"
+    "discord_spellcheck" "discord_sysimg" "discord_utils" "discord_voice"
+    "discord_webauthn" "discord_zstd"
+  ];
+  moduleLinks = lib.listToAttrs (map (name: {
+    name = "${modulesDir}/${name}";
+    value.source = "${bundleModules}/${name}";
+  }) discordModuleNames);
 in
 {
   environment.systemPackages = [ discord ];
@@ -214,6 +192,6 @@ in
     "${discordDir}/settings.json" = mutable discordSettingsFile;
   } // lib.mapAttrs' (name: src: lib.nameValuePair "${vencordRoot}/themes/${name}" (mutable src)) localThemes
   // lib.optionalAttrs isDarwin (
-    moduleLinks // { "${modulesDir}/installed.json" = mutable installedJsonFile; }
+    moduleLinks // { "${modulesDir}/installed.json" = mutable "${bundleModules}/installed.json"; }
   );
 }
