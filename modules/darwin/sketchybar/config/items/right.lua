@@ -486,8 +486,7 @@ h.popup(wifi, 7, function(fill)
 end, 280, "right")
 
 ---------------- volume ----------------
--- Click opens macOS's own Sound menu (output devices, and for AirPods the
--- listening mode and battery). Right-click mutes, scrolling changes volume.
+-- A local popup works even when macOS hides its Sound menu-bar extra.
 local volume = right("volume", {
   icon = { padding_right = 6 },
   label = { drawing = false },
@@ -498,14 +497,24 @@ volume:subscribe("volume_change", function(env)
   local v = tonumber(env.INFO) or 0
   volume:set({ icon = { string = v == 0 and g.vol_mute or (v < 35 and g.vol_low or (v < 70 and g.vol_mid or g.vol_high)) } })
 end)
-volume:subscribe("mouse.clicked", function(env)
-  if env.BUTTON == "right" then
-    sbar.exec([[osascript -e 'set volume output muted (not output muted of (get volume settings))']])
-  else
-    h.close_popups()
-    sbar.exec(SBMENUS .. " -i com.apple.menuextra.sound")
-  end
-end)
+local function change_volume(step)
+  sbar.exec("osascript -e 'set volume output volume (output volume of (get volume settings) + " .. step .. ")'")
+end
+h.popup(volume, 5, function(fill)
+  sbar.exec([[osascript -e 'set s to get volume settings' -e 'return (output volume of s as text) & linefeed & (output muted of s as text)']], function(out)
+    local lines = h.lines(out)
+    local muted = h.trim(lines[2]) == "true"
+    fill({
+      { icon = g.vol_mid, text = "Sound · " .. (lines[1] or "?") .. "%", header = true },
+      { icon = g.vol_mute, text = muted and "Unmute" or "Mute", on_click = function()
+        sbar.exec([[osascript -e 'set volume output muted (not output muted of (get volume settings))']])
+      end },
+      { icon = g.vol_low, text = "Volume down", on_click = function() change_volume(-5) end },
+      { icon = g.vol_high, text = "Volume up", on_click = function() change_volume(5) end },
+      { icon = g.gear, text = "Output devices / Sound settings…", on_click = settings("com.apple.Sound-Settings.extension") },
+    })
+  end)
+end, 300, "right")
 -- Scrolling is summed and applied once the wheel has been quiet for 80 ms,
 -- instead of one osascript per tick.
 local pending, scroll_gen = 0, 0
