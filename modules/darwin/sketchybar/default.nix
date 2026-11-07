@@ -56,4 +56,9 @@ lib.mkIf config.services.sketchybar.enable {
   # one stays underneath SketchyBar's higher window level.
   system.defaults.NSGlobalDomain._HIHideMenuBar = false;
   system.defaults.CustomUserPreferences.NSGlobalDomain.AppleMenuBarVisibleInFullscreen = true;
+  # Native menus must exist for the Accessibility click bridge.
+  system.defaults.CustomUserPreferences."com.apple.controlcenter" = {
+    "NSStatusItem Visible Sound" = true;
+    "NSStatusItem Visible Display" = true;
+  };
 }

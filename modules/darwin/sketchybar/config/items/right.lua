@@ -486,7 +486,7 @@ h.popup(wifi, 7, function(fill)
 end, 280, "right")
 
 ---------------- volume ----------------
--- A local popup works even when macOS hides its Sound menu-bar extra.
+-- Open Apple's Sound menu; its native menu-bar extra is enabled in Nix.
 local volume = right("volume", {
   icon = { padding_right = 6 },
   label = { drawing = false },
@@ -497,24 +497,7 @@ volume:subscribe("volume_change", function(env)
   local v = tonumber(env.INFO) or 0
   volume:set({ icon = { string = v == 0 and g.vol_mute or (v < 35 and g.vol_low or (v < 70 and g.vol_mid or g.vol_high)) } })
 end)
-local function change_volume(step)
-  sbar.exec("osascript -e 'set volume output volume (output volume of (get volume settings) + " .. step .. ")'")
-end
-h.popup(volume, 5, function(fill)
-  sbar.exec([[osascript -e 'set s to get volume settings' -e 'return (output volume of s as text) & linefeed & (output muted of s as text)']], function(out)
-    local lines = h.lines(out)
-    local muted = h.trim(lines[2]) == "true"
-    fill({
-      { icon = g.vol_mid, text = "Sound · " .. (lines[1] or "?") .. "%", header = true },
-      { icon = g.vol_mute, text = muted and "Unmute" or "Mute", on_click = function()
-        sbar.exec([[osascript -e 'set volume output muted (not output muted of (get volume settings))']])
-      end },
-      { icon = g.vol_low, text = "Volume down", on_click = function() change_volume(-5) end },
-      { icon = g.vol_high, text = "Volume up", on_click = function() change_volume(5) end },
-      { icon = g.gear, text = "Output devices / Sound settings…", on_click = settings("com.apple.Sound-Settings.extension") },
-    })
-  end)
-end, 300, "right")
+volume:subscribe("mouse.clicked", h.apple_menu("com.apple.menuextra.sound"))
 -- Scrolling is summed and applied once the wheel has been quiet for 80 ms,
 -- instead of one osascript per tick.
 local pending, scroll_gen = 0, 0
@@ -531,6 +514,13 @@ volume:subscribe("mouse.scrolled", function(env)
   end)
 end)
 
+---------------- display ----------------
+local display = right("display", {
+  icon = { string = "\u{f0379}", padding_left = 6, padding_right = 6 },
+  label = { drawing = false },
+})
+h.hover(display)
+display:subscribe("mouse.clicked", h.apple_menu("com.apple.menuextra.display"))
 ---------------- keyboard layout (only with more than one) ----------------
 local layout = right("layout", {
   updates = true,
@@ -570,17 +560,21 @@ local FALLBACK = {
   ["Macs Fan Control"] = g.fan,
   ["WakaTime"] = g.timer,
 }
-local HIDDEN = { ["com.theboringteam.boringnotch"] = true }
-local TRAY = 12
-local tray, tray_pid = {}, {}
-for i = 1, TRAY do
+-- Native extras already represented by dedicated widgets are not duplicated.
+local DEDICATED = {}
+for _, name in ipairs({ "clock", "wifi", "battery", "sound", "display", "controlcenter" }) do
+  DEDICATED["com.apple.menuextra." .. name] = true
+end
+local tray, tray_targets = {}, {}
+local function ensure_tray(i)
+  if tray[i] then return end
   local item = right("tray." .. i, {
     drawing = false,
-    icon = { color = t.fg, padding_left = 5, padding_right = 5 },
+    icon = { color = t.fg, padding_left = 4, padding_right = 4 },
     label = { drawing = false },
   })
   item:subscribe("mouse.clicked", function()
-    if tray_pid[i] then sbar.exec(SBMENUS .. " -x " .. tray_pid[i]) end
+    if tray_targets[i] then h.close_popups(); sbar.exec(tray_targets[i]) end
   end)
   h.hover(item)
   tray[i] = item
@@ -595,18 +589,26 @@ end
 local tray_watch = right("tray.watch", { drawing = false, updates = true, update_freq = 180 })
 local function scan_tray()
   sbar.exec(SBMENUS .. " -t", function(out)
-    local apps, seen = {}, {}
+    local apps, occurrences = {}, {}
     for _, line in ipairs(h.lines(out)) do
-      local pid, name, bundle = line:match("^(%d+)\t([^\t]*)\t?(.*)$")
-      if pid and not seen[name] and not HIDDEN[bundle] then
-        seen[name] = true
-        apps[#apps + 1] = { pid = pid, name = name }
+      local pid, name, bundle, title = line:match("^(%d+)\t([^\t]*)\t([^\t]*)\t(.*)$")
+      if pid then
+        local occurrence = occurrences[pid] or 0
+        occurrences[pid] = occurrence + 1
+        if not DEDICATED[bundle] then
+          apps[#apps + 1] = {
+            name = name ~= "" and name or title,
+            target = tonumber(pid) == 0 and (SBMENUS .. " -i '" .. bundle:gsub("'", "'\\''") .. "'")
+              or (SBMENUS .. " -x " .. pid .. " " .. occurrence),
+          }
+        end
       end
     end
+    for i = 1, #apps do ensure_tray(i) end
     -- right-positioned: slot 1 is rightmost; keep the menu bar's order
-    for i = 1, TRAY do
+    for i = 1, #tray do
       local a = apps[#apps - i + 1]
-      tray_pid[i] = a and a.pid or nil
+      tray_targets[i] = a and a.target or nil
       if a then
         local glyph, font, y = tray_icon(a.name)
         tray[i]:set({ drawing = true, icon = { string = glyph, font = font, y_offset = y } })

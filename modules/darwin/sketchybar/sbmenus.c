@@ -125,8 +125,35 @@ static void press(AXUIElementRef item, bool reveal_bar) {
 
 typedef bool (*visit_fn)(AXUIElementRef item, pid_t owner, const char *ident, void *ctx);
 
-// Visit every icon in MenuBarAgent's first menu bar window that has any
-// (MenuBarAgent keeps one window per display; the first is the main one).
+// Walk every sibling, rather than only the first child of each group.
+static bool visit_icons(AXUIElementRef el, pid_t agent, visit_fn visit, void *ctx, int depth) {
+  if (depth > 8) return false;
+  char role[64];
+  copy_string(el, kAXRoleAttribute, role, sizeof role);
+  if (!strcmp(role, "AXButton") || !strcmp(role, "AXMenuBarItem")) {
+    // Nested menu actions are also AXButtons, but have no menu-bar geometry.
+    CFTypeRef value = NULL;
+    CGSize size = {0};
+    if (AXUIElementCopyAttributeValue(el, kAXSizeAttribute, &value) == kAXErrorSuccess && value) {
+      if (CFGetTypeID(value) == AXValueGetTypeID()) AXValueGetValue(value, kAXValueCGSizeType, &size);
+      CFRelease(value);
+    }
+    if (size.width <= 0 || size.height <= 0) return false;
+    pid_t owner = 0;
+    AXUIElementGetPid(el, &owner);
+    char ident[256];
+    copy_string(el, kAXIdentifierAttribute, ident, sizeof ident);
+    return visit(el, owner == agent ? 0 : owner, ident, ctx);
+  }
+  CFArrayRef kids = copy_children(el);
+  bool stop = false;
+  for (CFIndex i = 0; kids && i < CFArrayGetCount(kids) && !stop; i++)
+    stop = visit_icons((AXUIElementRef)CFArrayGetValueAtIndex(kids, i), agent, visit, ctx, depth + 1);
+  if (kids) CFRelease(kids);
+  return stop;
+}
+
+// One menu-bar window, avoiding duplicate copies from other displays.
 static void each_icon(visit_fn visit, void *ctx) {
   pid_t agent = pid_named("MenuBarAgent");
   if (!agent) return;
@@ -137,29 +164,8 @@ static void each_icon(visit_fn visit, void *ctx) {
   for (CFIndex w = 0; wins && w < CFArrayGetCount(wins) && !stop; w++) {
     CFArrayRef groups = copy_children((AXUIElementRef)CFArrayGetValueAtIndex(wins, w));
     CFIndex count = groups ? CFArrayGetCount(groups) : 0;
-    for (CFIndex g = 0; g < count && !stop; g++) {
-      // Apple extras are group > group > item, third-party ones group > item.
-      AXUIElementRef el = (AXUIElementRef)CFRetain(CFArrayGetValueAtIndex(groups, g));
-      for (int depth = 0; depth < 3 && el && !stop; depth++) {
-        CFArrayRef kids = copy_children(el);
-        CFRelease(el);
-        el = NULL;
-        if (!kids || CFArrayGetCount(kids) == 0) { if (kids) CFRelease(kids); break; }
-        el = (AXUIElementRef)CFRetain(CFArrayGetValueAtIndex(kids, 0));
-        CFRelease(kids);
-        char role[64];
-        copy_string(el, kAXRoleAttribute, role, sizeof role);
-        if (strcmp(role, "AXButton") == 0 || strcmp(role, "AXMenuBarItem") == 0) {
-          pid_t owner = 0;
-          AXUIElementGetPid(el, &owner);
-          char ident[256];
-          copy_string(el, kAXIdentifierAttribute, ident, sizeof ident);
-          stop = visit(el, owner == agent ? 0 : owner, ident, ctx);
-          break;
-        }
-      }
-      if (el) CFRelease(el);
-    }
+    for (CFIndex g = 0; g < count && !stop; g++)
+      stop = visit_icons((AXUIElementRef)CFArrayGetValueAtIndex(groups, g), agent, visit, ctx, 0);
     if (groups) CFRelease(groups);
     if (count > 0) break;  // only the first window that has icons
   }
@@ -168,20 +174,29 @@ static void each_icon(visit_fn visit, void *ctx) {
 }
 
 static bool print_icon(AXUIElementRef item, pid_t owner, const char *ident, void *ctx) {
-  (void)item; (void)ident; (void)ctx;
-  if (!owner) return false;  // Apple's own extras: the bar has its own widgets
-  char name[256], bundle[256];
-  app_info(owner, name, sizeof name, bundle, sizeof bundle);
-  printf("%d\t%s\t%s\n", owner, name, bundle);
+  (void)ctx;
+  char name[256] = "", bundle[256] = "";
+  if (owner) app_info(owner, name, sizeof name, bundle, sizeof bundle);
+  else {
+    snprintf(bundle, sizeof bundle, "%s", ident);
+    const char *suffix = strrchr(ident, '.');
+    snprintf(name, sizeof name, "%s", suffix ? suffix + 1 : ident);
+  }
+  char title[256];
+  copy_string(item, kAXDescriptionAttribute, title, sizeof title);
+  printf("%d\t%s\t%s\t%s\n", owner, name, bundle, title);
   return false;
 }
 
-struct match { pid_t pid; const char *ident; };
+struct match { pid_t pid; const char *ident; int occurrence; int seen; };
 
 static bool press_match(AXUIElementRef item, pid_t owner, const char *ident, void *ctx) {
   struct match *m = ctx;
   if ((m->pid && owner == m->pid) || (m->ident && strcmp(ident, m->ident) == 0)) {
-    press(item, true);
+    if (m->seen++ < m->occurrence) return false;
+    // Apple's bar is permanently shown underneath SketchyBar. A temporary
+    // visibility override followed by hiding it can dismiss the panel we open.
+    press(item, false);
     return true;
   }
   return false;
@@ -279,10 +294,10 @@ int main(int argc, char **argv) {
   else if (strcmp(argv[1], "-s") == 0 && argc >= 3) front_menus(atol(argv[2]));
   else if (strcmp(argv[1], "-t") == 0) each_icon(print_icon, NULL);
   else if (strcmp(argv[1], "-x") == 0 && argc >= 3) {
-    struct match m = { (pid_t)atoi(argv[2]), NULL };
+    struct match m = { (pid_t)atoi(argv[2]), NULL, argc >= 4 ? atoi(argv[3]) : 0, 0 };
     each_icon(press_match, &m);
   } else if (strcmp(argv[1], "-i") == 0 && argc >= 3) {
-    struct match m = { 0, argv[2] };
+    struct match m = { 0, argv[2], 0, 0 };
     each_icon(press_match, &m);
   } else return 1;
   return 0;
