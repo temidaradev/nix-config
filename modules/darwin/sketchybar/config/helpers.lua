@@ -42,8 +42,10 @@ end
 -- on app/space/display switches.
 local open_popup = nil
 local hover_gen = 0
+local popup_gen = 0
 
 function M.close_popups()
+  popup_gen = popup_gen + 1
   if open_popup then open_popup:set({ popup = { drawing = false } }) end
   open_popup = nil
 end
@@ -88,8 +90,10 @@ function M.open(parent, on_open)
   M.close_popups()
   open_popup = parent
   hovered()
-  local function show() M.redraw(parent) end
-  if on_open then on_open(show) else show() end
+  local mine = popup_gen
+  local function current() return open_popup == parent and popup_gen == mine end
+  local function show() if current() then M.redraw(parent) end end
+  if on_open then on_open(show, current) else show() end
 end
 
 -- A click with BUTTON ("left" by default, "right" where the left click opens
@@ -186,9 +190,10 @@ function M.popup(parent, n, refresh, width, align, button)
     end
   end
 
-  M.attach(parent, function(show)
+  M.attach(parent, function(show, current)
     if not refresh then return show() end
     refresh(function(data)
+      if not current() then return end
       fill(data)
       show()
     end)
@@ -237,14 +242,19 @@ function M.apple_menu(id)
   end
 end
 
--- (Re)start a long-running sbwatch provider. The "[s]" keeps pkill's pattern
--- from matching the shell that runs it.
+-- Match only an executable path at the start of the command line, never a
+-- shell whose script mentions the provider. [/] also excludes pkill itself.
+local function watch_pattern(kind)
+  assert(kind:match("^[a-z]+$"), "invalid provider kind")
+  return "^/[^ ]*[/]sbwatch " .. kind .. "( |$)"
+end
+
 function M.stop_watch(kind)
-  sbar.exec("pkill -f '[s]bwatch " .. kind .. "'")
+  sbar.exec("pkill -f '" .. watch_pattern(kind) .. "'")
 end
 function M.watch(kind, ...)
   local args = table.concat({ ... }, " ")
-  sbar.exec(string.format("pkill -f '[s]bwatch %s'; nohup %s %s %s >/dev/null 2>&1 &", kind, SBWATCH, kind, args))
+  sbar.exec(string.format("pkill -f '%s'; nohup %s %s %s >/dev/null 2>&1 &", watch_pattern(kind), SBWATCH, kind, args))
 end
 
 return M

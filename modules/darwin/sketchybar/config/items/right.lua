@@ -392,38 +392,38 @@ bt:subscribe("mouse.clicked", function(env)
   if env.BUTTON == "right" then sbar.exec("blueutil -p toggle", refresh_bt) end
 end)
 h.popup(bt, 9, function(fill)
-  sbar.exec("blueutil -p; blueutil --paired --format json", function(out)
-    local text = tostring(out)
-    local on = text:sub(1, 1) == "1"
-    local rows = {
-      { icon = on and g.bt_on or g.bt_off, text = "Bluetooth · " .. (on and "On" or "Off"), header = true,
-        on_click = function() sbar.exec("blueutil -p toggle", refresh_bt) end },
-    }
-    -- blueutil's JSON: one object per paired device; connected ones first
-    local devices = {}
-    for obj in text:gmatch("{(.-)}") do
-      local name, addr = obj:match('"name":"(.-)"'), obj:match('"address":"(.-)"')
-      if name and addr then
-        devices[#devices + 1] = { name = name, addr = addr, connected = obj:find('"connected":true') ~= nil }
-      end
-    end
-    table.sort(devices, function(a, b)
-      if a.connected ~= b.connected then return a.connected end
-      return a.name < b.name
-    end)
-    for _, d in ipairs(devices) do
-      if #rows >= 8 then break end
-      rows[#rows + 1] = {
-        icon = d.connected and g.bt_linked or g.device,
-        text = d.name,
-        dim = not d.connected,
-        on_click = function()
-          sbar.exec("blueutil --" .. (d.connected and "disconnect" or "connect") .. " " .. d.addr, refresh_bt)
-        end,
+  sbar.exec("blueutil -p", function(power)
+    local on = h.trim(power) == "1"
+    sbar.exec("blueutil --paired --format json", function(paired)
+      local rows = {
+        { icon = on and g.bt_on or g.bt_off, text = "Bluetooth · " .. (on and "On" or "Off"), header = true,
+          on_click = function() sbar.exec("blueutil -p toggle", refresh_bt) end },
       }
-    end
-    rows[#rows + 1] = { icon = g.gear, text = "Bluetooth settings…", on_click = settings("com.apple.BluetoothSettings") }
-    fill(rows)
+      local devices = {}
+      for _, device in ipairs(type(paired) == "table" and paired or {}) do
+        local name, addr = device.name, device.address
+        if type(name) == "string" and type(addr) == "string" and addr:match("^[%x:-]+$") then
+          devices[#devices + 1] = { name = name, addr = addr, connected = device.connected == true }
+        end
+      end
+      table.sort(devices, function(a, b)
+        if a.connected ~= b.connected then return a.connected end
+        return a.name < b.name
+      end)
+      for _, d in ipairs(devices) do
+        if #rows >= 8 then break end
+        rows[#rows + 1] = {
+          icon = d.connected and g.bt_linked or g.device,
+          text = d.name,
+          dim = not d.connected,
+          on_click = function()
+            sbar.exec("blueutil --" .. (d.connected and "disconnect" or "connect") .. " " .. d.addr, refresh_bt)
+          end,
+        }
+      end
+      rows[#rows + 1] = { icon = g.gear, text = "Bluetooth settings…", on_click = settings("com.apple.BluetoothSettings") }
+      fill(rows)
+    end)
   end)
 end, 300, "right")
 
