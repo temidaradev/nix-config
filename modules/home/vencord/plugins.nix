@@ -74,7 +74,6 @@ let
     ServerListIndicators = {
       enabled = true;
       mode = 3;
-      useCompact = true;
     };
     ShikiCodeblocks = {
       enabled = true;
@@ -103,11 +102,12 @@ let
     CopyUserURLs.enabled = true;
     CrashHandler.enabled = true;
     Dearrow.enabled = true;
+    DirectFileDownload.enabled = true;
     DisableCallIdle.enabled = true;
-    DisableDeepLinks.enabled = true;
     DontRoundMyTimestamps.enabled = true;
     Experiments.enabled = true;
-    ExpressionCloner.enabled = true;
+    # Renamed from ExpressionCloner in Vencord 1.15.16.
+    ExpressionManager.enabled = true;
     FakeNitro.enabled = true;
     FakeProfileThemes.enabled = true;
     FavoriteEmojiFirst.enabled = true;
@@ -118,6 +118,7 @@ let
     ForceOwnerCrown.enabled = true;
     FullSearchContext.enabled = true;
     GifPaste.enabled = true;
+    GifProviderSwitcher.enabled = true;
     GreetStickerPicker.enabled = true;
     HideMedia.enabled = true;
     ImplicitRelationships.enabled = true;
@@ -148,6 +149,7 @@ let
     ShowConnections.enabled = true;
     ShowHiddenChannels.enabled = true;
     ShowHiddenThings.enabled = true;
+    SilentTyping.enabled = true;
     SpotifyCrack.enabled = true;
     SpotifyShareCommands.enabled = true;
     StickerPaste.enabled = true;
@@ -163,6 +165,7 @@ let
     ViewIcons.enabled = true;
     VoiceDownload.enabled = true;
     VoiceMessages.enabled = true;
+    WhoReacted.enabled = true;
     YoutubeAdblock.enabled = true;
   };
 in
