@@ -9,7 +9,7 @@
 # own patcher.ts (adding AcceleratedVideoDecodeLinuxGL to the enable-features
 # Chromium switch on Linux) and only had an effect when Nix built Vencord from
 # source. It is kept for reference should that ever be revisited.
-{ hmUsername, lib, pkgs, ... }:
+{ hmUsername, lib, pkgs, system, ... }:
 let
   isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
 
@@ -27,10 +27,28 @@ let
     ]
   );
 
+  # Vencord 1.15.13 crashes Discord 0.0.420 during web startup (blank window).
+  vencord = pkgs.vencord.overrideAttrs (finalAttrs: old: {
+    version = "1.15.16";
+    src = old.src.override {
+      tag = "v${finalAttrs.version}";
+      hash = "sha256-aUJubLJpyLAZWiOezqFxPY6oVPgWVPQpajFqrJvrO9U=";
+    };
+    # Upstream now pins @types/react through a catalog; nixpkgs' lockfile fix is obsolete.
+    patches = [ ];
+    postPatch = "";
+    pnpmDeps = pkgs.fetchPnpmDeps {
+      inherit (finalAttrs) pname version src patches postPatch;
+      pnpm = pkgs.pnpm_11;
+      fetcherVersion = 4;
+      hash = "sha256-HS8uZNepvDefjrsG3buVLFCVv7sHvazcwdpcT3EQ/78=";
+    };
+  });
+
   discord = pkgs.discord.override {
     withVencord = true;
     withOpenASAR = true;
-    inherit commandLineArgs;
+    inherit commandLineArgs vencord;
   };
 
   # Vencord's config root differs per platform: XDG on Linux, Application
@@ -164,11 +182,18 @@ let
   # are present under <configDir>/<version>/modules. nixpkgs stages them from a
   # wrapper around bin/Discord, but on macOS the Dock and Spotlight launch the
   # .app bundle directly and never touch that wrapper, so the modules have to be
-  # linked declaratively instead. Linux keeps using the wrapper via its .desktop
+  # staged declaratively instead. Linux keeps using the wrapper via its .desktop
   # entry and needs none of this.
   #
-  # Keep the parent writable: Discord creates pending/ during startup even
-  # with module updates disabled. Only the packaged module entries are linked.
+  # They must be real copies, not symlinks into the store: discord_desktop_core
+  # resolves each native module (following symlinks) and throws "resolved
+  # outside the native module directories" unless the real path sits under the
+  # modules dir -- the renderer then never mounts (blank window). hjem's `copy`
+  # only handles single files, so activation copies the directories instead
+  # (a no-op unless the Discord build changed). Keep the parent
+  # writable: Discord creates pending/ during startup even with module updates
+  # disabled.
+  isDarwinHost = lib.hasSuffix "darwin" system;
   bundleModules = "${discord}/share/discord/modules";
   modulesDir = "${discordDir}/${discord.version}/modules";
   discordModuleNames = [
@@ -178,10 +203,35 @@ let
     "discord_spellcheck" "discord_sysimg" "discord_utils" "discord_voice"
     "discord_webauthn" "discord_zstd"
   ];
-  moduleLinks = lib.listToAttrs (map (name: {
-    name = "${modulesDir}/${name}";
-    value.source = "${bundleModules}/${name}";
-  }) discordModuleNames);
+  stageModules = pkgs.writeShellApplication {
+    name = "discord-stage-modules";
+    runtimeInputs = [ pkgs.coreutils ];
+    text = ''
+      dest="$HOME/${modulesDir}"
+      src=${bundleModules}
+      stamp="$dest/.nix-source"
+      mkdir -p "$dest"
+
+      # Up to date only if every module is a real directory from this build.
+      fresh=1
+      [[ "$(cat "$stamp" 2>/dev/null)" == "$src" ]] || fresh=0
+      for name in ${lib.concatStringsSep " " discordModuleNames}; do
+        if [[ -L "$dest/$name" || ! -d "$dest/$name" ]]; then fresh=0; fi
+      done
+      [[ $fresh == 1 ]] && exit 0
+
+      for name in ${lib.concatStringsSep " " discordModuleNames}; do
+        tmp="$dest/.$name.tmp"
+        rm -rf "$tmp"
+        cp -RL "$src/$name" "$tmp"
+        chmod -R u+w "$tmp"
+        rm -rf "''${dest:?}/$name"
+        mv "$tmp" "$dest/$name"
+      done
+      echo "$src" > "$stamp"
+      echo "staged Discord modules from $src"
+    '';
+  };
 in
 {
   environment.systemPackages = [ discord ];
@@ -191,7 +241,19 @@ in
     "${vencordDir}/quickCss.css" = mutable ./quickCss.css;
     "${discordDir}/settings.json" = mutable discordSettingsFile;
   } // lib.mapAttrs' (name: src: lib.nameValuePair "${vencordRoot}/themes/${name}" (mutable src)) localThemes
-  // lib.optionalAttrs isDarwin (
-    moduleLinks // { "${modulesDir}/installed.json" = mutable "${bundleModules}/installed.json"; }
-  );
+  // lib.optionalAttrs isDarwin {
+    "${modulesDir}/installed.json" = mutable "${bundleModules}/installed.json";
+  };
+}
+# Gated on the `system` specialArg rather than pkgs: these options only exist
+# on nix-darwin, and deciding attribute names from pkgs would recurse.
+// lib.optionalAttrs isDarwinHost {
+  # Run inline during activation rather than from a launchd agent: macOS
+  # privacy protection denies background agents access to another app's
+  # Application Support folder, while darwin-rebuild inherits the terminal's.
+  system.activationScripts.postActivation.text = lib.mkAfter ''
+    echo "staging Discord native modules..."
+    /usr/bin/sudo -H -u ${hmUsername} ${lib.getExe stageModules} \
+      || echo "warning: staging Discord native modules failed" >&2
+  '';
 }
