@@ -18,9 +18,9 @@ return {
   size        = 13.0,
   small       = 12.0,
   glyph       = 15.0,
-  -- 39pt is the menu bar height on the notched built-in display; matching it
-  -- covers Apple's bar exactly.
-  height      = 39,
-  pill        = 28,
+  -- Compact external bar; match Apple's taller bar only on notched displays.
+  height      = 28,
+  notch_height = 39,
+  pill        = 24,
   radius      = 7,
 }

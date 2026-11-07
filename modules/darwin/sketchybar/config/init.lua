@@ -7,6 +7,7 @@ sbar.begin_config()
 sbar.bar({
   position = "top",
   height = t.height,
+  notch_display_height = t.notch_height,
   color = t.bg,
   border_width = 0,
   corner_radius = 0,
