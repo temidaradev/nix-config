@@ -23,8 +23,8 @@ BarPopup {
         glyph: !pop.enabled ? "󰂲" : pop.connected.length > 0 ? "󰂱" : "󰂯"
         glyphColor: pop.enabled ? Theme.accent : Theme.fgDim
         text: "Bluetooth"
-        sub: !pop.adapter ? "No adapter" : !pop.enabled ? "Off" : pop.connected.length > 0 ? pop.connected.map(d => d.name).join(", ") : "On, nothing connected"
-        PopupSwitch { visible: pop.adapter !== null; on: pop.enabled; onToggled: v => pop.adapter.enabled = v }
+        sub: !pop.adapter ? "Off (radio blocked)" : !pop.enabled ? "Off" : pop.connected.length > 0 ? pop.connected.map(d => d.name).join(", ") : "On, nothing connected"
+        PopupSwitch { on: pop.enabled; onToggled: v => Devices.setBluetooth(v) }
     }
     PopupToggle {
         visible: pop.enabled

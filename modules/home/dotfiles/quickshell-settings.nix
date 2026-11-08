@@ -48,6 +48,8 @@
   weather = { city = "Istanbul"; };
 
   dashboard = { visualizer = !laptop; };   # cava bars in the media card (runs only while it is open)
+  sidebar = { width = 600; };
+  capture = { fps = if laptop then 30 else 60; bitrate = if laptop then 8 else 12; encoder = "h264_vaapi"; };
 
   osd = { timeoutMs = 1500; bottomMargin = 90; };
 

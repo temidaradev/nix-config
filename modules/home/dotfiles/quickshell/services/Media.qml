@@ -34,7 +34,7 @@ Singleton {
 
     // MPRIS doesn't push position updates; poll while something plays.
     Timer {
-        interval: Launcher.dashOpen || Launcher.sidebarOpen || !Battery.saving ? 1000 : 5000; repeat: true
+        interval: !Battery.saving ? 1000 : (Launcher.dashOpen || (Launcher.sidebarOpen && Launcher.sidebarTab === "media")) ? 2000 : 5000; repeat: true
         running: root.player !== null && root.playing && !Idle.screensOff && !Lock.locked
         onTriggered: root.player.positionChanged()
     }

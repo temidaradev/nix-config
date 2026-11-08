@@ -53,4 +53,15 @@ Singleton {
     readonly property bool hasBuds: all.some(d => d.key === "buds")
     readonly property bool hasSony: all.some(d => d.key === "sony")
     readonly property bool hasAirPods: all.some(d => d.key === "airpods")
+
+    property bool powerOnAppear: false
+    readonly property var btAdapter: Bluetooth.defaultAdapter
+    onBtAdapterChanged: if (btAdapter && powerOnAppear) { powerOnAppear = false; btAdapter.enabled = true }
+
+    function setBluetooth(on) {
+        if (btAdapter) { btAdapter.enabled = on; return }
+        if (!on) return
+        powerOnAppear = true
+        Quickshell.execDetached(["rfkill", "unblock", "bluetooth"])
+    }
 }

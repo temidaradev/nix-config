@@ -1,6 +1,24 @@
 { config, lib, pkgs, ... }:
 
 let
+  sidebarPython = pkgs.python3.withPackages (ps: [ ps.icalendar ps.python-dateutil ]);
+  sidebarBackend = pkgs.writeShellApplication {
+    name = "shell-sidebar-backend";
+    runtimeInputs = with pkgs; [ pipewire wireplumber pulseaudio procps iputils networkmanager niri wl-clipboard cliphist libnotify systemd polkit wlsunset wf-recorder ];
+    text = ''
+      exec ${sidebarPython}/bin/python3 ${../../../home/dotfiles/quickshell/scripts/sidebar.py} "$@"
+    '';
+  };
+  clipboardStore = pkgs.writeShellApplication {
+    name = "shell-clipboard-store";
+    runtimeInputs = [ pkgs.cliphist pkgs.coreutils ];
+    text = ''
+      if [[ ! -e "''${XDG_STATE_HOME:-$HOME/.local/state}/quickshell/clipboard-paused" ]]; then
+        exec cliphist store
+      fi
+      exec cat >/dev/null
+    '';
+  };
   # Spawned from config.kdl; wrappers keep store paths out of it.
   polkitAgent = pkgs.writeShellScriptBin "niri-polkit-agent" ''
     exec ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1
@@ -67,6 +85,11 @@ in
     swappy
     wl-clipboard
     cliphist             # clipboard history shown in the sidebar
+    sidebarBackend
+    clipboardStore
+    easyeffects
+    wlsunset
+    wf-recorder
     polkitAgent
     gtkSettings
     screenshot

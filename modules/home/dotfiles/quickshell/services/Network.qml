@@ -7,9 +7,9 @@ import qs.services
 // NetworkManager state via nmcli. Polls only while `active` (a panel is open).
 Singleton {
     id: root
-    readonly property bool active: Launcher.sidebarOpen || Launcher.controlOpen || Launcher.menu === "network"
-    property bool _rescan: true
-    onActiveChanged: if (active) _rescan = true
+    readonly property bool active: (Launcher.sidebarOpen && Launcher.sidebarTab === "network") || Launcher.controlOpen || Launcher.menu === "network"
+    property bool _rescan: !Battery.saving
+    onActiveChanged: if (active) _rescan = !Battery.saving
     property var devices: []      // [{name, type, state, connection, ip4}]
     property var wifi: []         // [{inUse, ssid, signal, freq, band, secure}]
     readonly property bool hasWifi: devices.some(d => d.type === "wifi")
@@ -52,7 +52,7 @@ Singleton {
         }
     }
     Timer {
-        interval: 5000; repeat: true; running: root.active; triggeredOnStart: true
+        interval: Battery.saving ? 15000 : 5000; repeat: true; running: root.active && !Lock.locked && !Idle.screensOff; triggeredOnStart: true
         onTriggered: root.refresh()
     }
     function scanWifi() { if (!scan.running) { scan.running = true; _rescan = false } }

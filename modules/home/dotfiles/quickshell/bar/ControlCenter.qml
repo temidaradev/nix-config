@@ -56,8 +56,8 @@ BarPopup {
         Toggle {
             glyph: "󰂯"; label: "Bluetooth"; expandable: win.adapter !== null
             on: win.adapter?.enabled ?? false
-            sub: !win.adapter ? "No adapter" : (win.btConnected.length > 0 ? win.btConnected.map(d => d.name).join(", ") : (on ? "On" : "Off"))
-            onClicked: if (win.adapter) win.adapter.enabled = !win.adapter.enabled
+            sub: !win.adapter ? "Off (radio blocked)" : (win.btConnected.length > 0 ? win.btConnected.map(d => d.name).join(", ") : (on ? "On" : "Off"))
+            onClicked: Devices.setBluetooth(!(win.adapter?.enabled ?? false))
             onExpand: Launcher.openSidebar("bluetooth")
         }
         Toggle {

@@ -8,6 +8,7 @@ import Quickshell.Services.Pipewire
 import Quickshell.Services.Mpris
 import qs
 import qs.services
+import "sidebar" as Extra
 
 // Noctalia-style control panel on the right edge: icon tabs on the left,
 // one page per tab. Mod+S or the bar button; `qs ipc call sidebar toggle`.
@@ -22,11 +23,24 @@ PanelWindow {
     WlrLayershell.keyboardFocus: visible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 
     property string tab: Launcher.sidebarTab
-    onTabChanged: Launcher.sidebarTab = tab
+    property string previousTab: ""
+    Connections { target: Launcher; function onSidebarTabChanged() { if (win.tab !== Launcher.sidebarTab) win.tab = Launcher.sidebarTab } }
+    onTabChanged: {
+        if (previousTab !== "") Workbench.scroll[previousTab] = pageScroll.contentY
+        Launcher.sidebarTab = tab
+        previousTab = tab
+        pageScroll.contentY = 0
+        restoreScroll.restart()
+    }
+    Timer { id: restoreScroll; interval: 0; onTriggered: pageScroll.contentY = Math.max(0, Math.min(Workbench.scroll[win.tab] || 0, pageScroll.contentHeight - pageScroll.height)) }
     readonly property var tabs: [
         { id: "home",          glyph: "󰋜", label: "Home" },
         { id: "media",         glyph: "󰝚", label: "Media" },
         { id: "audio",         glyph: "󰕾", label: "Audio" },
+        { id: "capture",       glyph: "󰑊", label: "Capture" },
+        { id: "displays",      glyph: "󰍹", label: "Displays" },
+        { id: "clipboard",     glyph: "󰅍", label: "Clipboard" },
+        { id: "tasks",         glyph: "󰄬", label: "Tasks" },
         { id: "system",        glyph: "󰍛", label: "System" },
         { id: "network",       glyph: "󰛳", label: "Network" },
         { id: "bluetooth",     glyph: "󰂯", label: "Bluetooth" },
@@ -37,8 +51,9 @@ PanelWindow {
         { id: "power",         glyph: "󰁹", label: "Power" }
     ]
     function open(t) { tab = t }
-    Component.onCompleted: { Clipboard.refresh(); Capture.refresh(); Power.refresh(); Brightness.refresh(); ScreenTime.flush() }
-    Timer { interval: 4000; repeat: true; running: win.tab === "home"; onTriggered: Capture.refresh() }
+    Component.onCompleted: { Clipboard.refresh(); Capture.refresh(); Power.refresh(); Brightness.refresh(); ScreenTime.flush(); previousTab = tab }
+    Component.onDestruction: Workbench.scroll[tab] = pageScroll.contentY
+    Timer { interval: Battery.saving ? 15000 : 5000; repeat: true; running: win.visible && win.tab === "home" && !Lock.locked && !Idle.screensOff; onTriggered: Capture.refresh() }
 
     // ---- pipewire ----
     readonly property var nodes: Pipewire.nodes.values.filter(n => n.audio)
@@ -167,7 +182,7 @@ PanelWindow {
     Rectangle {
         anchors.top: parent.top; anchors.bottom: parent.bottom; anchors.right: parent.right
         anchors.topMargin: Theme.barHeight
-        width: 540
+        width: Math.min(Settings.s.sidebar?.width || 600, win.width - 16)
         color: Theme.panelBg
         border.color: Theme.cardBorder; border.width: 1
         MouseArea { anchors.fill: parent }
@@ -179,8 +194,13 @@ PanelWindow {
             anchors.margins: 1
             width: 56
             color: "#14ffffff"
+            Flickable {
+                anchors.fill: parent; anchors.topMargin: 8; anchors.bottomMargin: 58
+                contentHeight: tabColumn.implicitHeight; clip: true
+                boundsBehavior: Flickable.StopAtBounds
             Column {
-                anchors.top: parent.top; anchors.topMargin: 8; anchors.horizontalCenter: parent.horizontalCenter
+                id: tabColumn
+                anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 4
                 Repeater {
                     model: win.tabs
@@ -195,8 +215,11 @@ PanelWindow {
                             width: 8; height: 8; radius: 4; color: Theme.accent
                         }
                         MouseArea { id: tm; anchors.fill: parent; hoverEnabled: true; onClicked: win.tab = modelData.id }
+                        ToolTip.visible: tm.containsMouse
+                        ToolTip.text: modelData.label
                     }
                 }
+            }
             }
             Rectangle {   // session
                 anchors.bottom: parent.bottom; anchors.horizontalCenter: parent.horizontalCenter; anchors.bottomMargin: 8
@@ -207,22 +230,44 @@ PanelWindow {
             }
         }
 
+        Column {
+            id: header
+            anchors.left: rail.right; anchors.right: parent.right; anchors.top: parent.top
+            anchors.margins: 14; spacing: 6
+            Extra.SField { id: search; placeholderText: "Search controls: codec, microphone, Tailscale…" }
+            Repeater {
+                model: search.text.trim() === "" ? [] : win.tabs.filter(t => {
+                    const keywords = ({ audio: "codec bitrate sample rate microphone mic routing equalizer noise effects buffer latency", capture: "record video screenshot fps encoder bitrate", displays: "monitor brightness resolution scaling night light refresh rotation", power: "battery charging threshold health watts awake", network: "wifi internet vpn mullvad tailscale hotspot ip dns latency", tasks: "notes reminders timer focus", clipboard: "copy paste pins snippets history", calendar: "agenda events" })[t.id] || ""
+                    return (t.label + " " + keywords).toLowerCase().includes(search.text.toLowerCase())
+                }).slice(0, 4)
+                Extra.SAction { required property var modelData; text: modelData.glyph + " " + modelData.label; width: parent.width; onClicked: { win.tab = modelData.id; search.clear() } }
+            }
+            Extra.SHint { visible: Workbench.message !== ""; text: Workbench.message; color: Workbench.failed ? Theme.red : Theme.fgDim; maximumLineCount: 7; elide: Text.ElideRight }
+        }
+
         Flickable {
-            anchors.left: rail.right; anchors.right: parent.right; anchors.top: parent.top; anchors.bottom: parent.bottom
+            id: pageScroll
+            anchors.left: rail.right; anchors.right: parent.right; anchors.top: header.bottom; anchors.bottom: parent.bottom
             anchors.margins: 14
             contentHeight: page.implicitHeight
             clip: true
             boundsBehavior: Flickable.StopAtBounds
+            ScrollBar.vertical: ScrollBar {}
 
             Column {
                 id: page
                 width: parent.width
                 spacing: 8
+                Loader { active: win.tab === "capture"; visible: active; width: parent.width; sourceComponent: Component { Extra.CapturePage {} } }
+                Loader { active: win.tab === "displays"; visible: active; width: parent.width; sourceComponent: Component { Extra.DisplaysPage {} } }
+                Loader { active: win.tab === "clipboard"; visible: active; width: parent.width; sourceComponent: Component { Extra.ClipboardPage {} } }
+                Loader { active: win.tab === "tasks"; visible: active; width: parent.width; sourceComponent: Component { Extra.TasksPage {} } }
 
                 // ================= HOME =================
                 Column {
                     visible: win.tab === "home"
                     width: parent.width; spacing: 8
+                    Loader { active: win.tab === "home"; width: parent.width; sourceComponent: Component { Extra.HomeTools { tabs: win.tabs } } }
                     Card {
                         Row {
                             width: parent.width; spacing: 12
@@ -337,10 +382,16 @@ PanelWindow {
                                 BarButton { padding: 6; onClicked: p.togglePlaying(); BarText { text: p.isPlaying ? "󰏤" : "󰐊"; font.pointSize: 18 } }
                                 BarButton { padding: 6; onClicked: p.next(); BarText { text: "󰒭"; font.pointSize: 14 } }
                             }
+                            Extra.MediaTools { player: p }
                         }
                     }
                 }
 
+                Extra.SCard {
+                    visible: win.tab === "media"
+                    Extra.SSelect { label: "Pause all media after"; options: ["No timer", "15 minutes", "30 minutes", "1 hour", "2 hours"]; values: [0, 15, 30, 60, 120]; onChosen: value => Workbench.sleep(value) }
+                    Extra.SHint { visible: Workbench.sleepUntil > 0; text: "Sleep timer: " + Media.fmtTime(Math.max(0, (Workbench.sleepUntil - Workbench.now) / 1000)) }
+                }
                 // ================= AUDIO =================
                 Column {
                     visible: win.tab === "audio"
@@ -462,6 +513,7 @@ PanelWindow {
                     }
                 }
 
+                Loader { active: win.tab === "system"; visible: active; width: parent.width; sourceComponent: Component { Extra.SystemTools {} } }
                 // ================= NETWORK =================
                 Column {
                     visible: win.tab === "network"
@@ -505,13 +557,14 @@ PanelWindow {
                         SmallButton { label: "Edit connections"; onClicked: { Launcher.sidebarOpen = false; Apps.spawn(["nm-connection-editor"]) } } }
                 }
 
+                Loader { active: win.tab === "network"; visible: active; width: parent.width; sourceComponent: Component { Extra.NetworkTools {} } }
                 // ================= BLUETOOTH =================
                 Column {
                     visible: win.tab === "bluetooth"
                     width: parent.width; spacing: 8
                     Heading { text: "Bluetooth" }
                     Card {
-                        ToggleRow { label: "Bluetooth"; sub: win.adapter ? (win.adapter.enabled ? "On" : "Off") : "No adapter"; on: win.adapter?.enabled ?? false; onToggled: v => { if (win.adapter) win.adapter.enabled = v } }
+                        ToggleRow { label: "Bluetooth"; sub: win.adapter ? (win.adapter.enabled ? "On" : "Off") : "Off (radio blocked)"; on: win.adapter?.enabled ?? false; onToggled: v => Devices.setBluetooth(v) }
                         ToggleRow { visible: win.adapter?.enabled ?? false; label: "Discover nearby devices"; sub: (win.adapter?.discovering ?? false) ? "Scanning…" : ""; on: win.adapter?.discovering ?? false; onToggled: v => { if (win.adapter) win.adapter.discovering = v } }
                     }
                     Section { text: "My devices" }
@@ -587,6 +640,7 @@ PanelWindow {
                     Heading { text: "Calendar" }
                     Card { CalendarView { width: parent.width } }
                     Dim { text: Qt.formatDate(new Date(), "dddd, d MMMM yyyy") }
+                    Loader { active: win.tab === "calendar"; width: parent.width; sourceComponent: Component { Extra.AgendaPage {} } }
                 }
 
                 // ================= NOTIFICATIONS =================
@@ -705,7 +759,7 @@ PanelWindow {
                             Row { spacing: 8
                                 Text { text: Battery.onAc ? "󰚥" : "󰁹"; color: Battery.onAc ? Theme.green : Theme.accent; font.family: Theme.font; font.pointSize: 13 }
                                 Label { text: Battery.onAc ? "Wall power: maximum performance" : "Battery: power saving"; font.bold: true; font.pointSize: Theme.smallSize; anchors.verticalCenter: parent.verticalCenter } }
-                            Dim { text: "Managed by watt; charge held between 40 and 80 %" } }
+                            Dim { text: "Managed by watt; live thresholds and charging controls below" } }
                     }
                     Section { text: "Peripherals"; visible: Devices.all.length > 0 }
                     Card {
@@ -720,6 +774,7 @@ PanelWindow {
                     }
                 }
 
+                Loader { active: win.tab === "power"; visible: active; width: parent.width; sourceComponent: Component { Extra.PowerTools {} } }
                 Item { width: 1; height: 8 }
             }
         }

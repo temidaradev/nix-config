@@ -176,7 +176,7 @@ PanelWindow {
                 readonly property bool on: adapter?.enabled ?? false
                 readonly property bool linked: on && Bluetooth.devices.values.some(d => d.connected)
                 BarText { text: !btBtn.on ? "󰂲" : btBtn.linked ? "󰂱" : "󰂯"; color: btBtn.on ? Theme.fg : Theme.fgDim; font.pointSize: 12 }
-                onClicked: e => { if (e.button === Qt.RightButton && adapter) adapter.enabled = !adapter.enabled; else pop() }
+                onClicked: e => { if (e.button === Qt.RightButton) Devices.setBluetooth(!btBtn.on); else pop() }
             }
 
             BarButton {   // laptop battery (only on laptops)

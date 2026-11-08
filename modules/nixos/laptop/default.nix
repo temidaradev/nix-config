@@ -265,7 +265,7 @@ in
 
     services.upower.enable = true;
     powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";   # intel_pstate active mode
-    boot.kernelParams = [ "intel_pstate=active" ];
+    boot.kernelParams = [ "intel_pstate=active" "pcie_aspm.policy=powersupersave" ];
     services.fstrim.enable = true;
     zramSwap = { enable = true; memoryPercent = 25; };
 

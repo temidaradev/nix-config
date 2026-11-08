@@ -30,9 +30,9 @@ Singleton {
     property var disks: []        // [{mount, size, used, pct}]
     property string uptime: ""
 
-    readonly property bool watched: Launcher.dashOpen || Launcher.sidebarOpen || Launcher.tempOpen || Launcher.diskOpen || ["cpu", "memory", "network"].indexOf(Launcher.menu) >= 0
+    readonly property bool watched: Launcher.dashOpen || (Launcher.sidebarOpen && ["system", "network"].includes(Launcher.sidebarTab)) || Launcher.tempOpen || Launcher.diskOpen || ["cpu", "memory", "network"].indexOf(Launcher.menu) >= 0
     readonly property bool sampling: !Lock.locked && !Idle.screensOff
-    readonly property int interval: watched || !Battery.saving ? 1000 : 10000
+    readonly property int interval: Battery.saving ? (watched ? 2000 : 10000) : 1000
 
     function fmtBytes(b, digits) {
         const d = digits === undefined ? 1 : digits
