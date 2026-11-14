@@ -209,6 +209,7 @@ fn parse_peers(p: &[u8], status_len: usize) -> Option<Vec<Peer>> {
 #[serde(rename_all = "camelCase")]
 struct State {
     connected: bool,
+    control: bool,
     name: String,
     address: String,
     firmware: String,
@@ -522,10 +523,10 @@ async fn next_line(input: &mut Input) -> String {
     }
 }
 
-async fn idle(input: &mut Input, dur: Duration) {
+async fn idle(input: &mut Input, dur: Duration) -> bool {
     tokio::select! {
-        _ = sleep(dur) => {}
-        _ = next_line(input) => {}
+        _ = sleep(dur) => false,
+        _ = next_line(input) => true,
     }
 }
 
@@ -556,14 +557,21 @@ async fn connect(dev: &Device, handles: &mut [(Uuid, ProfileHandle); 2]) -> Res<
     let deadline = sleep(Duration::from_secs(15));
     tokio::pin!(deadline);
     let mut requested = false;
+    let mut failure: Option<String> = None;
     loop {
         tokio::select! {
+            biased;
+            req = handle.next() => return Ok(req.ok_or("profile unregistered")?.accept()?),
             r = &mut request, if !requested => {
                 requested = true;
-                r?;
+                if let Err(e) = r {
+                    failure = Some(e.to_string());
+                    deadline.as_mut().reset(tokio::time::Instant::now() + Duration::from_secs(3));
+                }
             }
-            req = handle.next() => return Ok(req.ok_or("profile unregistered")?.accept()?),
-            _ = &mut deadline => return Err("timed out waiting for the control channel".into()),
+            _ = &mut deadline => {
+                return Err(failure.unwrap_or_else(|| "timed out waiting for the control channel".into()).into());
+            }
         }
     }
 }
@@ -668,9 +676,16 @@ async fn main() -> Res<()> {
     let mut input = BufReader::new(tokio::io::stdin()).lines();
     let mut st = State::default();
     st.emit();
+    let mut passive = false;
     loop {
         let (dev, name, address) = match find_device(&adapter).await {
             Ok(Some(found)) => found,
+            Ok(None) if st.connected => {
+                st = State::default();
+                st.emit();
+                passive = false;
+                continue;
+            }
             Ok(None) => {
                 idle(&mut input, Duration::from_secs(5)).await;
                 continue;
@@ -681,6 +696,15 @@ async fn main() -> Res<()> {
                 continue;
             }
         };
+        if !st.connected || st.address != address {
+            st = State { connected: true, name, address: address.clone(), local_address: local_address.clone(), ..Default::default() };
+            st.emit();
+            passive = false;
+        }
+        if passive {
+            passive = !idle(&mut input, Duration::from_secs(5)).await;
+            continue;
+        }
         let stream = match connect(&dev, &mut handles).await {
             Ok(s) => s,
             Err(e) => {
@@ -689,13 +713,13 @@ async fn main() -> Res<()> {
                 continue;
             }
         };
-        st = State { connected: true, name, address, local_address: local_address.clone(), ..Default::default() };
+        st.control = true;
         st.emit();
         if let Err(e) = run(stream, &mut st, &mut input).await {
             eprintln!("session: {e}");
         }
-        st = State::default();
+        st.control = false;
         st.emit();
-        idle(&mut input, Duration::from_secs(2)).await;
+        passive = true;
     }
 }

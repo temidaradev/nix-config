@@ -6,10 +6,11 @@ import Quickshell.Io
 Singleton {
     id: root
 
-    readonly property var empty: ({ connected: false, name: "", firmware: "", codec: null, battery: null, anc: null, focusVoice: false, ambientLevel: 0, eq: null, speakToChat: null, stcSensitivity: null, stcTimeout: null, pauseOnRemove: null, autoOff: null, voiceGuide: null, quick: null, dsee: null, soundQuality: null, ncButton: null, assistant: null, touchPanel: null, multipoint: null, pairing: false, peers: [], localAddress: "" })
+    readonly property var empty: ({ connected: false, control: false, name: "", firmware: "", codec: null, battery: null, anc: null, focusVoice: false, ambientLevel: 0, eq: null, speakToChat: null, stcSensitivity: null, stcTimeout: null, pauseOnRemove: null, autoOff: null, voiceGuide: null, quick: null, dsee: null, soundQuality: null, ncButton: null, assistant: null, touchPanel: null, multipoint: null, pairing: false, peers: [], localAddress: "" })
     property var state: empty
 
     readonly property bool connected: state.connected
+    readonly property bool control: state.control ?? false
     readonly property int level: state.battery ? state.battery.level : -1
     readonly property bool charging: state.battery?.charging ?? false
 
@@ -46,6 +47,7 @@ Singleton {
                 try { root.state = JSON.parse(data) } catch (e) { console.log("sony-xm5:", e, data) }
             }
         }
+        stderr: SplitParser { onRead: data => console.log("sony-xm5:", data) }
         onExited: { root.state = root.empty; restart.start() }
     }
     Timer { id: restart; interval: 5000; onTriggered: proc.running = true }

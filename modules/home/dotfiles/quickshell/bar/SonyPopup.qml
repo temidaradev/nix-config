@@ -10,7 +10,7 @@ BarPopup {
     anchorX: Launcher.menuAnchorX
     panelWidth: 360
     onDismissed: Launcher.menu = ""
-    Component.onCompleted: Sony.refresh()
+    onVisibleChanged: if (visible) Sony.refresh()
 
     readonly property var s: Sony.state
     property bool showBands: false
@@ -188,6 +188,12 @@ BarPopup {
         visible: !Sony.connected
         width: parent.width; wrapMode: Text.WordWrap
         text: "Turn the headphones on and connect them over Bluetooth."
+        color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1
+    }
+    Text {
+        visible: Sony.connected && !Sony.control
+        width: parent.width; wrapMode: Text.WordWrap
+        text: "Controlled from another device. Press 󰑐 to take over."
         color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1
     }
 
