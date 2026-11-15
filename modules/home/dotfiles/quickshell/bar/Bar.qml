@@ -80,7 +80,7 @@ PanelWindow {
                 else if (Media.player) Media.player.next()
             }
 
-                BarText { visible: Theme.steins; text: Worldline.display; color: Theme.accent; font.bold: true; font.letterSpacing: 1 }
+                MiniMeter { visible: Theme.steins }
                 Sep { visible: Theme.steins }
                 BarText { text: Qt.formatDateTime(clock.date, Settings.s.bar.dateFormat); color: Theme.fgDim }
                 BarText { text: Qt.formatDateTime(clock.date, Settings.s.bar.clockFormat); font.bold: true }

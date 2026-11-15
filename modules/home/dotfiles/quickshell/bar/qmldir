@@ -47,3 +47,4 @@ MemoryPopup 1.0 MemoryPopup.qml
 NetworkPopup 1.0 NetworkPopup.qml
 LayoutPopup 1.0 LayoutPopup.qml
 WindowPopup 1.0 WindowPopup.qml
+MiniMeter 1.0 MiniMeter.qml
