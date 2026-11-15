@@ -11,7 +11,7 @@ Column {
         list.splice(at, 1); list.splice(next, 0, id); Workbench.preference("favorites", list)
     }
     width: parent.width; spacing: 8
-    SHeading { text: "Pinned controls" }
+    SHeading { text: Theme.lab("Pinned controls") }
     SCard {
         Flow { width: parent.width; spacing: 6
             Repeater {
@@ -32,7 +32,7 @@ Column {
             }
         }
     }
-    SHeading { text: "Quick launch" }
+    SHeading { text: Theme.lab("Quick launch") }
     SCard {
         Flow { width: parent.width; spacing: 6
             Repeater { model: Settings.s.pinned.map(id => Apps.all.find(e => e.id.toLowerCase() === id.toLowerCase())).filter(e => e); SAction { required property var modelData; text: modelData.name; onClicked: { Apps.launch(modelData); Launcher.sidebarOpen = false } } }

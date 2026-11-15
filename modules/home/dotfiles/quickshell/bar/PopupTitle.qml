@@ -26,7 +26,7 @@ Item {
         Column {
             anchors.verticalCenter: parent.verticalCenter
             width: parent.width - (g.visible ? g.width + 10 : 0)
-            Text { width: parent.width; elide: Text.ElideRight; text: t.text; color: Theme.fg; font.bold: true; font.family: Theme.font; font.pointSize: Theme.fontSize + 1 }
+            Text { width: parent.width; elide: Text.ElideRight; text: Theme.lab(t.text); color: Theme.fg; font.bold: true; font.family: Theme.font; font.pointSize: Theme.fontSize + 1 }
             Text { visible: t.sub !== ""; width: parent.width; elide: Text.ElideRight; text: t.sub; color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1 }
         }
     }

@@ -5,7 +5,7 @@ import ".."
 
 Column {
     width: parent.width; spacing: 8
-    SHeading { text: "Traffic" }
+    SHeading { text: Theme.lab("Traffic") }
     SCard {
         SHint { text: "Download " + SysStats.fmtRate(SysStats.rx) + " · Upload " + SysStats.fmtRate(SysStats.tx) }
         Sparkline { width: parent.width; height: 45; anchors.verticalCenter: undefined; values: SysStats.rxHist; max: Math.max(1, ...SysStats.rxHist) }
@@ -16,7 +16,7 @@ Column {
         SAction { text: "Copy connection details"; onClicked: Workbench.copy(JSON.stringify({ connection: Network.primary, dns: Workbench.network.dns, tailscale: Workbench.network.tailIP }, null, 2)) }
         SHint { text: "DNS: " + (Workbench.network.dns || "—") }
     }
-    SHeading { text: "Tailscale" }
+    SHeading { text: Theme.lab("Tailscale") }
     SCard {
         visible: Workbench.network.tailscale || false
         SLabel { text: Workbench.network.tailState + (Workbench.network.tailIP ? " · " + Workbench.network.tailIP : "") }
@@ -42,7 +42,7 @@ Column {
             SAction { text: "Disconnect"; onClicked: Workbench.act({ op: "vpn", provider: "mullvad", on: false }) }
         }
     }
-    SHeading { text: "Connection test" }
+    SHeading { text: Theme.lab("Connection test") }
     SCard {
         SAction { visible: Network.hasWifi; text: "Rescan Wi-Fi"; onClicked: { Network._rescan = true; Network.scanWifi() } }
         SField { id: host; placeholderText: "Hostname or IP"; text: "1.1.1.1" }

@@ -3,7 +3,7 @@ import qs.services
 
 Column {
     width: parent.width; spacing: 8
-    SHeading { text: "Upcoming · next 30 days" }
+    SHeading { text: Theme.lab("Upcoming · next 30 days") }
     SCard {
         SField { id: calendarPath; placeholderText: "Local calendar file: /path/to/calendar.ics"; text: Workbench.calendar.file || "" }
         SAction { text: "Load calendar"; onClicked: Workbench.act({ op: "calendar-file", path: calendarPath.text }) }

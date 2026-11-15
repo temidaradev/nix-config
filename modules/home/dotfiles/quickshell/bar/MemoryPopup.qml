@@ -26,7 +26,7 @@ BarPopup {
         PopupKV { k: "Cache & buffers"; v: SysStats.fmtBytes(SysStats.memCached) }
         PopupKV { visible: SysStats.swapTotal > 0; k: "Swap"; v: SysStats.fmtBytes(SysStats.swapUsed) + " / " + SysStats.fmtBytes(SysStats.swapTotal, 0) + "  (" + Math.round(pop.swapPct) + "%)" }
     }
-    PopupSection { text: "Top processes" }
+    PopupSection { text: Theme.lab("Top processes") }
     TopProcs { by: "mem" }
     Row {
         spacing: 6; topPadding: 4

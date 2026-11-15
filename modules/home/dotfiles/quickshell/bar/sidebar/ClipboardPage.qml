@@ -6,7 +6,7 @@ Column {
     id: root
     width: parent.width; spacing: 8
     property bool confirmClear: false
-    SHeading { text: "Clipboard" }
+    SHeading { text: Theme.lab("Clipboard") }
     SField { id: query; placeholderText: "Search history and pinned snippets…" }
     SCard {
         SToggle { text: "Pause clipboard history"; checked: Workbench.clipboard.paused || false; onToggled: Workbench.act({ op: "clipboard-pause", paused: checked }) }
@@ -14,7 +14,7 @@ Column {
         SHint { text: "Pinned copies are kept separately. Pausing prevents new entries from being stored." }
     }
     Timer { id: clearTimeout; interval: 5000; onTriggered: root.confirmClear = false }
-    SHeading { text: "Pinned" }
+    SHeading { text: Theme.lab("Pinned") }
     Repeater {
         model: (Workbench.local.pins || []).filter(p => p.text.toLowerCase().includes(query.text.toLowerCase()))
         SCard {
@@ -27,7 +27,7 @@ Column {
             }
         }
     }
-    SHeading { text: "Recent" }
+    SHeading { text: Theme.lab("Recent") }
     Repeater {
         model: (Workbench.clipboard.items || []).filter(p => p.text.toLowerCase().includes(query.text.toLowerCase()))
         SCard {

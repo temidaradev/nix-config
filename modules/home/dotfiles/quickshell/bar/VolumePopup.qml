@@ -40,7 +40,7 @@ BarPopup {
         onToggleMute: if (pop.source?.audio) pop.source.audio.muted = !m
     }
 
-    PopupSection { text: "Output" }
+    PopupSection { text: Theme.lab("Output") }
     Column {
         width: parent.width; spacing: 1
         Repeater {
@@ -48,7 +48,7 @@ BarPopup {
             PopupRow { required property var modelData; glyph: modelData === pop.sink ? "󰄬" : "󰓃"; label: pop.name(modelData); active: modelData === pop.sink; onClicked: Pipewire.preferredDefaultAudioSink = modelData }
         }
     }
-    PopupSection { text: "Input"; visible: pop.sources.length > 1 }
+    PopupSection { text: Theme.lab("Input"); visible: pop.sources.length > 1 }
     Column {
         visible: pop.sources.length > 1
         width: parent.width; spacing: 1
@@ -58,7 +58,7 @@ BarPopup {
         }
     }
 
-    PopupSection { text: "Applications"; visible: pop.streams.length > 0 }
+    PopupSection { text: Theme.lab("Applications"); visible: pop.streams.length > 0 }
     Repeater {
         model: pop.streams
         Column {

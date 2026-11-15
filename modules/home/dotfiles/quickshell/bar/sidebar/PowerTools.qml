@@ -4,7 +4,7 @@ import ".."
 
 Column {
     width: parent.width; spacing: 8
-    SHeading { text: "Battery health & charging"; visible: Battery.present }
+    SHeading { text: Theme.lab("Battery health & charging"); visible: Battery.present }
     Repeater {
         model: Workbench.power.batteries || []
         SCard {
@@ -23,7 +23,7 @@ Column {
         SHint { text: "Power draw while this page is open · watts" }
         Sparkline { width: parent.width; height: 60; anchors.verticalCenter: undefined; values: Workbench.wattHistory; max: Math.max(5, ...Workbench.wattHistory) }
     }
-    SHeading { text: "Current power policy" }
+    SHeading { text: Theme.lab("Current power policy") }
     SCard {
         SHint { text: "Governor: " + (Workbench.power.governor || "—") + "\nEnergy preference: " + (Workbench.power.epp || "—") + "\nPlatform: " + (Workbench.power.profile || "—") }
         SSelect { label: "Keep awake temporarily"; options: ["Disabled", "15 minutes", "30 minutes", "1 hour", "2 hours"]; values: [0, 15, 30, 60, 120]; current: Workbench.awakeMinutes; onChosen: value => Workbench.awake(value) }

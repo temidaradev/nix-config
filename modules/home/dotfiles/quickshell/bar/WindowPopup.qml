@@ -42,7 +42,7 @@ BarPopup {
         PopupButton { label: "󰅖  Close"; danger: true; onClicked: { Niri.closeWindow(pop.w.id); Launcher.menu = "" } }
     }
 
-    PopupSection { text: "Move to workspace"; visible: pop.siblings.length > 1 }
+    PopupSection { text: Theme.lab("Move to workspace"); visible: pop.siblings.length > 1 }
     Flow {
         visible: pop.siblings.length > 1
         width: parent.width; spacing: 4
@@ -57,7 +57,7 @@ BarPopup {
         }
     }
 
-    PopupSection { text: "Also on this workspace"; visible: pop.others.length > 0 }
+    PopupSection { text: Theme.lab("Also on this workspace"); visible: pop.others.length > 0 }
     Column {
         visible: pop.others.length > 0
         width: parent.width; spacing: 1

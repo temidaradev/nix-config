@@ -43,7 +43,7 @@ BarPopup {
         color: Theme.fg; font.family: Theme.font; font.pointSize: Theme.smallSize - 1
     }
 
-    PopupSection { text: "Brightness"; visible: Brightness.present }
+    PopupSection { text: Theme.lab("Brightness"); visible: Brightness.present }
     PopupSlider {
         id: bri
         visible: Brightness.present

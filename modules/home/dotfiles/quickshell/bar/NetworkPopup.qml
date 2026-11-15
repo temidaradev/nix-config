@@ -36,7 +36,7 @@ BarPopup {
     }
     PopupKV { visible: Network.vpn !== null; k: "VPN"; v: Network.vpn ? Network.vpn.connection + (Network.vpn.ip4 ? "  " + Network.vpn.ip4 : "") : "" }
 
-    PopupSection { text: "Wi-Fi"; visible: Network.hasWifi }
+    PopupSection { text: Theme.lab("Wi-Fi"); visible: Network.hasWifi }
     PopupToggle { visible: Network.hasWifi; label: "Wi-Fi"; on: pop.wifiOn; onToggled: v => Network.toggleWifi(v) }
     Column {
         visible: Network.hasWifi

@@ -33,7 +33,7 @@ BarPopup {
         onToggled: v => { pop.adapter.discovering = v; if (v) pop.startedScan = true }
     }
 
-    PopupSection { text: "Devices"; visible: pop.enabled }
+    PopupSection { text: Theme.lab("Devices"); visible: pop.enabled }
     Text { visible: pop.enabled && pop.known.length === 0; text: "No paired devices"; color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1 }
     Column {
         visible: pop.enabled
@@ -53,7 +53,7 @@ BarPopup {
             }
         }
     }
-    PopupSection { text: "Nearby"; visible: pop.enabled && pop.found.length > 0 }
+    PopupSection { text: Theme.lab("Nearby"); visible: pop.enabled && pop.found.length > 0 }
     Column {
         visible: pop.enabled && pop.found.length > 0
         width: parent.width; spacing: 1

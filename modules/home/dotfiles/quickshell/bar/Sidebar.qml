@@ -216,7 +216,7 @@ PanelWindow {
                         }
                         MouseArea { id: tm; anchors.fill: parent; hoverEnabled: true; onClicked: win.tab = modelData.id }
                         ToolTip.visible: tm.containsMouse
-                        ToolTip.text: modelData.label
+                        ToolTip.text: Theme.lab(modelData.label)
                     }
                 }
             }
@@ -240,7 +240,7 @@ PanelWindow {
                     const keywords = ({ audio: "codec bitrate sample rate microphone mic routing equalizer noise effects buffer latency", capture: "record video screenshot fps encoder bitrate", displays: "monitor brightness resolution scaling night light refresh rotation", power: "battery charging threshold health watts awake", network: "wifi internet vpn mullvad tailscale hotspot ip dns latency", tasks: "notes reminders timer focus", clipboard: "copy paste pins snippets history", calendar: "agenda events" })[t.id] || ""
                     return (t.label + " " + keywords).toLowerCase().includes(search.text.toLowerCase())
                 }).slice(0, 4)
-                Extra.SAction { required property var modelData; text: modelData.glyph + " " + modelData.label; width: parent.width; onClicked: { win.tab = modelData.id; search.clear() } }
+                Extra.SAction { required property var modelData; text: modelData.glyph + " " + Theme.lab(modelData.label); width: parent.width; onClicked: { win.tab = modelData.id; search.clear() } }
             }
             Extra.SHint { visible: Workbench.message !== ""; text: Workbench.message; color: Workbench.failed ? Theme.red : Theme.fgDim; maximumLineCount: 7; elide: Text.ElideRight }
         }
@@ -307,7 +307,7 @@ PanelWindow {
                             onClicked: win.tab = "media"
                         }
                     }
-                    Section { text: "Shortcuts" }
+                    Section { text: Theme.lab("Shortcuts") }
                     Card {
                         Flow {
                             width: parent.width; spacing: 8
@@ -338,7 +338,7 @@ PanelWindow {
                                     MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["sh", "-c", "wl-copy < '" + modelData + "' && notify-send -a Screenshots 'Copied to clipboard' '" + modelData.split("/").pop() + "'"]) } } }
                         }
                     }
-                    Section { text: "Clipboard" }
+                    Section { text: Theme.lab("Clipboard") }
                     Card {
                         Repeater {
                             model: Clipboard.items.slice(0, 6)
@@ -353,7 +353,7 @@ PanelWindow {
                 Column {
                     visible: win.tab === "media"
                     width: parent.width; spacing: 8
-                    Heading { text: "Media" }
+                    Heading { text: Theme.lab("Media") }
                     Dim { visible: Media.players.length === 0; text: "No MPRIS players running" }
                     Repeater {
                         model: Media.players
@@ -396,24 +396,24 @@ PanelWindow {
                 Column {
                     visible: win.tab === "audio"
                     width: parent.width; spacing: 8
-                    Heading { text: "Audio" }
+                    Heading { text: Theme.lab("Audio") }
                     Card {
-                        Section { text: "Output  ·  " + (win.sink ? win.nodeName(win.sink) : "none"); topPadding: 0 }
+                        Section { text: Theme.lab("Output  ·  ") + (win.sink ? win.nodeName(win.sink) : "none"); topPadding: 0 }
                         Vol { glyph: mutedState ? "󰖁" : "󰕾"; node: win.sink; mutedState: win.sink?.audio?.muted ?? false; onToggleMute: if (win.sink?.audio) win.sink.audio.muted = !win.sink.audio.muted }
-                        Section { text: "Input  ·  " + (win.source ? win.nodeName(win.source) : "none") }
+                        Section { text: Theme.lab("Input  ·  ") + (win.source ? win.nodeName(win.source) : "none") }
                         Vol { glyph: mutedState ? "󰍭" : "󰍬"; node: win.source; mutedState: win.source?.audio?.muted ?? false; onToggleMute: if (win.source?.audio) win.source.audio.muted = !win.source.audio.muted }
                     }
-                    Section { text: "Output devices" }
+                    Section { text: Theme.lab("Output devices") }
                     Card {
                         Repeater { model: win.sinks
                             ListRow { required property var modelData; glyph: modelData === win.sink ? "󰄬" : "󰓃"; label: win.nodeName(modelData); active: modelData === win.sink; onClicked: Pipewire.preferredDefaultAudioSink = modelData } }
                     }
-                    Section { text: "Input devices" }
+                    Section { text: Theme.lab("Input devices") }
                     Card {
                         Repeater { model: win.sources
                             ListRow { required property var modelData; glyph: modelData === win.source ? "󰄬" : "󰍬"; label: win.nodeName(modelData); active: modelData === win.source; onClicked: Pipewire.preferredDefaultAudioSource = modelData } }
                     }
-                    Section { text: "Applications" }
+                    Section { text: Theme.lab("Applications") }
                     Card {
                         Dim { visible: win.streams.length === 0; text: "No application is playing or recording" }
                         Repeater {
@@ -435,7 +435,7 @@ PanelWindow {
                     visible: win.tab === "system"
                     width: parent.width; spacing: 8
                     Component.onCompleted: SysInfo.refreshDisplays()
-                    Heading { text: "System" }
+                    Heading { text: Theme.lab("System") }
                     Card {
                         Row {
                             width: parent.width; spacing: 12
@@ -448,7 +448,7 @@ PanelWindow {
                             }
                         }
                     }
-                    Section { text: "Hardware" }
+                    Section { text: Theme.lab("Hardware") }
                     Card {
                         spacing: 10
                         KV { k: "Device"; v: SysInfo.host; sub: SysInfo.board !== SysInfo.host ? SysInfo.board : "" }
@@ -469,7 +469,7 @@ PanelWindow {
                         }
                         KV { visible: SysInfo.bios !== ""; k: "Firmware"; v: SysInfo.bios }
                     }
-                    Section { text: "Software" }
+                    Section { text: Theme.lab("Software") }
                     Card {
                         spacing: 10
                         KV { k: "OS"; v: SysInfo.os }
@@ -479,7 +479,7 @@ PanelWindow {
                         KV { k: "Shell"; v: SysInfo.shell }
                         KV { k: "Locale"; v: SysInfo.locale }
                     }
-                    Section { text: "Live" }
+                    Section { text: Theme.lab("Live") }
                     Card {
                         spacing: 8
                         Row { width: parent.width
@@ -498,13 +498,13 @@ PanelWindow {
                         KV { k: "Swap"; v: SysStats.fmtBytes(SysStats.swapUsed, 0) + " / " + SysStats.fmtBytes(SysStats.swapTotal, 0) }
                         KV { k: "Network"; v: "󰁅 " + SysStats.fmtRate(SysStats.rx) + "   󰁝 " + SysStats.fmtRate(SysStats.tx) }
                     }
-                    Section { text: "Storage" }
+                    Section { text: Theme.lab("Storage") }
                     Card {
                         Repeater { model: SysStats.disks
                             DiskRow { required property var modelData; disk: modelData; width: parent.width } }
                         KV { visible: SysStats.nvmeTemp > 0; k: "NVMe temp"; v: Math.round(SysStats.nvmeTemp) + " °C" }
                     }
-                    Section { text: "NixOS" }
+                    Section { text: Theme.lab("NixOS") }
                     Card {
                         Row { spacing: 6
                             SmallButton { label: "󱄅  Rebuild"; onClicked: { Launcher.sidebarOpen = false; Power.rebuild() } }
@@ -518,7 +518,7 @@ PanelWindow {
                 Column {
                     visible: win.tab === "network"
                     width: parent.width; spacing: 8
-                    Heading { text: "Network" }
+                    Heading { text: Theme.lab("Network") }
                     Card {
                         KV { k: "Connection"; v: Network.primary ? Network.primary.connection + "  (" + Network.primary.name + ")" : "Disconnected" }
                         KV { k: "Type"; v: Network.primary ? Network.primary.type : "—" }
@@ -526,7 +526,7 @@ PanelWindow {
                         KV { visible: Network.vpn !== null; k: "VPN"; v: Network.vpn ? Network.vpn.connection + "  " + Network.vpn.ip4 : "" }
                         KV { visible: Network.current !== null; k: "Wi-Fi"; v: Network.current ? Network.current.ssid + "  ·  " + Network.current.signal + "%  ·  " + Network.current.band : "" }
                     }
-                    Section { text: "Wi-Fi"; visible: Network.hasWifi }
+                    Section { text: Theme.lab("Wi-Fi"); visible: Network.hasWifi }
                     Card {
                         visible: Network.hasWifi
                         ToggleRow { label: "Wi-Fi"; on: Network.wifi.length > 0 || Network.current !== null; onToggled: v => Network.toggleWifi(v) }
@@ -543,7 +543,7 @@ PanelWindow {
                             }
                         }
                     }
-                    Section { text: "Interfaces" }
+                    Section { text: Theme.lab("Interfaces") }
                     Card {
                         Repeater { model: Network.devices
                             ListRow { required property var modelData
@@ -562,12 +562,12 @@ PanelWindow {
                 Column {
                     visible: win.tab === "bluetooth"
                     width: parent.width; spacing: 8
-                    Heading { text: "Bluetooth" }
+                    Heading { text: Theme.lab("Bluetooth") }
                     Card {
                         ToggleRow { label: "Bluetooth"; sub: win.adapter ? (win.adapter.enabled ? "On" : "Off") : "Off (radio blocked)"; on: win.adapter?.enabled ?? false; onToggled: v => Devices.setBluetooth(v) }
                         ToggleRow { visible: win.adapter?.enabled ?? false; label: "Discover nearby devices"; sub: (win.adapter?.discovering ?? false) ? "Scanning…" : ""; on: win.adapter?.discovering ?? false; onToggled: v => { if (win.adapter) win.adapter.discovering = v } }
                     }
-                    Section { text: "My devices" }
+                    Section { text: Theme.lab("My devices") }
                     Card {
                         Dim { visible: win.btKnown.length === 0; text: "No paired devices" }
                         Repeater {
@@ -584,7 +584,7 @@ PanelWindow {
                             }
                         }
                     }
-                    Section { text: "Nearby"; visible: win.btFound.length > 0 }
+                    Section { text: Theme.lab("Nearby"); visible: win.btFound.length > 0 }
                     Card {
                         visible: win.btFound.length > 0
                         Repeater {
@@ -598,7 +598,7 @@ PanelWindow {
                 Column {
                     visible: win.tab === "weather"
                     width: parent.width; spacing: 8
-                    Heading { text: "Weather" }
+                    Heading { text: Theme.lab("Weather") }
                     Card {
                         Dim { visible: Weather.error !== ""; text: Weather.error; color: Theme.red }
                         Dim { visible: !Weather.ready && Weather.error === ""; text: "Loading…" }
@@ -615,7 +615,7 @@ PanelWindow {
                         KV { visible: Weather.ready; k: "Wind"; v: Weather.ready ? Weather.current.wind + " km/h" : "" }
                         KV { visible: Weather.ready; k: "Humidity"; v: Weather.ready ? Weather.current.humidity + "%" : "" }
                     }
-                    Section { text: "Forecast" }
+                    Section { text: Theme.lab("Forecast") }
                     Card {
                         Repeater {
                             model: Weather.daily
@@ -637,7 +637,7 @@ PanelWindow {
                 Column {
                     visible: win.tab === "calendar"
                     width: parent.width; spacing: 8
-                    Heading { text: "Calendar" }
+                    Heading { text: Theme.lab("Calendar") }
                     Card { CalendarView { width: parent.width } }
                     Dim { text: Qt.formatDate(new Date(), "dddd, d MMMM yyyy") }
                     Loader { active: win.tab === "calendar"; width: parent.width; sourceComponent: Component { Extra.AgendaPage {} } }
@@ -648,7 +648,7 @@ PanelWindow {
                     visible: win.tab === "notifications"
                     width: parent.width; spacing: 8
                     Row { width: parent.width
-                        Heading { text: "Notifications" + (Notifs.count > 0 ? "  " + Notifs.count : ""); width: parent.width - 170 }
+                        Heading { text: Theme.lab("Notifications") + (Notifs.count > 0 ? "  " + Notifs.count : ""); width: parent.width - 170 }
                         Row { spacing: 6
                             SmallButton { label: Notifs.dnd ? "󰂛 DND on" : "󰂚 DND off"; on: Notifs.dnd; onClicked: Notifs.dnd = !Notifs.dnd }
                             SmallButton { visible: Notifs.count > 0; label: "Clear"; onClicked: Notifs.clearAll() } } }
@@ -669,7 +669,7 @@ PanelWindow {
                     readonly property real total: apps.reduce((s, a) => s + a.seconds, 0)
                     readonly property real maxDay: Math.max(1, ...days.map(d => d.seconds))
                     Row { width: parent.width
-                        Heading { text: "Screen time"; width: parent.width - 220 }
+                        Heading { text: Theme.lab("Screen time"); width: parent.width - 220 }
                         Row { spacing: 4
                             SmallButton { label: "Today"; on: win.stRange === 1; onClicked: win.stRange = 1 }
                             SmallButton { label: "3 days"; on: win.stRange === 3; onClicked: win.stRange = 3 }
@@ -693,7 +693,7 @@ PanelWindow {
                             }
                         }
                     }
-                    Section { text: "By application" }
+                    Section { text: Theme.lab("By application") }
                     Card {
                         Dim { visible: st.apps.length === 0; text: "Nothing tracked yet" }
                         Repeater {
@@ -719,7 +719,7 @@ PanelWindow {
                 Column {
                     visible: win.tab === "power"
                     width: parent.width; spacing: 8
-                    Heading { text: "Power" }
+                    Heading { text: Theme.lab("Power") }
                     Card {
                         visible: Battery.present
                         Row { spacing: 12
@@ -734,7 +734,7 @@ PanelWindow {
                         visible: !Battery.present
                         Dim { text: "Desktop: no battery" }
                     }
-                    Section { text: "Display"; visible: Brightness.present }
+                    Section { text: Theme.lab("Display"); visible: Brightness.present }
                     Card {
                         visible: Brightness.present
                         Vol {
@@ -745,7 +745,7 @@ PanelWindow {
                             Connections { target: Brightness; function onLevelChanged() { if (!bri.pressed) bri.value = Brightness.level } }
                         }
                     }
-                    Section { text: "Idle" }
+                    Section { text: Theme.lab("Idle") }
                     Card {
                         ToggleRow { label: "Stay awake"; sub: Idle.inhibit ? "Dimming, locking and sleep are paused" : "Pauses idle dimming, locking and sleep"; on: Idle.inhibit; onToggled: v => Idle.inhibit = v }
                         KV { k: !Battery.present ? "Timeouts" : Battery.saving ? "On battery" : "Plugged in"; v: [Idle.cur.dim > 0 ? "dim " + Idle.fmt(Idle.cur.dim) : "", "lock " + Idle.fmt(Idle.cur.lock), "screen off " + Idle.fmt(Idle.cur.screenOff), Idle.cur.suspend > 0 ? "sleep " + Idle.fmt(Idle.cur.suspend) : ""].filter(s => s !== "").join("  ·  ") }
@@ -761,7 +761,7 @@ PanelWindow {
                                 Label { text: Battery.onAc ? "Wall power: maximum performance" : "Battery: power saving"; font.bold: true; font.pointSize: Theme.smallSize; anchors.verticalCenter: parent.verticalCenter } }
                             Dim { text: "Managed by watt; live thresholds and charging controls below" } }
                     }
-                    Section { text: "Peripherals"; visible: Devices.all.length > 0 }
+                    Section { text: Theme.lab("Peripherals"); visible: Devices.all.length > 0 }
                     Card {
                         visible: Devices.all.length > 0
                         Repeater { model: Devices.all

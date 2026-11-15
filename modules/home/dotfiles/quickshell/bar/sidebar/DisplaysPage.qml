@@ -4,7 +4,7 @@ import qs.services
 
 Column {
     width: parent.width; spacing: 8
-    SHeading { text: "Displays" }
+    SHeading { text: Theme.lab("Displays") }
     SCard {
         visible: !!Workbench.displays.pending?.token
         SLabel { text: "Keep this display configuration?"; font.bold: true }
@@ -40,11 +40,11 @@ Column {
             }
         }
     }
-    SHeading { text: "Night light" }
+    SHeading { text: Theme.lab("Night light") }
     SCard {
         SSelect { label: "Colour temperature"; options: ["Off · 6500 K", "5500 K", "4500 K", "3500 K", "2500 K"]; values: [6500, 5500, 4500, 3500, 2500]; current: Workbench.displays.temperature || 6500; onChosen: value => Workbench.act({ op: "night", value }) }
     }
-    SHeading { text: "Saved layouts" }
+    SHeading { text: Theme.lab("Saved layouts") }
     SCard {
         SField { id: layout; placeholderText: "Layout name, e.g. Docked" }
         SAction { text: "Save current layout"; onClicked: { Workbench.act({ op: "layout-save", name: layout.text }); layout.clear() } }

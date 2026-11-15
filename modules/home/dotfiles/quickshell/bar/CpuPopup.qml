@@ -22,7 +22,7 @@ BarPopup {
         PopupKV { k: "Threads"; v: String(SysInfo.threads) }
         PopupKV { k: "Uptime"; v: SysStats.uptime }
     }
-    PopupSection { text: "Top processes" }
+    PopupSection { text: Theme.lab("Top processes") }
     TopProcs { by: "cpu" }
     Row {
         spacing: 6; topPadding: 4

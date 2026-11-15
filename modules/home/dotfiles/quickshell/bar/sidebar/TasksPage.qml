@@ -7,7 +7,7 @@ Column {
     id: root
     width: parent.width; spacing: 8
     property bool showCompleted: false
-    SHeading { text: "Tasks & reminders" }
+    SHeading { text: Theme.lab("Tasks & reminders") }
     SCard {
         SField { id: task; placeholderText: "What needs doing?"; onAccepted: addTask.clicked() }
         SField { id: due; placeholderText: "Optional reminder: YYYY-MM-DD HH:MM" }
@@ -32,7 +32,7 @@ Column {
             }
         }
     }
-    SHeading { text: "Focus timer" }
+    SHeading { text: Theme.lab("Focus timer") }
     SCard {
         SLabel { text: Workbench.focusUntil > 0 ? "Focus · " + Media.fmtTime(Math.max(0, (Workbench.focusUntil - Workbench.now) / 1000)) : "Start a session with Do Not Disturb" }
         Flow { width: parent.width; spacing: 6
@@ -40,7 +40,7 @@ Column {
             SAction { visible: Workbench.focusUntil > 0; text: "End session"; onClicked: Workbench.focus(0) }
         }
     }
-    SHeading { text: "Scratchpad" }
+    SHeading { text: Theme.lab("Scratchpad") }
     SCard {
         TextArea {
             id: notes

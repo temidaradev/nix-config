@@ -4,7 +4,7 @@ import qs.services
 
 Column {
     width: parent.width; spacing: 8
-    SHeading { text: "Capture & recording" }
+    SHeading { text: Theme.lab("Capture & recording") }
     SCard {
         Flow {
             width: parent.width; spacing: 6
@@ -34,7 +34,7 @@ Column {
             SAction { text: "Open screenshots"; onClicked: Apps.spawn(["xdg-open", Capture.shotDir]) }
         }
     }
-    SHeading { text: "Recent recordings" }
+    SHeading { text: Theme.lab("Recent recordings") }
     Repeater {
         model: Workbench.capture.recent || []
         SCard {

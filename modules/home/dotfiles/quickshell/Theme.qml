@@ -68,6 +68,25 @@ Singleton {
     function ink(alpha) { return Qt.rgba(_ink.r, _ink.g, _ink.b, alpha / 255) }
     function panel(alpha) { return Qt.rgba(_panel.r, _panel.g, _panel.b, alpha) }
 
+    // Steins;Gate: panel and section names in Future Gadget Lab terms.
+    // Display only; ids, search and behaviour keep the plain names.
+    readonly property var labNames: ({
+        "System": "Lab Equipment", "Your processes": "Active Experiments", "Top processes": "Active Experiments",
+        "Media": "Phonewave", "Audio": "Acoustic Bench", "Capture": "Observation Records",
+        "Capture & recording": "Observation Records", "Recent recordings": "Recorded Observations",
+        "Displays": "Monitors", "Saved layouts": "Monitor Layouts", "Clipboard": "Data Buffer",
+        "Tasks": "Operation Log", "Tasks & reminders": "Operations & Reminders", "Scratchpad": "Lab Notebook",
+        "Network": "Communications", "Traffic": "Signal Traffic", "Connection test": "Signal Test",
+        "Bluetooth": "Short-range Link", "Weather": "Field Conditions", "Calendar": "Timeline",
+        "Upcoming · next 30 days": "Timeline · next 30 days", "Notifications": "D-Mail Inbox",
+        "Screen time": "Time Logged", "Power": "Power Supply", "Battery health & charging": "Battery Cells",
+        "Current power policy": "Power Protocol", "Failed services": "Failed Experiments", "Recent errors": "Anomaly Log",
+        "Quick launch": "Gadget Rack", "Pinned": "Pinned Gadgets", "Pinned controls": "Pinned Gadgets",
+        "Recent": "Recent Activity", "Applications": "Future Gadgets", "Devices": "Lab Devices",
+        "Device batteries": "Device Cells", "Settings": "Configuration"
+    })
+    function lab(s) { return steins && labNames[s] !== undefined ? labNames[s] : s }
+
     readonly property string font: a.font
     readonly property real fontSize: a.fontSize
     readonly property real smallSize: a.fontSize - 1

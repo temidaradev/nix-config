@@ -4,7 +4,7 @@ import qs.services
 
 Column {
     width: parent.width; spacing: 8
-    SHeading { text: "Your processes" }
+    SHeading { text: Theme.lab("Your processes") }
     Repeater {
         model: Workbench.system.processes || []
         SCard {
@@ -16,7 +16,7 @@ Column {
             Timer { id: reset; interval: 4000; onTriggered: confirming = false }
         }
     }
-    SHeading { text: "Failed services" }
+    SHeading { text: Theme.lab("Failed services") }
     SHint { visible: !(Workbench.system.failed || []).length; text: "No failed units." }
     Repeater {
         model: Workbench.system.failed || []
@@ -30,7 +30,7 @@ Column {
             }
         }
     }
-    SHeading { text: "Recent errors" }
+    SHeading { text: Theme.lab("Recent errors") }
     SCard {
         SHint { text: Workbench.system.errors || "No recent errors."; maximumLineCount: 25; elide: Text.ElideRight }
         SAction { text: "Open boot error log"; onClicked: Apps.spawn(["ghostty", "-e", "journalctl", "-b", "-p", "err"]) }
