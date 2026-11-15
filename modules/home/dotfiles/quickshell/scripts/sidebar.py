@@ -33,6 +33,20 @@ def run(*args, optional=False, timeout=8, input=None):
         return ""
 
 
+
+def copy_to_clipboard(data):
+    # wl-copy forks a child that keeps serving the selection. With captured
+    # stdout/stderr that child holds the pipes open, so run() would wait out
+    # its timeout and report "unavailable" although the copy worked.
+    try:
+        p = subprocess.run(["wl-copy"], input=data, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, timeout=8)
+    except FileNotFoundError:
+        raise ValueError("wl-copy is not installed")
+    except subprocess.TimeoutExpired:
+        raise ValueError("wl-copy did not respond")
+    if p.returncode:
+        raise ValueError(f"wl-copy exited {p.returncode}")
+
 def js(*args, default=None):
     try:
         return json.loads(run(*args, optional=True))
@@ -500,7 +514,7 @@ def action(a):
         else:
             p = subprocess.run(["cliphist", "decode", key], capture_output=True, timeout=5, check=True)
             if op == "clipboard-copy":
-                run("wl-copy", input=p.stdout)
+                copy_to_clipboard(p.stdout)
             else:
                 pin = uuid.uuid4().hex
                 path = STATE / "pins" / pin
@@ -514,7 +528,7 @@ def action(a):
         if not re.fullmatch(r"[0-9a-f]{32}", key):
             raise ValueError("Invalid pin")
         if op == "pin-copy":
-            run("wl-copy", input=(STATE / "pins" / key).read_bytes())
+            copy_to_clipboard((STATE / "pins" / key).read_bytes())
         else:
             with state() as data:
                 data["pins"] = [p for p in data["pins"] if p["id"] != key]
@@ -524,7 +538,7 @@ def action(a):
         for p in CACHE.glob("*.png"):
             p.unlink(missing_ok=True)
     elif op == "copy":
-        run("wl-copy", input=str(a["text"]).encode())
+        copy_to_clipboard(str(a["text"]).encode())
     elif op == "vpn":
         if a["provider"] == "mullvad":
             run("mullvad", "connect" if a["on"] else "disconnect")
@@ -552,7 +566,7 @@ def action(a):
         os.kill(pid, signal.SIGTERM)
     elif op == "diagnostics":
         report = {"system": system(), "audio": audio(), "power": power(), "displays": outputs()}
-        run("wl-copy", input=json.dumps(report, indent=2).encode())
+        copy_to_clipboard(json.dumps(report, indent=2).encode())
     else:
         raise ValueError("Unknown sidebar action")
     return "Done"
