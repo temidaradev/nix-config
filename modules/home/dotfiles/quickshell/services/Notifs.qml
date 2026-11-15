@@ -21,6 +21,7 @@ Singleton {
         imageSupported: true
         persistenceSupported: true
         onNotification: n => {
+            root.arrived[n.id] = new Date()     // shown in the D-mail header
             n.tracked = true
             n.closed.connect(() => { root.gone[n.id] = true; root.hidePopup(n) })
             if (root.dnd && n.urgency !== NotificationUrgency.Critical) return
@@ -38,6 +39,7 @@ Singleton {
     Component { id: timerComp; PopupTimer {} }
 
     property var gone: ({})                                  // ids already closed by the app
+    property var arrived: ({})                               // id -> Date the notification came in
     function hidePopup(n) { popups = popups.filter(p => p !== n) }
     function dismiss(n) { hidePopup(n); if (!gone[n.id]) { gone[n.id] = true; n.dismiss() } }
     function clearAll() { for (const n of history.slice()) dismiss(n); popups = [] }
