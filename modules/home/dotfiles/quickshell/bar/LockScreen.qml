@@ -64,8 +64,8 @@ WlSessionLock {
 
         Column {
             anchors.centerIn: parent
-            anchors.verticalCenterOffset: Theme.steins ? -110 : -60
-            spacing: Theme.steins ? 14 : 6
+            anchors.verticalCenterOffset: Theme.steins ? -125 : -60
+            spacing: Theme.steins ? 12 : 6
             Text {
                 visible: !Theme.steins
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -73,26 +73,36 @@ WlSessionLock {
                 color: Theme.fg; font.family: Theme.font; font.pointSize: 72; font.bold: true
                 style: Text.Outline; styleColor: "#40000000"
             }
-            Loader {   // nixie clock
+            Text {
+                visible: !Theme.steins
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: Qt.formatDateTime(clock.date, "dddd, d MMMM")
+                color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.fontSize + 4
+            }
+
+            // Steins;Gate: the divergence meter, centred and large
+            Loader {
                 active: Theme.steins
                 visible: active
                 anchors.horizontalCenter: parent.horizontalCenter
                 sourceComponent: NixieMeter {
-                    text: Qt.formatDateTime(clock.date, "HH:mm")
-                    tubeWidth: Math.round(Math.min(64, surface.width / 22))
+                    text: Worldline.display
+                    tubeWidth: Math.round(Math.min(84, surface.width / 16, surface.height / 13))
                 }
-            }
-            Text {
-                anchors.horizontalCenter: parent.horizontalCenter
-                text: Theme.steins ? Qt.formatDateTime(clock.date, "dddd, d MMMM").toUpperCase() : Qt.formatDateTime(clock.date, "dddd, d MMMM")
-                color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.fontSize + 4
-                font.letterSpacing: Theme.steins ? 4 : 0
             }
             Text {
                 visible: Theme.steins
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: "DIVERGENCE  " + Worldline.value + "   ·   " + Worldline.worldName
-                color: Theme.accent; font.family: Theme.font; font.pointSize: Theme.fontSize; font.letterSpacing: 2
+                text: "El Psy Kongroo."
+                color: "#ffe4bd"; font.family: Theme.font; font.italic: true
+                font.pointSize: Theme.fontSize + 10; font.letterSpacing: 4
+                style: Text.Outline; styleColor: "#60000000"
+            }
+            Text {
+                visible: Theme.steins
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: Qt.formatDateTime(clock.date, "HH:mm") + "   ·   " + Qt.formatDateTime(clock.date, "dddd d MMMM").toUpperCase()
+                color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.fontSize + 1; font.letterSpacing: 3
             }
         }
 
@@ -143,7 +153,7 @@ WlSessionLock {
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: box.bottom; anchors.topMargin: 12
-            text: surface.error !== "" ? surface.error : (Theme.steins ? "El Psy Kongroo." : Quickshell.env("USER") + "@" + Niri.hostname)
+            text: surface.error !== "" ? surface.error : Quickshell.env("USER") + "@" + Niri.hostname
             color: surface.error !== "" ? Theme.red : Theme.fgDim
             font.family: Theme.font; font.pointSize: Theme.smallSize
         }
