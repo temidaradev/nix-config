@@ -35,7 +35,7 @@ Singleton {
     // temperature), warm unlit-cathode browns, CRT phosphor green, lab red.
     readonly property var sg: ({
         panel: "#100a06", bg2: "#1f150c", bg3: "#2a1c10", fg: "#ffdcae", fgDim: "#a88760",
-        accent: "#ff9e2c", onAccent: "#160b03", green: "#8fd16a", yellow: "#ffcc4d", red: "#e8452c",
+        accent: "#ff9e2c", onAccent: "#160b03", green: "#8fd16a", yellow: "#ffcc4d", red: "#e8452c", cyan: "#5fd4e0",
         ring: "#2b1d11", ink: "#ffc78a", border: "#4dff9e2c", desktop: "#0a0604", backdrop: "#140b05"
     })
 
@@ -52,6 +52,9 @@ Singleton {
     readonly property color accent: steins ? sg.accent : (a.accentFromWallpaper && Wallpaper.accent !== "" ? Wallpaper.accent : a.accent)
     readonly property color onAccent: steins ? sg.onAccent : "#1b1e20"     // text drawn on an accent fill
     readonly property color accentSoft: Qt.rgba(accent.r, accent.g, accent.b, 0.28)
+    // Steins;Gate roles: amber = main accent, green = good, cyan = second
+    // accent (info, links, D-mail), red = errors only.
+    readonly property color cyan: steins ? sg.cyan : accent
     readonly property color green: steins ? sg.green : "#27ae60"
     readonly property color yellow: steins ? sg.yellow : "#f6c744"
     readonly property color red: steins ? sg.red : "#da4453"

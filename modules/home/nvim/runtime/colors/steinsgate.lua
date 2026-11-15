@@ -7,7 +7,7 @@ vim.g.colors_name = "steinsgate"
 
 local c = {
   bg0 = "#0c0805", bg1 = "#160e08", bg2 = "#1f150c", bg3 = "#2a1c10", sel = "#3a2410", line = "#4a3018",
-  fg = "#ffdcae", cream = "#f2d3a6", dim = "#a88760", mute = "#6e5640",
+  fg = "#ffdcae", cream = "#f2d3a6", dim = "#a88760", mute = "#967a5a",
   amber = "#ff9e2c", amber2 = "#ffb35c", red = "#e8452c", green = "#8fb359", yellow = "#ffcc4d",
   steel = "#7fa3bf", rose = "#d48aa0", teal = "#7fbfb1",
 }

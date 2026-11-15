@@ -13,7 +13,7 @@ local sg_lualine = {
   visual = { a = { fg = "#160b03", bg = "#d48aa0", gui = "bold" } },
   replace = { a = { fg = "#160b03", bg = "#e8452c", gui = "bold" } },
   command = { a = { fg = "#160b03", bg = "#ffcc4d", gui = "bold" } },
-  inactive = { a = { fg = "#6e5640", bg = "#160e08" }, b = { fg = "#6e5640", bg = "#160e08" }, c = { fg = "#6e5640", bg = "#0c0805" } },
+  inactive = { a = { fg = "#967a5a", bg = "#160e08" }, b = { fg = "#967a5a", bg = "#160e08" }, c = { fg = "#967a5a", bg = "#0c0805" } },
 }
 
 local function read()

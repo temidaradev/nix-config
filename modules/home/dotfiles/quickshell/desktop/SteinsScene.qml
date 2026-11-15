@@ -221,15 +221,15 @@ Item {
         anchors.left: parent.left; anchors.bottom: parent.bottom
         anchors.leftMargin: 40 * scene.s; anchors.bottomMargin: 30 * scene.s
         spacing: 2
-        Text { text: "未来ガジェット研究所"; color: "#8c6a48"; font.pixelSize: 18 * scene.s; font.letterSpacing: 4 * scene.s }
-        Text { text: "FUTURE GADGET LABORATORY  ·  LAB MEM 001"; color: "#5e4630"; font.family: Theme.font; font.pixelSize: 11 * scene.s; font.letterSpacing: 2 * scene.s }
+        Text { text: "未来ガジェット研究所"; color: "#b8956a"; font.pixelSize: 18 * scene.s; font.letterSpacing: 4 * scene.s }
+        Text { text: "FUTURE GADGET LABORATORY  ·  LAB MEM 001"; color: "#a88760"; font.family: Theme.font; font.pixelSize: 11 * scene.s; font.letterSpacing: 2 * scene.s }
     }
     Text {
         visible: scene.showText
         anchors.right: parent.right; anchors.bottom: parent.bottom
         anchors.rightMargin: 40 * scene.s; anchors.bottomMargin: 30 * scene.s
         text: "El Psy Kongroo."
-        color: "#8c6a48"; font.family: Theme.font; font.italic: true; font.pixelSize: 16 * scene.s; font.letterSpacing: 2 * scene.s
+        color: "#b8956a"; font.family: Theme.font; font.italic: true; font.pixelSize: 16 * scene.s; font.letterSpacing: 2 * scene.s
     }
 
     // ------------------------------------------------------------ CRT scanlines + vignette

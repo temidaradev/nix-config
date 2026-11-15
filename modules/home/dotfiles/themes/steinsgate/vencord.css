@@ -4,7 +4,7 @@
  */
 :root, html, .theme-dark, .theme-darker, .theme-midnight, .visual-refresh, .visual-refresh.theme-dark, .theme-dark .theme-dark {
   --sg-bg0: #0a0604 !important; --sg-bg: #100a06 !important; --sg-bg1: #160e08 !important; --sg-bg2: #1f150c !important; --sg-bg3: #2a1c10 !important;
-  --sg-line: #4a3018 !important; --sg-fg: #ffdcae !important; --sg-dim: #a88760 !important; --sg-mute: #6e5640 !important;
+  --sg-line: #4a3018 !important; --sg-fg: #ffdcae !important; --sg-dim: #a88760 !important; --sg-mute: #967a5a !important;
   --sg-amber: #ff9e2c !important; --sg-amber2: #ffb35c !important; --sg-red: #e8452c !important; --sg-green: #8fd16a !important;
 
   /* classic tokens */
