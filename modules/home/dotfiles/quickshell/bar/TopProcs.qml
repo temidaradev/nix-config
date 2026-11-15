@@ -34,7 +34,7 @@ Column {
             required property var modelData
             readonly property real pct: tp.by === "cpu" ? modelData.value / Math.max(1, SysInfo.threads) : modelData.value * 1024 / Math.max(1, SysStats.memTotal) * 100
             width: tp.width; height: 22
-            Rectangle { anchors.left: parent.left; anchors.bottom: parent.bottom; height: 2; radius: 1; width: parent.width * Math.min(1, parent.pct / 100); color: tp.by === "cpu" ? Theme.accent : Theme.green; opacity: 0.6 }
+            Rectangle { anchors.left: parent.left; anchors.bottom: parent.bottom; height: 2; radius: Theme.r(1); width: parent.width * Math.min(1, parent.pct / 100); color: tp.by === "cpu" ? Theme.accent : Theme.green; opacity: 0.6 }
             Text { anchors.left: parent.left; anchors.verticalCenter: parent.verticalCenter; width: parent.width - 90; elide: Text.ElideRight; text: modelData.name; color: Theme.fg; font.family: Theme.font; font.pointSize: Theme.smallSize - 1 }
             Text {
                 anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter

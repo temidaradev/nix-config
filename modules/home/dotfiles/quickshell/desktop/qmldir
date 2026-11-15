@@ -1,2 +1,5 @@
 Desktop 1.0 Desktop.qml
 Backdrop 1.0 Backdrop.qml
+Nixie 1.0 Nixie.qml
+NixieMeter 1.0 NixieMeter.qml
+SteinsScene 1.0 SteinsScene.qml

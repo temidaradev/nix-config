@@ -1,0 +1,73 @@
+/* shell-theme: steinsgate
+ * Steins;Gate for GTK 3 / GTK 4 / libadwaita: nixie amber on lab black, hard
+ * edges. Written to ~/.config/gtk-{3,4}.0/gtk.css by `shell-theme` (your
+ * previous gtk.css is kept in ~/.local/state/quickshell and restored). */
+@define-color accent_color #ff9e2c;
+@define-color accent_bg_color #ff9e2c;
+@define-color accent_fg_color #160b03;
+@define-color destructive_color #e8452c;
+@define-color destructive_bg_color #e8452c;
+@define-color destructive_fg_color #160b03;
+@define-color success_color #8fd16a;
+@define-color warning_color #ffcc4d;
+@define-color error_color #e8452c;
+@define-color window_bg_color #100a06;
+@define-color window_fg_color #ffdcae;
+@define-color view_bg_color #0c0805;
+@define-color view_fg_color #ffdcae;
+@define-color headerbar_bg_color #140c06;
+@define-color headerbar_fg_color #ffdcae;
+@define-color headerbar_border_color #4a3018;
+@define-color headerbar_backdrop_color #100a06;
+@define-color sidebar_bg_color #140c06;
+@define-color sidebar_fg_color #ffdcae;
+@define-color secondary_sidebar_bg_color #120b06;
+@define-color card_bg_color #1a110a;
+@define-color card_fg_color #ffdcae;
+@define-color dialog_bg_color #140c06;
+@define-color dialog_fg_color #ffdcae;
+@define-color popover_bg_color #140c06;
+@define-color popover_fg_color #ffdcae;
+@define-color thumbnail_bg_color #1a110a;
+@define-color borders #4a3018;
+
+/* GTK 3 / Breeze names */
+@define-color theme_bg_color #100a06;
+@define-color theme_fg_color #ffdcae;
+@define-color theme_base_color #0c0805;
+@define-color theme_text_color #ffdcae;
+@define-color theme_selected_bg_color #ff9e2c;
+@define-color theme_selected_fg_color #160b03;
+@define-color insensitive_bg_color #140c06;
+@define-color insensitive_fg_color #6e5640;
+@define-color unfocused_borders #33220f;
+@define-color theme_unfocused_bg_color #100a06;
+@define-color theme_unfocused_fg_color #a88760;
+@define-color theme_unfocused_base_color #0c0805;
+@define-color theme_unfocused_text_color #a88760;
+@define-color theme_unfocused_selected_bg_color #b8701f;
+@define-color theme_unfocused_selected_fg_color #160b03;
+@define-color theme_button_background_normal_breeze #24180e;
+@define-color theme_button_foreground_normal_breeze #ffdcae;
+@define-color theme_button_decoration_focus_breeze #ff9e2c;
+@define-color theme_button_decoration_hover_breeze #ff9e2c;
+@define-color borders_breeze #4a3018;
+@define-color content_view_bg_breeze #0c0805;
+@define-color theme_titlebar_background_breeze #140c06;
+@define-color theme_titlebar_foreground_breeze #ffdcae;
+@define-color theme_titlebar_background_backdrop_breeze #100a06;
+@define-color theme_titlebar_foreground_backdrop_breeze #a88760;
+@define-color theme_header_background_breeze #140c06;
+@define-color theme_header_foreground_breeze #ffdcae;
+@define-color theme_view_hover_decoration_color_breeze #ff9e2c;
+@define-color theme_view_active_decoration_color_breeze #ff9e2c;
+@define-color link_color #ffb35c;
+@define-color link_visited_color #c97a8f;
+
+/* hard edges, like the shell */
+button, entry, spinbutton, combobox, dropdown, switch, scale trough, scale slider,
+popover > contents, popover.menu > contents, menu, .menu, tooltip, .card, list.boxed-list,
+notebook > header tab, searchbar entry, progressbar trough, progressbar progress,
+check, toast, .osd, infobar, row.activatable { border-radius: 0; }
+switch slider { border-radius: 0; }
+selection, *:selected { background-color: alpha(#ff9e2c, 0.35); color: #ffe4bd; }

@@ -72,7 +72,8 @@ let
   };
 
   # Filenames from localThemes that Vencord should actually apply.
-  enabledThemes = [ ];
+  # steinsgate.css is written (or emptied) by `shell-theme` on Linux.
+  enabledThemes = lib.optionals (!isDarwin) [ "steinsgate.css" ];
 
   settings = {
     autoUpdate = false;

@@ -21,14 +21,14 @@ BarPopup {
         property bool dim: false
         property bool active: false
         signal clicked
-        color: active ? Theme.accent : (dim ? "#88ffffff" : Theme.fg)
+        color: active ? Theme.accent : (dim ? Theme.ink(0x88) : Theme.fg)
         font.family: Theme.font; font.pointSize: 15
         anchors.verticalCenter: parent.verticalCenter
         verticalAlignment: Text.AlignVCenter; horizontalAlignment: Text.AlignHCenter
         width: 28
         MouseArea { anchors.fill: parent; anchors.margins: -8; cursorShape: Qt.PointingHandCursor; onClicked: parent.clicked() }
     }
-    component Card: Rectangle {
+    component Card: Plate {
         radius: Theme.radius; color: Theme.bg2
         default property alias content: inner.data
         property alias spacing: inner.spacing
@@ -67,7 +67,7 @@ BarPopup {
             Row {
                 width: parent.width; spacing: 14
                 Rectangle {
-                    width: 168; height: 168; radius: 6; color: Theme.bg3; clip: true
+                    width: 168; height: 168; radius: Theme.r(6); color: Theme.bg3; clip: true
                     Image { anchors.fill: parent; source: Media.artUrl; fillMode: Image.PreserveAspectCrop; asynchronous: true; smooth: true; mipmap: true; sourceSize: Qt.size(336, 336) }
                     Text { visible: Media.artUrl === ""; anchors.centerIn: parent; text: "󰝚"; color: Theme.fgDim; font.family: Theme.font; font.pointSize: 34 }
                 }
@@ -84,13 +84,13 @@ BarPopup {
                             BarButton {
                                 required property MprisPlayer modelData
                                 padding: 6; implicitHeight: 20
-                                color: modelData === dash.p ? Theme.accent : (hovered ? "#2affffff" : Theme.bg3)
-                                BarText { text: modelData.identity; font.pointSize: Theme.smallSize - 2; color: modelData === dash.p ? "#1b1e20" : Theme.fg }
+                                color: modelData === dash.p ? Theme.accent : (hovered ? Theme.ink(0x2a) : Theme.bg3)
+                                BarText { text: modelData.identity; font.pointSize: Theme.smallSize - 2; color: modelData === dash.p ? Theme.onAccent : Theme.fg }
                                 onClicked: Media.select(modelData)
                             }
                         }
                     }
-                    Text { visible: Media.players.length <= 1; width: parent.width; elide: Text.ElideRight; text: dash.p ? dash.p.identity : ""; color: "#66ffffff"; font.family: Theme.font; font.pointSize: Theme.smallSize - 1; topPadding: 4 }
+                    Text { visible: Media.players.length <= 1; width: parent.width; elide: Text.ElideRight; text: dash.p ? dash.p.identity : ""; color: Theme.ink(0x66); font.family: Theme.font; font.pointSize: Theme.smallSize - 1; topPadding: 4 }
                 }
             }
 
@@ -108,13 +108,13 @@ BarPopup {
                     onMoved: if (dash.p) dash.p.position = value
                     background: Rectangle {
                         x: seek.leftPadding; y: seek.topPadding + seek.availableHeight / 2 - 2
-                        width: seek.availableWidth; height: 4; radius: 2; color: Theme.bg3
-                        Rectangle { width: seek.visualPosition * parent.width; height: parent.height; radius: 2; color: Theme.accent }
+                        width: seek.availableWidth; height: 4; radius: Theme.r(2); color: Theme.bg3
+                        Rectangle { width: seek.visualPosition * parent.width; height: parent.height; radius: Theme.r(2); color: Theme.accent }
                     }
                     handle: Rectangle {
                         x: seek.leftPadding + seek.visualPosition * (seek.availableWidth - width)
                         y: seek.topPadding + seek.availableHeight / 2 - height / 2
-                        width: 12; height: 12; radius: 6; color: Theme.fg; visible: seek.enabled
+                        width: 12; height: 12; radius: Theme.r(6); rotation: Theme.knobRotation; color: Theme.fg; visible: seek.enabled
                     }
                 }
                 Item {
@@ -152,7 +152,7 @@ BarPopup {
         readonly property var rootDisk: SysStats.disks.find(d => d.mount === "/")
         readonly property real memPct: SysStats.memTotal > 0 ? SysStats.memUsed / SysStats.memTotal * 100 : 0
 
-        component Tile: Rectangle {
+        component Tile: Plate {
             property string glyph
             property string label
             property string value
@@ -175,8 +175,8 @@ BarPopup {
             property real pct: 0
             property color accent: Theme.accent
             anchors.bottom: parent.bottom
-            width: parent.width; height: 5; radius: 3; color: Theme.bg3
-            Rectangle { width: parent.width * Math.min(1, pct / 100); height: parent.height; radius: 3; color: accent
+            width: parent.width; height: 5; radius: Theme.r(3); color: Theme.bg3
+            Rectangle { width: parent.width * Math.min(1, pct / 100); height: parent.height; radius: Theme.r(3); color: accent
                 Behavior on width { enabled: !Theme.reducedMotion; NumberAnimation { duration: 400 } } }
         }
 
@@ -190,6 +190,6 @@ BarPopup {
         Tile { glyph: "󰋊"; label: "Disk  /"; value: (tiles.rootDisk ? tiles.rootDisk.pct : 0) + "%"; sub: tiles.rootDisk ? SysStats.fmtBytes(tiles.rootDisk.used, 0) + " of " + SysStats.fmtBytes(tiles.rootDisk.size, 0) : ""
             Bar { pct: tiles.rootDisk ? tiles.rootDisk.pct : 0 } }
         Tile { glyph: "󰛳"; label: "Network"; value: "󰁅 " + SysStats.fmtRate(SysStats.rx); sub: "󰁝 " + SysStats.fmtRate(SysStats.tx)
-            Text { anchors.bottom: parent.bottom; anchors.right: parent.right; text: "up " + SysStats.uptime; color: "#66ffffff"; font.family: Theme.font; font.pointSize: Theme.smallSize - 2 } }
+            Text { anchors.bottom: parent.bottom; anchors.right: parent.right; text: "up " + SysStats.uptime; color: Theme.ink(0x66); font.family: Theme.font; font.pointSize: Theme.smallSize - 2 } }
     }
 }

@@ -18,14 +18,14 @@ BarPopup {
         }
         BarButton {
             width: 92; implicitHeight: 24; padding: 6
-            color: Notifs.dnd ? Theme.accent : (hovered ? "#2affffff" : Theme.bg2)
-            BarText { text: Notifs.dnd ? "󰂛 DND on" : "󰂚 DND off"; font.pointSize: Theme.smallSize - 1; color: Notifs.dnd ? "#1b1e20" : Theme.fg }
+            color: Notifs.dnd ? Theme.accent : (hovered ? Theme.ink(0x2a) : Theme.bg2)
+            BarText { text: Notifs.dnd ? "󰂛 DND on" : "󰂚 DND off"; font.pointSize: Theme.smallSize - 1; color: Notifs.dnd ? Theme.onAccent : Theme.fg }
             onClicked: Notifs.dnd = !Notifs.dnd
         }
         BarButton {
             width: 56; implicitHeight: 24; padding: 6
             visible: Notifs.count > 0
-            color: hovered ? "#2affffff" : Theme.bg2
+            color: hovered ? Theme.ink(0x2a) : Theme.bg2
             BarText { text: "Clear"; font.pointSize: Theme.smallSize - 1 }
             onClicked: Notifs.clearAll()
         }
@@ -36,7 +36,7 @@ BarPopup {
         width: parent.width; horizontalAlignment: Text.AlignHCenter
         topPadding: 24; bottomPadding: 24
         text: "󰂜\nNo notifications"
-        color: "#66ffffff"; font.family: Theme.font; font.pointSize: Theme.smallSize
+        color: Theme.ink(0x66); font.family: Theme.font; font.pointSize: Theme.smallSize
     }
 
     Flickable {

@@ -20,21 +20,28 @@ BarPopup {
         columns: 3; spacing: 8; width: parent.width
         Repeater {
             model: Wallpaper.available
-            Rectangle {
+            Plate {
                 required property string modelData
                 readonly property bool active: modelData === Wallpaper.current
                 width: (parent.width - 16) / 3; height: width * 9 / 16
                 radius: Theme.radius
                 color: Theme.bg2
-                border.color: active ? Theme.accent : (ma.containsMouse ? "#66ffffff" : "transparent"); border.width: 2
+                stroke: active ? Theme.accent : (ma.containsMouse ? Theme.ink(0x66) : "transparent"); strokeWidth: 2
                 clip: true
                 Image {
                     id: thumb
                     anchors.fill: parent; anchors.margins: 2
-                    source: "file://" + modelData
+                    source: modelData === Wallpaper.scene ? "" : "file://" + modelData
                     fillMode: Image.PreserveAspectCrop
                     asynchronous: true; smooth: true; mipmap: true
                     sourceSize: Qt.size(360, 202)
+                }
+                Text {   // preview for the drawn scene
+                    visible: modelData === Wallpaper.scene
+                    anchors.centerIn: parent
+                    text: "1.048596"
+                    color: Theme.accent; style: Text.Outline; styleColor: "#80ff6a00"
+                    font.family: "Noto Sans"; font.weight: Font.ExtraLight; font.pointSize: 22
                 }
                 Text {
                     visible: thumb.status === Image.Error
@@ -45,12 +52,12 @@ BarPopup {
                 Text {
                     anchors.left: parent.left; anchors.right: parent.right; anchors.bottom: parent.bottom
                     anchors.margins: 6
-                    text: modelData.split("/").pop()
+                    text: modelData === Wallpaper.scene ? "Divergence meter (drawn)" : modelData.split("/").pop().replace(/\.[^.]+$/, "")
                     elide: Text.ElideMiddle
                     color: Theme.fg; style: Text.Outline; styleColor: "#aa000000"
                     font.family: Theme.font; font.pointSize: Theme.smallSize - 2
                 }
-                MouseArea { id: ma; anchors.fill: parent; hoverEnabled: true; onClicked: if (thumb.status !== Image.Error) Wallpaper.set(modelData) }
+                MouseArea { id: ma; anchors.fill: parent; hoverEnabled: true; onClicked: if (modelData === Wallpaper.scene || thumb.status !== Image.Error) Wallpaper.set(modelData) }
             }
         }
     }

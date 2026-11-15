@@ -11,7 +11,7 @@ PanelWindow {
     visible: Launcher.sessionOpen
     anchors { top: true; bottom: true; left: true; right: true }
     exclusionMode: ExclusionMode.Ignore
-    color: "#a01b1e20"
+    color: Theme.panel(0.63)
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.namespace: "qs-session"
     WlrLayershell.keyboardFocus: visible ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
@@ -58,20 +58,20 @@ PanelWindow {
             spacing: 18
             Repeater {
                 model: win.actions
-                Rectangle {
+                Plate {
                     required property var modelData
                     required property int index
                     readonly property bool sel: index === win.current
                     width: 150; height: 150
-                    radius: 12
+                    radius: Theme.r(12)
                     color: sel ? Theme.accent : Theme.panelBg
-                    border.color: sel ? Theme.accent : Theme.cardBorder; border.width: 1
+                    stroke: sel ? Theme.accent : Theme.cardBorder; strokeWidth: 1
                     scale: sel ? 1.04 : 1
                     Behavior on scale { NumberAnimation { duration: 100 } }
                     Column {
                         anchors.centerIn: parent; spacing: 10
-                        Text { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.glyph; color: sel ? "#1b1e20" : Theme.fg; font.family: Theme.font; font.pointSize: 40 }
-                        Text { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.label; color: sel ? "#1b1e20" : Theme.fg; font.bold: sel; font.family: Theme.font; font.pointSize: Theme.fontSize }
+                        Text { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.glyph; color: sel ? Theme.onAccent : Theme.fg; font.family: Theme.font; font.pointSize: 40 }
+                        Text { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.label; color: sel ? Theme.onAccent : Theme.fg; font.bold: sel; font.family: Theme.font; font.pointSize: Theme.fontSize }
                     }
                     MouseArea {
                         anchors.fill: parent; hoverEnabled: true

@@ -6,18 +6,36 @@ import qs
 import qs.services
 
 // Current wallpaper path, persisted outside the (read-only) nix config.
+// Each theme remembers its own: ~/.local/state/quickshell/wallpaper and
+// .../wallpaper-steinsgate. The Steins;Gate list is the art pinned in
+// themes/steinsgate/wallpapers.nix (linked into the shell dir) plus
+// ~/Pictures/Wallpapers/steinsgate, and "scene" (the drawn divergence meter).
 Singleton {
     id: root
     readonly property string stateDir: Quickshell.env("HOME") + "/.local/state/quickshell"
-    readonly property string stateFile: stateDir + "/wallpaper"
-    readonly property string dir: Quickshell.env("HOME") + "/Pictures/Wallpapers"
-    property string current: Theme.wallpaper
+    readonly property string stateFile: stateDir + (Theme.steins ? "/wallpaper-steinsgate" : "/wallpaper")
+    readonly property string dir: Theme.steins ? sgUserDir : normalDir
+    readonly property string normalDir: Quickshell.env("HOME") + "/Pictures/Wallpapers"
+    readonly property string sgUserDir: normalDir + "/steinsgate"
+    readonly property string sgDir: Quickshell.shellDir + "/steinsgate-walls"
+    readonly property string sgDefault: sgDir + "/kurisu-gears.png"
+    readonly property string scene: "scene"
+
+    property string normalCurrent: Theme.wallpaper
+    property string steinsCurrent: sgDefault
+    readonly property string current: Theme.steins ? steinsCurrent : normalCurrent
+    readonly property bool isScene: current === scene
+
     property string accent: ""          // dominant hue of the wallpaper, boosted (Settings: appearance.accentFromWallpaper)
     property string blurred: ""
     readonly property string cacheDir: Quickshell.env("HOME") + "/.cache/quickshell/blur"
     readonly property bool wantAccent: Settings.s.appearance.accentFromWallpaper
-    onWantAccentChanged: if (wantAccent) pickAccent.running = true
-    onCurrentChanged: { if (wantAccent) pickAccent.running = true; blur.running = true }
+    onWantAccentChanged: if (wantAccent && !isScene) pickAccent.running = true
+    onCurrentChanged: {
+        if (isScene) { blurred = ""; return }
+        if (wantAccent) pickAccent.running = true
+        blur.running = true
+    }
 
     Process {
         id: blur
@@ -40,25 +58,39 @@ Singleton {
     property var available: []
 
     FileView {
-        id: state
-        path: root.stateFile
+        path: root.stateDir + "/wallpaper"
         printErrors: false
         watchChanges: true
         onFileChanged: reload()
-        onLoaded: { const t = text().trim(); if (t !== "") root.current = t }
-        onLoadFailed: root.current = Theme.wallpaper
+        onLoaded: { const t = text().trim(); if (t !== "") root.normalCurrent = t }
+        onLoadFailed: root.normalCurrent = Theme.wallpaper
+    }
+    FileView {
+        path: root.stateDir + "/wallpaper-steinsgate"
+        printErrors: false
+        watchChanges: true
+        onFileChanged: reload()
+        onLoaded: { const t = text().trim(); if (t !== "") root.steinsCurrent = t }
+        onLoadFailed: root.steinsCurrent = root.sgDefault
     }
 
     Process {
         id: scan
-        command: ["sh", "-c", 'mkdir -p "$1"; find "$1" -maxdepth 1 -type f -size +0 \\( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \\) | sort', "sh", root.dir]
-        stdout: StdioCollector { onStreamFinished: root.available = [Theme.wallpaper].concat(text.trim().split("\n").filter(l => l !== "")) }
+        // -L: the pinned Steins;Gate art is a directory of store symlinks
+        command: ["sh", "-c", 'for d in "$@"; do mkdir -p "$d" 2>/dev/null; find -L "$d" -maxdepth 1 -type f -size +0 \\( -iname "*.png" -o -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.webp" \\) | sort; done', "sh"].concat(Theme.steins ? [root.sgDir, root.sgUserDir] : [root.normalDir])
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const found = text.trim().split("\n").filter(l => l !== "")
+                root.available = Theme.steins ? [root.scene].concat(found) : [Theme.wallpaper].concat(found)
+            }
+        }
     }
     function rescan() { scan.running = true }
     Component.onCompleted: rescan()
+    Connections { target: Theme; function onSteinsChanged() { root.rescan() } }
 
     function set(path) {
-        Quickshell.execDetached(["sh", "-c", 'mkdir -p "$1" && printf %s "$2" > "$1/wallpaper"', "sh", stateDir, path])
-        current = path
+        Quickshell.execDetached(["sh", "-c", 'mkdir -p "$(dirname "$1")" && printf %s "$2" > "$1"', "sh", stateFile, path])
+        if (Theme.steins) steinsCurrent = path; else normalCurrent = path
     }
 }

@@ -21,10 +21,23 @@ PanelWindow {
     readonly property real volume: sink?.audio?.volume ?? 0
     readonly property bool muted: sink?.audio?.muted ?? false
 
+    // Steins;Gate: a nixie-amber filament along the bar's lower edge
+    Rectangle {
+        visible: Theme.steins
+        anchors.left: parent.left; anchors.right: parent.right; anchors.bottom: parent.bottom
+        height: 1
+        gradient: Gradient {
+            orientation: Gradient.Horizontal
+            GradientStop { position: 0.0; color: "transparent" }
+            GradientStop { position: 0.5; color: Theme.accent }
+            GradientStop { position: 1.0; color: "transparent" }
+        }
+    }
+
     component Sep: Rectangle {
         width: 1; height: 16
         anchors.verticalCenter: parent.verticalCenter
-        color: "#33ffffff"
+        color: Theme.ink(0x33)
     }
 
     Item {
@@ -41,7 +54,7 @@ PanelWindow {
 
             BarButton {   // app drawer
                 padding: 6
-                color: Launcher.open ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
+                color: Launcher.open ? Theme.ink(0x40) : (hovered ? Theme.ink(0x2a) : "transparent")
                 IconImage {
                     anchors.verticalCenter: parent.verticalCenter
                     implicitSize: 20
@@ -60,13 +73,15 @@ PanelWindow {
             id: nowPlaying
             anchors.horizontalCenter: parent.horizontalCenter
             padding: 10
-            color: Launcher.dashOpen ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
+            color: Launcher.dashOpen ? Theme.ink(0x40) : (hovered ? Theme.ink(0x2a) : "transparent")
             onClicked: e => {
                 if (e.button === Qt.LeftButton) Launcher.toggleDash(nowPlaying.mapToItem(null, 0, 0).x + nowPlaying.width / 2)
                 else if (Media.player && e.button === Qt.MiddleButton) Media.player.togglePlaying()
                 else if (Media.player) Media.player.next()
             }
 
+                BarText { visible: Theme.steins; text: Worldline.display; color: Theme.accent; font.bold: true; font.letterSpacing: 1 }
+                Sep { visible: Theme.steins }
                 BarText { text: Qt.formatDateTime(clock.date, Settings.s.bar.dateFormat); color: Theme.fgDim }
                 BarText { text: Qt.formatDateTime(clock.date, Settings.s.bar.clockFormat); font.bold: true }
                 Sep { visible: Settings.s.bar.nowPlaying && Media.player !== null }
@@ -75,7 +90,7 @@ PanelWindow {
                 Rectangle {
                     visible: Settings.s.bar.nowPlaying && Media.player !== null
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 22; height: 22; radius: 3; color: Theme.bg3
+                    width: 22; height: 22; radius: Theme.r(3); color: Theme.bg3
                     clip: true
                     Image {
                         anchors.fill: parent
@@ -117,14 +132,14 @@ PanelWindow {
                     anchors.bottom: parent.bottom; anchors.bottomMargin: 3
                     anchors.left: parent.left; anchors.leftMargin: 8
                     width: (parent.width - 16) * nowPlaying.progress
-                    height: 2; radius: 1; color: Theme.accent
+                    height: 2; radius: Theme.r(1); color: Theme.accent
                 }
                 Rectangle {
                     parent: nowPlaying
                     visible: Settings.s.bar.nowPlaying && Media.player !== null
                     anchors.bottom: parent.bottom; anchors.bottomMargin: 3
                     anchors.left: parent.left; anchors.leftMargin: 8
-                    width: parent.width - 16; height: 2; radius: 1; color: "#22ffffff"; z: -1
+                    width: parent.width - 16; height: 2; radius: Theme.r(1); color: Theme.ink(0x22); z: -1
                 }
         }
 
@@ -191,7 +206,7 @@ PanelWindow {
                 id: devBtn
                 visible: Settings.s.bar.battery && Devices.all.some(d => !d.key.startsWith("mouse:"))
                 menu: "devices"
-                color: ["devices", "buds", "sony", "airpods"].includes(Launcher.menu) ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
+                color: ["devices", "buds", "sony", "airpods"].includes(Launcher.menu) ? Theme.ink(0x40) : (hovered ? Theme.ink(0x2a) : "transparent")
                 Repeater {
                     model: Devices.all.filter(d => !d.key.startsWith("mouse:"))
                     Row {
@@ -246,7 +261,7 @@ PanelWindow {
             BarButton {   // temperatures
                 visible: Settings.s.bar.temps
                 id: tempBtn
-                color: Launcher.tempOpen ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
+                color: Launcher.tempOpen ? Theme.ink(0x40) : (hovered ? Theme.ink(0x2a) : "transparent")
                 BarText { text: "󰔏"; color: SysStats.temp > 80 ? Theme.red : Theme.accent; font.pointSize: 12 }
                 BarText { text: Math.round(SysStats.temp) + "°"; font.pointSize: Theme.smallSize }
                 BarText { visible: SysStats.gpuTemp > 0; text: "󰢮"; color: SysStats.gpuTemp > 85 ? Theme.red : Theme.accent; font.pointSize: 12 }
@@ -258,7 +273,7 @@ PanelWindow {
                 visible: Settings.s.bar.disk
                 id: diskBtn
                 readonly property var rootDisk: SysStats.disks.find(d => d.mount === "/")
-                color: Launcher.diskOpen ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
+                color: Launcher.diskOpen ? Theme.ink(0x40) : (hovered ? Theme.ink(0x2a) : "transparent")
                 BarText { text: "󰋊"; color: Theme.accent; font.pointSize: 12 }
                 BarText { text: diskBtn.rootDisk ? diskBtn.rootDisk.pct + "%" : "–"; font.pointSize: Theme.smallSize }
                 onClicked: Launcher.toggleDisks(diskBtn.mapToItem(null, 0, 0).x + diskBtn.width / 2)
@@ -286,7 +301,7 @@ PanelWindow {
             BarButton {   // notifications
                 visible: Settings.s.bar.notifications
                 id: bellBtn
-                color: Launcher.notifOpen ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
+                color: Launcher.notifOpen ? Theme.ink(0x40) : (hovered ? Theme.ink(0x2a) : "transparent")
                 BarText { text: Notifs.dnd ? "󰂛" : (Notifs.count > 0 ? "󰂚" : "󰂜"); font.pointSize: 12 }
                 BarText { visible: Notifs.count > 0; text: String(Notifs.count); color: Theme.accent; font.bold: true; font.pointSize: Theme.smallSize }
                 onClicked: e => e.button === Qt.RightButton ? Notifs.dnd = !Notifs.dnd : Launcher.toggleNotifs(bellBtn.mapToItem(null, 0, 0).x + bellBtn.width / 2)
@@ -294,14 +309,14 @@ PanelWindow {
 
             BarButton {   // control center
                 visible: Settings.s.bar.control
-                color: Launcher.controlOpen ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
+                color: Launcher.controlOpen ? Theme.ink(0x40) : (hovered ? Theme.ink(0x2a) : "transparent")
                 BarText { text: "󰒓"; font.pointSize: 12 }
                 onClicked: Launcher.toggleControl()
             }
 
             BarButton {   // sidebar
                 visible: Settings.s.bar.sidebar
-                color: Launcher.sidebarOpen ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
+                color: Launcher.sidebarOpen ? Theme.ink(0x40) : (hovered ? Theme.ink(0x2a) : "transparent")
                 BarText { text: "󰨝"; font.pointSize: 12 }
                 onClicked: Launcher.toggleSidebar()
             }

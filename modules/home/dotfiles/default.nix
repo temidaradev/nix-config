@@ -11,37 +11,43 @@ let
     cp -r ${./quickshell} $out
     chmod -R u+w $out
     ln -s ${shellSettings} $out/settings.json
+    ln -s ${import ./themes/steinsgate/wallpapers.nix { inherit pkgs; }} $out/steinsgate-walls
   '';
 in
 {
-  hjem.users.${hmUsername}.xdg.config.files = {
-    # macOS window management (dormant unless the daemons are started)
-    "aerospace/aerospace.toml".source = ./aerospace.toml;
-    "skhd/skhdrc".source = ./skhdrc;
-    # yabairc/bordersrc are executed as scripts — writeScript keeps the exec bit
-    "yabai/yabairc".source = pkgs.writeScript "yabairc" (builtins.readFile ./yabairc);
-    "borders/bordersrc".source = pkgs.writeScript "bordersrc" (builtins.readFile ./bordersrc);
+  # Qt/KDE colour scheme for the Steins;Gate theme (applied by `shell-theme`)
+  hjem.users.${hmUsername}.xdg = {
+    data.files."color-schemes/SteinsGate.colors".source = ./themes/steinsgate/SteinsGate.colors;
 
-    "btop/btop.conf".source = ./btop.conf;
-    "cava".source = ./cava;
-
-    "kitty/kitty.conf".source = ./kitty/kitty.conf;
-    "kitty/theme.conf".source = ./kitty/theme.conf;
-    "kitty/userprefs.conf".source = ./kitty/userprefs.conf;
-    "kitty/1701872350454979.png".source = ./kitty/1701872350454979.png;
-
-    "zed/settings.json".source = ./zed/settings.json;
-    "zed/keymap.json".source = ./zed/keymap.json;
-
-    "karabiner/karabiner.json".source = ./karabiner.json;
-
-    # niri + its Quickshell shell (see quickshell/README.md)
-    "niri/config.kdl".source = ./niri/config.kdl;
-    "niri/host.kdl".source = if builtins.pathExists (./niri + "/host-${hostName}.kdl") then (./niri + "/host-${hostName}.kdl") else ./niri/host-temidaradev.kdl;
-    "powerdevilrc".source = ./powerdevilrc;
-
-    "niri/wallpaper.png".source = ./niri/wallpaper.png;
-    "swappy/config".source = ./niri/swappy;
-    "quickshell".source = quickshellDir;
+    config.files = {
+      # macOS window management (dormant unless the daemons are started)
+      "aerospace/aerospace.toml".source = ./aerospace.toml;
+      "skhd/skhdrc".source = ./skhdrc;
+      # yabairc/bordersrc are executed as scripts — writeScript keeps the exec bit
+      "yabai/yabairc".source = pkgs.writeScript "yabairc" (builtins.readFile ./yabairc);
+      "borders/bordersrc".source = pkgs.writeScript "bordersrc" (builtins.readFile ./bordersrc);
+  
+      "btop/btop.conf".source = ./btop.conf;
+      "cava".source = ./cava;
+  
+      "kitty/kitty.conf".source = ./kitty/kitty.conf;
+      "kitty/theme.conf".source = ./kitty/theme.conf;
+      "kitty/userprefs.conf".source = ./kitty/userprefs.conf;
+      "kitty/1701872350454979.png".source = ./kitty/1701872350454979.png;
+  
+      "zed/settings.json".source = ./zed/settings.json;
+      "zed/keymap.json".source = ./zed/keymap.json;
+  
+      "karabiner/karabiner.json".source = ./karabiner.json;
+  
+      # niri + its Quickshell shell (see quickshell/README.md)
+      "niri/config.kdl".source = ./niri/config.kdl;
+      "niri/host.kdl".source = if builtins.pathExists (./niri + "/host-${hostName}.kdl") then (./niri + "/host-${hostName}.kdl") else ./niri/host-temidaradev.kdl;
+      "powerdevilrc".source = ./powerdevilrc;
+  
+      "niri/wallpaper.png".source = ./niri/wallpaper.png;
+      "swappy/config".source = ./niri/swappy;
+      "quickshell".source = quickshellDir;
+    };
   };
 }

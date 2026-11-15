@@ -3,6 +3,7 @@ import Quickshell
 import Quickshell.Wayland
 import Quickshell.Services.Pam
 import qs
+import qs.desktop
 import qs.services
 
 // Session lock drawn by the shell: blurred wallpaper, clock, password.
@@ -12,7 +13,7 @@ WlSessionLock {
 
     WlSessionLockSurface {
         id: surface
-        color: "#1b1e20"
+        color: Theme.bg0
 
         property string password: ""
         property string error: ""
@@ -39,7 +40,7 @@ WlSessionLock {
 
         Image {
             anchors.fill: parent
-            visible: Wallpaper.blurred !== ""
+            visible: !Wallpaper.isScene && Wallpaper.blurred !== ""
             source: visible ? "file://" + Wallpaper.blurred : ""
             fillMode: Image.PreserveAspectCrop
             asynchronous: true
@@ -47,41 +48,63 @@ WlSessionLock {
         }
         Image {
             anchors.fill: parent
-            visible: Wallpaper.blurred === ""
+            visible: !Wallpaper.isScene && Wallpaper.blurred === ""
             source: visible ? "file://" + Wallpaper.current : ""
             sourceSize: Qt.size(Math.max(1, surface.width / 10), Math.max(1, surface.height / 10))
             fillMode: Image.PreserveAspectCrop
             asynchronous: true
             smooth: true
         }
+        Loader {
+            anchors.fill: parent
+            active: Theme.steins && Wallpaper.isScene
+            sourceComponent: SteinsScene { showMeter: false; showText: false; interactive: false }
+        }
         Rectangle { anchors.fill: parent; color: "#40000000" }
 
         Column {
             anchors.centerIn: parent
-            anchors.verticalCenterOffset: -60
-            spacing: 6
+            anchors.verticalCenterOffset: Theme.steins ? -110 : -60
+            spacing: Theme.steins ? 14 : 6
             Text {
+                visible: !Theme.steins
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: Qt.formatDateTime(clock.date, "HH:mm")
                 color: Theme.fg; font.family: Theme.font; font.pointSize: 72; font.bold: true
                 style: Text.Outline; styleColor: "#40000000"
             }
+            Loader {   // nixie clock
+                active: Theme.steins
+                visible: active
+                anchors.horizontalCenter: parent.horizontalCenter
+                sourceComponent: NixieMeter {
+                    text: Qt.formatDateTime(clock.date, "HH:mm")
+                    tubeWidth: Math.round(Math.min(64, surface.width / 22))
+                }
+            }
             Text {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: Qt.formatDateTime(clock.date, "dddd, d MMMM")
+                text: Theme.steins ? Qt.formatDateTime(clock.date, "dddd, d MMMM").toUpperCase() : Qt.formatDateTime(clock.date, "dddd, d MMMM")
                 color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.fontSize + 4
+                font.letterSpacing: Theme.steins ? 4 : 0
+            }
+            Text {
+                visible: Theme.steins
+                anchors.horizontalCenter: parent.horizontalCenter
+                text: "DIVERGENCE  " + Worldline.value + "   ·   " + Worldline.worldName
+                color: Theme.accent; font.family: Theme.font; font.pointSize: Theme.fontSize; font.letterSpacing: 2
             }
         }
 
-        Rectangle {
+        Plate {
             id: box
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.verticalCenter: parent.verticalCenter
             anchors.verticalCenterOffset: 110
             width: 340; height: 44
-            radius: 22
+            radius: Theme.r(22)
             color: Theme.panelBg
-            border.color: surface.error !== "" ? Theme.red : (input.activeFocus ? Theme.accent : Theme.cardBorder); border.width: 1
+            stroke: surface.error !== "" ? Theme.red : (input.activeFocus ? Theme.accent : Theme.cardBorder); strokeWidth: 1
 
             SequentialAnimation {
                 id: shake
@@ -106,11 +129,11 @@ WlSessionLock {
                     text: surface.password
                     onTextChanged: surface.password = text
                     onAccepted: surface.submit()
-                    Text { visible: input.text === ""; anchors.verticalCenter: parent.verticalCenter; text: surface.busy ? "Checking…" : "Password"; color: "#66ffffff"; font.family: Theme.font; font.pointSize: Theme.fontSize }
+                    Text { visible: input.text === ""; anchors.verticalCenter: parent.verticalCenter; text: surface.busy ? (Theme.steins ? "Leaping…" : "Checking…") : (Theme.steins ? "Password, Lab Mem" : "Password"); color: Theme.ink(0x66); font.family: Theme.font; font.pointSize: Theme.fontSize }
                 }
                 Text {
                     anchors.verticalCenter: parent.verticalCenter
-                    text: "󰁔"; color: surface.password !== "" ? Theme.accent : "#44ffffff"; font.family: Theme.font; font.pointSize: 14
+                    text: "󰁔"; color: surface.password !== "" ? Theme.accent : Theme.ink(0x44); font.family: Theme.font; font.pointSize: 14
                     MouseArea { anchors.fill: parent; anchors.margins: -6; onClicked: surface.submit() }
                 }
             }
@@ -120,7 +143,7 @@ WlSessionLock {
         Text {
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: box.bottom; anchors.topMargin: 12
-            text: surface.error !== "" ? surface.error : Quickshell.env("USER") + "@" + Niri.hostname
+            text: surface.error !== "" ? surface.error : (Theme.steins ? "El Psy Kongroo." : Quickshell.env("USER") + "@" + Niri.hostname)
             color: surface.error !== "" ? Theme.red : Theme.fgDim
             font.family: Theme.font; font.pointSize: Theme.smallSize
         }

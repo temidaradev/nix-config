@@ -25,9 +25,9 @@ Item {
             }
         }
         Rectangle {
-            width: parent.width; height: 6; radius: 3; color: Theme.bg3
+            width: parent.width; height: 6; radius: Theme.r(3); color: Theme.bg3
             Rectangle {
-                width: parent.width * Math.min(1, (row.disk ? row.disk.pct : 0) / 100); height: parent.height; radius: 3
+                width: parent.width * Math.min(1, (row.disk ? row.disk.pct : 0) / 100); height: parent.height; radius: Theme.r(3)
                 color: !row.disk ? Theme.accent : row.disk.pct > 90 ? Theme.red : row.disk.pct > 75 ? Theme.yellow : Theme.accent
             }
         }

@@ -26,9 +26,9 @@ BarPopup {
             Text { text: Math.round(value) + " °C"; width: 52; horizontalAlignment: Text.AlignRight; color: value > warn ? Theme.red : Theme.fg; font.bold: true; font.family: Theme.font; font.pointSize: Theme.smallSize; anchors.verticalCenter: parent.verticalCenter }
         }
         Rectangle {
-            width: parent.width; height: 5; radius: 3; color: Theme.bg3
+            width: parent.width; height: 5; radius: Theme.r(3); color: Theme.bg3
             Rectangle {
-                width: parent.width * Math.min(1, value / max); height: parent.height; radius: 3
+                width: parent.width * Math.min(1, value / max); height: parent.height; radius: Theme.r(3)
                 color: value > warn ? Theme.red : value > warn - 15 ? Theme.yellow : Theme.accent
                 Behavior on width { enabled: !Theme.reducedMotion; NumberAnimation { duration: 400 } }
             }
@@ -44,6 +44,6 @@ BarPopup {
         visible: text !== ""
         text: SysStats.gpuTemp > 0 ? "" : SysInfo.gpuShort + (SysInfo.gpuDriver ? " (" + SysInfo.gpuDriver + ")" : "") + " doesn't expose a temperature sensor."
         wrapMode: Text.Wrap
-        color: "#66ffffff"; font.family: Theme.font; font.pointSize: Theme.smallSize - 2
+        color: Theme.ink(0x66); font.family: Theme.font; font.pointSize: Theme.smallSize - 2
     }
 }

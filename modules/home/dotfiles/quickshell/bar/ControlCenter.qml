@@ -21,7 +21,7 @@ BarPopup {
 
     function runAndClose(cmd) { Quickshell.execDetached(cmd); Launcher.hideControl() }
 
-    component Toggle: Rectangle {
+    component Toggle: Plate {
         property string glyph
         property string label
         property string sub: ""
@@ -34,17 +34,17 @@ BarPopup {
         color: on ? Theme.accent : Theme.bg2
         Row {
             anchors.fill: parent; anchors.margins: 10; spacing: 10
-            Text { text: glyph; anchors.verticalCenter: parent.verticalCenter; color: on ? "#1b1e20" : Theme.fg; font.family: Theme.font; font.pointSize: 15 }
+            Text { text: glyph; anchors.verticalCenter: parent.verticalCenter; color: on ? Theme.onAccent : Theme.fg; font.family: Theme.font; font.pointSize: 15 }
             Column {
                 anchors.verticalCenter: parent.verticalCenter
                 width: parent.width - 34 - (expandable ? 20 : 0)
-                Text { width: parent.width; elide: Text.ElideRight; text: label; color: on ? "#1b1e20" : Theme.fg; font.family: Theme.font; font.pointSize: Theme.fontSize; font.bold: true }
-                Text { width: parent.width; elide: Text.ElideRight; visible: sub !== ""; text: sub; color: on ? "#1b1e20" : Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1 }
+                Text { width: parent.width; elide: Text.ElideRight; text: label; color: on ? Theme.onAccent : Theme.fg; font.family: Theme.font; font.pointSize: Theme.fontSize; font.bold: true }
+                Text { width: parent.width; elide: Text.ElideRight; visible: sub !== ""; text: sub; color: on ? Theme.onAccent : Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1 }
             }
             Text {
                 visible: expandable
                 anchors.verticalCenter: parent.verticalCenter
-                text: "󰅂"; color: on ? "#1b1e20" : Theme.fgDim; font.family: Theme.font; font.pointSize: 12
+                text: "󰅂"; color: on ? Theme.onAccent : Theme.fgDim; font.family: Theme.font; font.pointSize: 12
                 MouseArea { anchors.fill: parent; anchors.margins: -8; onClicked: parent.parent.parent.expand() }
             }
         }
@@ -81,9 +81,14 @@ BarPopup {
             glyph: "󰸉"; label: "Wallpaper"; sub: "Pick an image"
             onClicked: Launcher.toggleWallpaper()
         }
+        Toggle {
+            glyph: "󰅐"; label: "Steins;Gate"
+            on: Theme.steins; sub: on ? Worldline.value + " · El Psy Kongroo" : "Divergence meter theme"
+            onClicked: Theme.toggle()
+        }
     }
 
-    Rectangle { width: parent.width; height: 1; color: "#22ffffff" }
+    Rectangle { width: parent.width; height: 1; color: Theme.ink(0x22) }
 
     Row {
         width: parent.width; height: 32; spacing: 6

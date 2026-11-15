@@ -19,6 +19,110 @@ let
       exec cat >/dev/null
     '';
   };
+  # Desktop theme switch: normal (Breeze) <-> steinsgate. The shell watches the
+  # state file; niri and ghostty pick up the copied override files through
+  # optional includes (both live-reload; ghostty is nudged with SIGUSR2).
+  steinsGate = ../../../home/dotfiles/themes/steinsgate;
+  ghosttySteins = pkgs.replaceVars "${steinsGate}/ghostty" { background = "${steinsGate}/terminal.jpg"; };
+  shellTheme = pkgs.writeShellApplication {
+    name = "shell-theme";
+    runtimeInputs = [ pkgs.coreutils pkgs.procps pkgs.gnugrep pkgs.findutils pkgs.glib ];
+    text = ''
+      dir="''${XDG_STATE_HOME:-$HOME/.local/state}/quickshell"
+      cfg="''${XDG_CONFIG_HOME:-$HOME/.config}"
+      mkdir -p "$dir"
+      cur=$(cat "$dir/theme" 2>/dev/null || echo normal)
+      refresh=1
+      case "''${1:-toggle}" in
+        get) echo "$cur"; exit 0 ;;
+        toggle) if [[ $cur == steinsgate ]]; then new=normal; else new=steinsgate; fi ;;
+        apply) new=$cur; refresh=0 ;;   # login / after a rebuild: re-sync the files only
+        normal|steinsgate) new=$1 ;;
+        *) echo "usage: shell-theme [toggle|normal|steinsgate|get|apply]" >&2; exit 2 ;;
+      esac
+      sg=${steinsGate}
+      steins() { [[ $new == steinsgate ]]; }
+
+      put() {   # atomic, so file watchers never see half a file
+        mkdir -p "$(dirname "$1")"
+        if [[ -n $2 ]]; then install -m 644 "$2" "$1.tmp"; else printf '%s\n' "$3" > "$1.tmp"; fi
+        mv -f "$1.tmp" "$1"
+      }
+      # A file the user may already have (gtk.css...): keep their copy while
+      # Steins;Gate is on and put it back after. Never touch hjem symlinks.
+      swap() {
+        local target=$1 src=$2 bak; bak="$dir/normal/$(printf %s "$1" | md5sum | cut -c1-12)"
+        [[ -L $target ]] && return 0
+        if steins; then
+          if [[ -e $target ]] && ! grep -qs 'shell-theme: steinsgate' "$target"; then mkdir -p "$dir/normal"; cp -f "$target" "$bak"; fi
+          put "$target" "$src"
+        elif grep -qs 'shell-theme: steinsgate' "$target"; then
+          if [[ -e $bak ]]; then put "$target" "$bak"; else rm -f "$target"; fi
+        fi
+      }
+
+      # niri + ghostty: optional includes, both live-reload
+      if steins; then
+        put "$dir/niri-theme.kdl" "$sg/niri.kdl"
+        put "$dir/ghostty-theme" ${ghosttySteins}
+      else
+        put "$dir/niri-theme.kdl" "" "// normal theme: no overrides"
+        put "$dir/ghostty-theme" "" "# normal theme: no overrides"
+      fi
+
+      # GTK 3/4 + libadwaita
+      swap "$cfg/gtk-3.0/gtk.css" "$sg/gtk.css"
+      swap "$cfg/gtk-4.0/gtk.css" "$sg/gtk.css"
+
+      # Vencord (watches its themes dir), btop, helix
+      if steins; then
+        put "$cfg/Vencord/themes/steinsgate.css" "$sg/vencord.css"
+        put "$cfg/btop/themes/shell.theme" "$sg/btop.theme"
+        put "$cfg/helix/themes/shell.toml" "$sg/helix.toml"
+      else
+        put "$cfg/Vencord/themes/steinsgate.css" "" "/* normal theme */"
+        rm -f "$cfg/btop/themes/shell.theme"
+        put "$cfg/helix/themes/shell.toml" "" 'inherits = "gruvbox_dark_soft"'
+      fi
+
+      # Zen: chrome/steinsgate.css imported from userChrome.css (next start)
+      for prefs in "$HOME"/.zen/*/prefs.js "$cfg"/zen/*/prefs.js; do
+        [[ -e $prefs ]] || continue
+        p=$(dirname "$prefs")
+        if steins; then
+          put "$p/chrome/steinsgate.css" "$sg/zen.css"
+          uc="$p/chrome/userChrome.css"
+          if ! grep -qs 'steinsgate.css' "$uc"; then
+            { echo '@import url("steinsgate.css");   /* shell-theme */'; cat "$uc" 2>/dev/null || true; } > "$uc.tmp" && mv -f "$uc.tmp" "$uc"
+          fi
+          grep -qs 'legacyUserProfileCustomizations.stylesheets' "$p/user.js" \
+            || echo 'user_pref("toolkit.legacyUserProfileCustomizations.stylesheets", true);' >> "$p/user.js"
+        elif [[ -e $p/chrome/steinsgate.css ]]; then
+          put "$p/chrome/steinsgate.css" "" "/* normal theme */"
+        fi
+      done
+
+      printf '%s' "$new" > "$dir/theme.tmp" && mv -f "$dir/theme.tmp" "$dir/theme"
+
+      if (( refresh )); then
+        # Qt/KDE apps repaint on the colour-scheme change signal
+        if command -v plasma-apply-colorscheme >/dev/null; then
+          if steins; then plasma-apply-colorscheme SteinsGate >/dev/null 2>&1 || true
+          else plasma-apply-colorscheme BreezeDark >/dev/null 2>&1 || true; fi
+        fi
+        # GTK apps re-read gtk.css when the theme changes; libadwaita follows accent-color
+        gs() { gsettings "$@" 2>/dev/null || true; }
+        if steins; then gs set org.gnome.desktop.interface accent-color orange; else gs set org.gnome.desktop.interface accent-color blue; fi
+        theme=$(gsettings get org.gnome.desktop.interface gtk-theme 2>/dev/null | tr -d "'" || true)
+        if [[ -n $theme ]]; then gs set org.gnome.desktop.interface gtk-theme Adwaita; sleep 0.3; gs set org.gnome.desktop.interface gtk-theme "$theme"; fi
+      fi
+
+      # ghostty and helix reload their config on a signal (nixpkgs names: .ghostty-wrapped, hx)
+      pkill -USR2 -x '\.?ghostty(-wrappe(d)?)?' 2>/dev/null || true
+      pkill -USR1 -x 'hx|\.hx-wrapped' 2>/dev/null || true
+      [[ ''${1:-} == apply ]] || echo "$new"
+    '';
+  };
   # Spawned from config.kdl; wrappers keep store paths out of it.
   polkitAgent = pkgs.writeShellScriptBin "niri-polkit-agent" ''
     exec ${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1
@@ -93,6 +197,7 @@ in
     polkitAgent
     gtkSettings
     screenshot
+    shellTheme
   ];
 
   # niri wants the GNOME portal for screencast/screenshot; the GTK one covers

@@ -1,0 +1,72 @@
+# Steins;Gate for helix: gruvbox's structure, re-inked in nixie amber.
+inherits = "gruvbox_dark_soft"
+
+"ui.background" = { bg = "bg0" }
+"ui.text" = "fg"
+"ui.cursor" = { fg = "bg0", bg = "amber" }
+"ui.cursor.primary" = { fg = "bg0", bg = "amber" }
+"ui.cursor.match" = { bg = "bg3" }
+"ui.selection" = { bg = "sel" }
+"ui.selection.primary" = { bg = "sel" }
+"ui.linenr" = "mute"
+"ui.linenr.selected" = "amber"
+"ui.cursorline.primary" = { bg = "bg1" }
+"ui.statusline" = { fg = "fg", bg = "bg2" }
+"ui.statusline.inactive" = { fg = "dim", bg = "bg1" }
+"ui.statusline.normal" = { fg = "bg0", bg = "amber", modifiers = ["bold"] }
+"ui.statusline.insert" = { fg = "bg0", bg = "green", modifiers = ["bold"] }
+"ui.statusline.select" = { fg = "bg0", bg = "rose", modifiers = ["bold"] }
+"ui.popup" = { bg = "bg1" }
+"ui.menu" = { fg = "fg", bg = "bg1" }
+"ui.menu.selected" = { fg = "bg0", bg = "amber" }
+"ui.window" = "line"
+"ui.help" = { fg = "fg", bg = "bg1" }
+"ui.virtual.whitespace" = "bg3"
+"ui.virtual.indent-guide" = "bg3"
+"ui.virtual.ruler" = { bg = "bg1" }
+"comment" = { fg = "mute", modifiers = ["italic"] }
+"keyword" = "red"
+"keyword.control" = "red"
+"function" = "amber2"
+"function.builtin" = "amber"
+"type" = "yellow"
+"constructor" = "yellow"
+"string" = "green"
+"constant" = "rose"
+"constant.numeric" = "rose"
+"variable" = "fg"
+"variable.parameter" = "cream"
+"variable.other.member" = "steel"
+"operator" = "amber"
+"punctuation" = "dim"
+"namespace" = "teal"
+"tag" = "amber"
+"attribute" = "teal"
+"markup.heading" = { fg = "amber", modifiers = ["bold"] }
+"markup.link.url" = { fg = "steel", modifiers = ["underlined"] }
+"diagnostic.error" = { underline = { color = "red", style = "curl" } }
+"diagnostic.warning" = { underline = { color = "yellow", style = "curl" } }
+"error" = "red"
+"warning" = "yellow"
+"info" = "steel"
+"hint" = "teal"
+
+[palette]
+bg0 = "#0c0805"
+bg1 = "#160e08"
+bg2 = "#24180e"
+bg3 = "#33220f"
+sel = "#3a2410"
+line = "#4a3018"
+fg = "#ffdcae"
+cream = "#f2d3a6"
+dim = "#a88760"
+mute = "#6e5640"
+amber = "#ff9e2c"
+amber2 = "#ffb35c"
+red = "#e8452c"
+green = "#8fb359"
+yellow = "#ffcc4d"
+steel = "#7fa3bf"
+rose = "#d48aa0"
+teal = "#7fbfb1"

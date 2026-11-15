@@ -32,13 +32,13 @@ BarPopup {
             width: parent.width
             height: modelData.isSeparator ? 9 : 28
 
-            Rectangle { visible: modelData.isSeparator; anchors.centerIn: parent; width: parent.width - 12; height: 1; color: "#22ffffff" }
+            Rectangle { visible: modelData.isSeparator; anchors.centerIn: parent; width: parent.width - 12; height: 1; color: Theme.ink(0x22) }
 
-            Rectangle {
+            Plate {
                 visible: !modelData.isSeparator
                 anchors.fill: parent
                 radius: Theme.radius
-                color: ma.containsMouse && modelData.enabled ? "#2affffff" : "transparent"
+                color: ma.containsMouse && modelData.enabled ? Theme.ink(0x2a) : "transparent"
                 Row {
                     anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 8; spacing: 8
                     Text {
@@ -58,7 +58,7 @@ BarPopup {
                         width: parent.width - 14 - 8 - (modelData.icon !== "" ? 24 : 0) - 16
                         elide: Text.ElideRight
                         text: modelData.text
-                        color: modelData.enabled ? Theme.fg : "#66ffffff"
+                        color: modelData.enabled ? Theme.fg : Theme.ink(0x66)
                         font.family: Theme.font; font.pointSize: Theme.smallSize
                     }
                     Text {

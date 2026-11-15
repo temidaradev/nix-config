@@ -28,7 +28,7 @@ PanelWindow {
 
     MouseArea { anchors.fill: parent; onClicked: win.dismissed() }
 
-    Rectangle {
+    Plate {
         id: panel
         width: win.panelWidth
         height: win.panelHeight
@@ -36,7 +36,8 @@ PanelWindow {
         x: win.anchorRight ? win.width - width - 4 : Math.max(4, Math.min(win.width - width - 4, win.anchorX - width / 2))
         radius: win.panelRadius
         color: win.panelColor
-        border.color: win.panelBorder; border.width: 1
+        stroke: win.panelBorder; strokeWidth: 1
+        cut: 12; brackets: true
         MouseArea { anchors.fill: parent }
 
         Column {

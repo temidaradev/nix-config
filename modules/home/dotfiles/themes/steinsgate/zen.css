@@ -1,0 +1,37 @@
+/* shell-theme: steinsgate. Zen browser chrome: nixie amber on lab black.
+ * Imported by userChrome.css; `shell-theme` empties this file in normal mode.
+ * Applies on the next Zen start. */
+:root {
+  --zen-primary-color: #ff9e2c !important;
+  --zen-colors-primary: #24180e !important;
+  --zen-colors-secondary: #1a110a !important;
+  --zen-colors-tertiary: #100a06 !important;
+  --zen-colors-border: #4a3018 !important;
+  --zen-colors-primary-foreground: #ffdcae !important;
+  --zen-main-browser-background: #0a0604 !important;
+  --zen-main-browser-background-toolbar: #0a0604 !important;
+  --zen-themed-toolbar-bg: #0a0604 !important;
+  --zen-themed-toolbar-bg-transparent: #0a0604 !important;
+  --zen-dialog-background: #140c06 !important;
+  --zen-urlbar-background: #140c06 !important;
+  --toolbar-bgcolor: #100a06 !important;
+  --toolbar-color: #ffdcae !important;
+  --toolbar-field-background-color: #140c06 !important;
+  --toolbar-field-color: #ffdcae !important;
+  --toolbar-field-focus-border-color: #ff9e2c !important;
+  --lwt-text-color: #ffdcae !important;
+  --arrowpanel-background: #140c06 !important;
+  --arrowpanel-color: #ffdcae !important;
+  --arrowpanel-border-color: #4a3018 !important;
+  --focus-outline-color: #ff9e2c !important;
+  --tab-selected-bgcolor: #2a1c10 !important;
+  --tab-selected-textcolor: #ffb35c !important;
+  --border-radius-medium: 0px !important;
+  --border-radius-small: 0px !important;
+  --tab-border-radius: 0px !important;
+  --zen-border-radius: 0px !important;
+  --zen-webview-border-radius: 0px !important;
+  accent-color: #ff9e2c !important;
+}
+#browser, #navigator-toolbox, #zen-main-app-wrapper { background: #0a0604 !important; }
+.tabbrowser-tab[selected] .tab-background { border-left: 2px solid #ff9e2c !important; }

@@ -26,12 +26,12 @@ Slider {
     }
     background: Rectangle {
         x: s.leftPadding; y: s.topPadding + s.availableHeight / 2 - 2
-        width: s.availableWidth; height: 4; radius: 2; color: Theme.bg3
-        Rectangle { width: s.visualPosition * parent.width; height: parent.height; radius: 2; color: s.muted ? Theme.fgDim : Theme.accent }
+        width: s.availableWidth; height: 4; radius: Theme.r(2); color: Theme.bg3
+        Rectangle { width: s.visualPosition * parent.width; height: parent.height; radius: Theme.r(2); color: s.muted ? Theme.fgDim : Theme.accent }
     }
     handle: Rectangle {
         x: s.leftPadding + s.visualPosition * (s.availableWidth - width)
         y: s.topPadding + s.availableHeight / 2 - height / 2
-        width: 14; height: 14; radius: 7; color: Theme.fg
+        width: 14; height: 14; radius: Theme.r(7); rotation: Theme.knobRotation; color: Theme.fg
     }
 }

@@ -6,7 +6,8 @@
       "helix/config.toml" = {
         generator = (pkgs.formats.toml { }).generate "helix-config.toml";
         value = {
-          theme = "gruvbox_dark_soft";
+          # Linux: "shell" is written by `shell-theme` (gruvbox, or Steins;Gate)
+          theme = if pkgs.stdenv.hostPlatform.isLinux then "shell" else "gruvbox_dark_soft";
 
           editor = {
             line-number = "relative";

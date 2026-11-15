@@ -29,6 +29,6 @@ BarPopup {
     Text {
         width: parent.width; wrapMode: Text.Wrap; topPadding: 2
         text: "Right-click or scroll the indicator to cycle layouts."
-        color: "#66ffffff"; font.family: Theme.font; font.pointSize: Theme.smallSize - 2
+        color: Theme.ink(0x66); font.family: Theme.font; font.pointSize: Theme.smallSize - 2
     }
 }

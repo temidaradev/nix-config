@@ -1,7 +1,7 @@
 import QtQuick
 import qs
 
-Rectangle {
+Plate {
     id: r
     property string glyph: ""
     property string label
@@ -14,7 +14,7 @@ Rectangle {
     width: parent.width
     height: sub !== "" ? 40 : 32
     radius: Theme.radius
-    color: ma.containsMouse ? "#2affffff" : "transparent"
+    color: ma.containsMouse ? Theme.ink(0x2a) : "transparent"
     Row {
         anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 6; spacing: 8
         Text { visible: r.glyph !== ""; anchors.verticalCenter: parent.verticalCenter; width: 18; text: r.glyph; color: r.active ? Theme.accent : Theme.fg; font.family: Theme.font; font.pointSize: 12 }

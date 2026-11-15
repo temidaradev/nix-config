@@ -94,12 +94,12 @@ BarPopup {
             id: track
             anchors.left: parent.left; anchors.right: num.left; anchors.rightMargin: 10
             anchors.verticalCenter: parent.verticalCenter
-            height: 4; radius: 2; color: Theme.bg3
-            Rectangle { width: parent.width * st.shown / st.max; height: parent.height; radius: 2; color: Theme.accent }
+            height: 4; radius: Theme.r(2); color: Theme.bg3
+            Rectangle { width: parent.width * st.shown / st.max; height: parent.height; radius: Theme.r(2); color: Theme.accent }
             Rectangle {
                 x: (parent.width - width) * st.shown / st.max
                 anchors.verticalCenter: parent.verticalCenter
-                width: 14; height: 14; radius: 7; color: Theme.fg
+                width: 14; height: 14; radius: Theme.r(7); rotation: Theme.knobRotation; color: Theme.fg
             }
             MouseArea {
                 anchors.fill: parent; anchors.margins: -9
@@ -140,19 +140,19 @@ BarPopup {
             id: btrack
             anchors.horizontalCenter: parent.horizontalCenter
             y: bandValue.height + 6
-            width: 4; height: 72; radius: 2
+            width: 4; height: 72; radius: Theme.r(2)
             color: Theme.bg3
             Rectangle {
                 readonly property real mid: btrack.height / 2
                 readonly property real pos: btrack.height * (0.5 - band.shown / 20)
-                width: parent.width; radius: 2
+                width: parent.width; radius: Theme.r(2)
                 y: Math.min(mid, pos); height: Math.abs(mid - pos)
                 color: Theme.accent
             }
             Rectangle {
                 anchors.horizontalCenter: parent.horizontalCenter
                 y: btrack.height * (0.5 - band.shown / 20) - height / 2
-                width: 12; height: 12; radius: 6; color: Theme.fg
+                width: 12; height: 12; radius: Theme.r(6); rotation: Theme.knobRotation; color: Theme.fg
             }
             MouseArea {
                 anchors.fill: parent; anchors.margins: -8
@@ -375,7 +375,7 @@ BarPopup {
             visible: Sony.connected
             label: popup.confirmOff ? "󰐥  Sure?" : "󰐥  Power off"
             danger: true; on: false
-            color: popup.confirmOff ? Theme.red : hovered ? "#2affffff" : Theme.bg2
+            color: popup.confirmOff ? Theme.red : hovered ? Theme.ink(0x2a) : Theme.bg2
             onClicked: {
                 if (popup.confirmOff) { Sony.powerOff(); popup.confirmOff = false; confirmReset.stop() }
                 else { popup.confirmOff = true; confirmReset.restart() }

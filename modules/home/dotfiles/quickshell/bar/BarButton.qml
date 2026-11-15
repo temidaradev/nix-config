@@ -4,7 +4,7 @@ import qs
 import qs.services
 
 // Hover-highlighted container for a panel widget.
-Rectangle {
+Plate {
     id: root
     property alias hovered: mouse.containsMouse
     property alias mouse: mouse
@@ -23,7 +23,7 @@ Rectangle {
     implicitWidth: inner.implicitWidth + padding * 2
     implicitHeight: Theme.barHeight
     radius: Theme.radius
-    color: menu !== "" && Launcher.menu === menu ? "#40ffffff" : mouse.containsMouse ? "#2affffff" : "transparent"
+    color: menu !== "" && Launcher.menu === menu ? Theme.ink(0x40) : mouse.containsMouse ? Theme.ink(0x2a) : "transparent"
 
     Row {
         id: inner

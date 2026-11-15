@@ -23,6 +23,31 @@ desktop/        wallpaper layer + blurred overview backdrop
 IPC from niri binds: `qs ipc call launcher|control|media|calendar toggle`.
 Logs: `qs log` or `journalctl --user -u quickshell-niri`.
 
+## Themes: normal / Steins;Gate
+
+`shell-theme toggle` (Mod+Shift+G, or the Steins;Gate tile in the control
+center) switches between Breeze and a Steins;Gate theme at runtime, no rebuild:
+
+- Shell: `Theme.qml` swaps palettes (nixie amber `#ff9e2c` on lab black); every
+  colour goes through Theme tokens (`Theme.ink(alpha)` for translucent washes,
+  `Theme.onAccent` for text on accent fills).
+- Shapes: `Plate` (rounded rect normally, `Chamfer` cut-corner HUD plate in
+  Steins;Gate) backs panels, tiles, buttons, cards and workspace pills; fixed
+  radii go through `Theme.r()` (square in Steins;Gate), knobs turn to diamonds.
+- Wallpaper: each theme keeps its own. Steins;Gate lists the art pinned in
+  `../themes/steinsgate/wallpapers.nix` (fetched by Nix, not committed),
+  `~/Pictures/Wallpapers/steinsgate`, and the drawn divergence-meter scene
+  (`desktop/SteinsScene.qml`). The desktop takes no input.
+- Lock screen: nixie clock and the current divergence. Bar: live readout
+  (`qs ipc call worldline shift|to 0.571024` changes world line).
+- Apps, via `shell-theme` and `../themes/steinsgate/`: niri + ghostty (optional
+  includes, live), GTK 3/4 gtk.css (your own is kept and restored; running apps
+  are refreshed), Qt/KDE colour scheme `SteinsGate` <-> `BreezeDark`, Vencord
+  `themes/steinsgate.css` (live), Neovim (`nvim/runtime`, live via a file
+  watcher), helix (SIGUSR1), btop and Zen (`chrome/steinsgate.css`, next start).
+
+State: `~/.local/state/quickshell/theme`, `wallpaper-steinsgate`, `worldline`.
+
 ## Sidebar
 
 Open with Mod+S. Search controls in the header, pin pages on Home, and reorder

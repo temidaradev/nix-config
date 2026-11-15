@@ -1,0 +1,31 @@
+# Steins;Gate: divergence-meter amber on lab black. Loaded by the optional
+# config-file include in ghostty's config; `shell-theme` swaps it in and out.
+background = #0c0805
+foreground = #f2d3a6
+cursor-color = #ff9e2c
+cursor-text = #160b03
+selection-background = #4a2a10
+selection-foreground = #ffe4bd
+
+# 0-7 normal, 8-15 bright: lab red, phosphor green, nixie amber, cold
+# anime-grade steel blue, Kurisu rose, IBN teal, cathode cream
+palette = 0=#1a120b
+palette = 1=#d9472b
+palette = 2=#8fb359
+palette = 3=#e0a030
+palette = 4=#6f8fa6
+palette = 5=#b3687a
+palette = 6=#6fa39a
+palette = 7=#d9bf9a
+palette = 8=#5a4330
+palette = 9=#ff6a3d
+palette = 10=#b5d77a
+palette = 11=#ffc35c
+palette = 12=#93b3c9
+palette = 13=#d48aa0
+palette = 14=#93c9bf
+palette = 15=#fff0d6
+
+# lab clockwork + world line diagram, rendered from the shell's desktop scene
+background-image = @background@
+background-image-opacity = 0.55

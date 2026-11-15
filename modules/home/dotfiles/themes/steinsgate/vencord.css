@@ -1,0 +1,44 @@
+/**
+ * @name Steins;Gate
+ * @description Nixie amber on lab black, hard edges. Swapped in and out by `shell-theme`.
+ */
+:root, html, .theme-dark, .theme-darker, .theme-midnight, .visual-refresh, .visual-refresh.theme-dark, .theme-dark .theme-dark {
+  --sg-bg0: #0a0604 !important; --sg-bg: #100a06 !important; --sg-bg1: #160e08 !important; --sg-bg2: #1f150c !important; --sg-bg3: #2a1c10 !important;
+  --sg-line: #4a3018 !important; --sg-fg: #ffdcae !important; --sg-dim: #a88760 !important; --sg-mute: #6e5640 !important;
+  --sg-amber: #ff9e2c !important; --sg-amber2: #ffb35c !important; --sg-red: #e8452c !important; --sg-green: #8fd16a !important;
+
+  /* classic tokens */
+  --background-primary: var(--sg-bg) !important; --background-secondary: var(--sg-bg1) !important;
+  --background-secondary-alt: var(--sg-bg2) !important; --background-tertiary: var(--sg-bg0) !important;
+  --background-accent: var(--sg-bg3) !important; --background-floating: var(--sg-bg1) !important;
+  --background-nested-floating: var(--sg-bg2) !important; --background-mobile-primary: var(--sg-bg) !important;
+  --background-modifier-hover: rgba(255, 158, 44, 0.07) !important; --background-modifier-active: rgba(255, 158, 44, 0.12) !important;
+  --background-modifier-selected: rgba(255, 158, 44, 0.16) !important; --background-modifier-accent: rgba(255, 158, 44, 0.18) !important;
+  --channeltextarea-background: var(--sg-bg1) !important; --deprecated-card-bg: var(--sg-bg1) !important;
+  --header-primary: var(--sg-fg) !important; --header-secondary: var(--sg-dim) !important;
+  --text-normal: var(--sg-fg) !important; --text-muted: var(--sg-dim) !important; --text-link: var(--sg-amber2) !important;
+  --interactive-normal: var(--sg-dim) !important; --interactive-hover: var(--sg-fg) !important;
+  --interactive-active: var(--sg-amber) !important; --interactive-muted: var(--sg-mute) !important;
+  --channels-default: var(--sg-dim) !important; --channel-icon: var(--sg-dim) !important;
+  --scrollbar-thin-thumb: var(--sg-line) !important; --scrollbar-auto-thumb: var(--sg-line) !important; --scrollbar-auto-track: var(--sg-bg0) !important;
+  --brand-experiment: var(--sg-amber) !important; --brand-500: var(--sg-amber) !important; --brand-560: #e5861d !important; --brand-600: #cc7414 !important;
+  --mention-foreground: var(--sg-amber2) !important; --mention-background: rgba(255, 158, 44, 0.12) !important;
+  --info-danger-foreground: var(--sg-red) !important; --status-danger: var(--sg-red) !important; --status-positive: var(--sg-green) !important;
+
+  /* visual refresh tokens */
+  --background-base-lowest: var(--sg-bg0) !important; --background-base-lower: var(--sg-bg) !important; --background-base-low: var(--sg-bg1) !important;
+  --background-surface-high: var(--sg-bg2) !important; --background-surface-higher: var(--sg-bg3) !important; --background-surface-highest: var(--sg-bg3) !important;
+  --chat-background-default: var(--sg-bg) !important; --modal-background: var(--sg-bg1) !important; --input-background-default: var(--sg-bg1) !important;
+  --text-default: var(--sg-fg) !important; --text-strong: #fff0d6 !important; --text-subtle: var(--sg-dim) !important; --text-brand: var(--sg-amber) !important;
+  --icon-default: var(--sg-dim) !important; --icon-strong: var(--sg-fg) !important; --icon-muted: var(--sg-mute) !important;
+  --border-subtle: var(--sg-line) !important; --border-normal: var(--sg-line) !important; --border-strong: #6b4520 !important;
+  --control-brand-foreground: var(--sg-amber) !important; --control-brand-foreground-new: var(--sg-amber) !important;
+  --button-filled-brand-background: var(--sg-amber) !important; --button-filled-brand-background-hover: var(--sg-amber2) !important;
+  --button-filled-brand-text: #160b03 !important;
+  --app-frame-background: var(--sg-bg0) !important; --app-border-frame: var(--sg-line) !important;
+
+  /* hard edges */
+  --radius-xs: 0px !important; --radius-sm: 0px !important; --radius-md: 0px !important; --radius-lg: 2px !important; --radius-xl: 2px !important;
+}
+::selection { background: rgba(255, 158, 44, 0.35); }
+[class*="lookFilled"][class*="colorBrand"], [class*="button"][class*="brand"] { color: #160b03 !important; }

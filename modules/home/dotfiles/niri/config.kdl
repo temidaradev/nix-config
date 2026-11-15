@@ -100,6 +100,7 @@ overview {
 // Polkit prompts and GTK theming (wrappers from niri.nix).
 spawn-at-startup "niri-polkit-agent"
 spawn-at-startup "niri-gtk-settings"
+spawn-at-startup "shell-theme" "apply"
 spawn-at-startup "wl-paste" "--type" "text" "--watch" "shell-clipboard-store"
 spawn-at-startup "wl-paste" "--type" "image" "--watch" "shell-clipboard-store"
 
@@ -268,6 +269,7 @@ binds {
 
     Print { screenshot; }
     Mod+Shift+S hotkey-overlay-title="Screenshot area (annotate)" { spawn "niri-screenshot"; }
+    Mod+Shift+G hotkey-overlay-title="Toggle Steins;Gate theme" { spawn "shell-theme" "toggle"; }
     Ctrl+Print { screenshot-screen; }
     Alt+Print { screenshot-window; }
 
@@ -277,3 +279,7 @@ binds {
     Ctrl+Alt+Delete { spawn "qs" "ipc" "call" "session" "toggle"; }
     Mod+Shift+P { power-off-monitors; }
 }
+
+// Theme overrides written by `shell-theme` (Steins;Gate focus ring, overview
+// backdrop...). Last, so it wins over everything above; live-reloads.
+include optional=true "~/.local/state/quickshell/niri-theme.kdl"

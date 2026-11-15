@@ -61,13 +61,13 @@ BarPopup {
             id: track
             anchors.left: lvLabel.right; anchors.right: num.left; anchors.rightMargin: 10
             anchors.verticalCenter: parent.verticalCenter
-            height: 4; radius: 2; color: Theme.bg3
+            height: 4; radius: Theme.r(2); color: Theme.bg3
             readonly property real frac: (lv.shown - lv.from) / (lv.to - lv.from)
-            Rectangle { width: parent.width * track.frac; height: parent.height; radius: 2; color: Theme.accent }
+            Rectangle { width: parent.width * track.frac; height: parent.height; radius: Theme.r(2); color: Theme.accent }
             Rectangle {
                 x: (parent.width - width) * track.frac
                 anchors.verticalCenter: parent.verticalCenter
-                width: 14; height: 14; radius: 7; color: Theme.fg
+                width: 14; height: 14; radius: Theme.r(7); rotation: Theme.knobRotation; color: Theme.fg
             }
             MouseArea {
                 anchors.fill: parent; anchors.margins: -9
@@ -267,11 +267,11 @@ BarPopup {
         }
         Item {
             width: parent.width; height: 30
-            Rectangle {
+            Plate {
                 anchors.left: parent.left; anchors.right: renameBtn.left; anchors.rightMargin: 6
                 anchors.verticalCenter: parent.verticalCenter
                 height: 26; radius: Theme.radius; color: Theme.bg2
-                border.color: nameInput.activeFocus ? Theme.accent : "transparent"; border.width: 1
+                stroke: nameInput.activeFocus ? Theme.accent : "transparent"; strokeWidth: 1
                 TextInput {
                     id: nameInput
                     anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 8

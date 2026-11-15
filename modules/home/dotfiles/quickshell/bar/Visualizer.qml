@@ -35,7 +35,7 @@ Item {
                 width: Math.max(1, (viz.width - row.spacing * (row.n - 1)) / row.n)
                 height: Math.max(2, viz.height * modelData / 100)
                 anchors.bottom: parent.bottom
-                radius: 1
+                radius: Theme.r(1)
                 color: viz.color
                 opacity: 0.35 + 0.65 * modelData / 100
                 Behavior on height { enabled: !Theme.reducedMotion; NumberAnimation { duration: 40 } }

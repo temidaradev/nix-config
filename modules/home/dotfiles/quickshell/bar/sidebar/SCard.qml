@@ -1,6 +1,6 @@
 import QtQuick
 import qs
-Rectangle {
+Plate {
     default property alias contents: body.data
     width: parent.width
     implicitHeight: body.implicitHeight + 24

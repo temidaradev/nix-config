@@ -80,7 +80,7 @@ PanelWindow {
     component Dim: Text { color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1 }
     component Heading: Text { color: Theme.fg; font.bold: true; font.family: Theme.font; font.pointSize: Theme.fontSize + 3; bottomPadding: 6 }
     component Section: Text { color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize - 1; font.capitalization: Font.AllUppercase; topPadding: 10 }
-    component Card: Rectangle {
+    component Card: Plate {
         width: parent.width
         radius: Theme.radius; color: Theme.bg2
         default property alias content: inner.data
@@ -104,15 +104,15 @@ PanelWindow {
         property string label
         property bool on: false
         padding: 8; implicitHeight: 26
-        color: on ? Theme.accent : (hovered ? "#2affffff" : Theme.bg3)
-        BarText { text: label; font.pointSize: Theme.smallSize - 1; color: on ? "#1b1e20" : Theme.fg }
+        color: on ? Theme.accent : (hovered ? Theme.ink(0x2a) : Theme.bg3)
+        BarText { text: label; font.pointSize: Theme.smallSize - 1; color: on ? Theme.onAccent : Theme.fg }
     }
     component Toggle: Rectangle {
         property bool on: false
         signal toggled(bool value)
-        width: 44; height: 24; radius: 12
+        width: 44; height: 24; radius: Theme.r(12)
         color: on ? Theme.accent : Theme.bg3
-        Rectangle { x: parent.on ? parent.width - width - 3 : 3; y: 3; width: 18; height: 18; radius: 9; color: Theme.fg; Behavior on x { NumberAnimation { duration: 120 } } }
+        Rectangle { x: parent.on ? parent.width - width - 3 : 3; y: 3; width: 18; height: 18; radius: Theme.r(9); color: Theme.fg; Behavior on x { NumberAnimation { duration: 120 } } }
         MouseArea { anchors.fill: parent; onClicked: parent.toggled(!parent.on) }
     }
     component ToggleRow: Row {
@@ -141,11 +141,11 @@ PanelWindow {
         Text { x: 4; anchors.verticalCenter: parent.verticalCenter; text: s.glyph; color: s.mutedState ? Theme.fgDim : Theme.fg; font.family: Theme.font; font.pointSize: 13
             MouseArea { anchors.fill: parent; anchors.margins: -4; onClicked: s.toggleMute() } }
         Text { anchors.right: parent.right; anchors.verticalCenter: parent.verticalCenter; text: Math.round(s.value * 100) + "%"; color: Theme.fgDim; font.family: Theme.font; font.pointSize: Theme.smallSize }
-        background: Rectangle { x: s.leftPadding; y: s.topPadding + s.availableHeight / 2 - 2; width: s.availableWidth; height: 4; radius: 2; color: Theme.bg3
-            Rectangle { width: s.visualPosition * parent.width; height: parent.height; radius: 2; color: s.mutedState ? Theme.fgDim : Theme.accent } }
-        handle: Rectangle { x: s.leftPadding + s.visualPosition * (s.availableWidth - width); y: s.topPadding + s.availableHeight / 2 - height / 2; width: 14; height: 14; radius: 7; color: Theme.fg }
+        background: Rectangle { x: s.leftPadding; y: s.topPadding + s.availableHeight / 2 - 2; width: s.availableWidth; height: 4; radius: Theme.r(2); color: Theme.bg3
+            Rectangle { width: s.visualPosition * parent.width; height: parent.height; radius: Theme.r(2); color: s.mutedState ? Theme.fgDim : Theme.accent } }
+        handle: Rectangle { x: s.leftPadding + s.visualPosition * (s.availableWidth - width); y: s.topPadding + s.availableHeight / 2 - height / 2; width: 14; height: 14; radius: Theme.r(7); rotation: Theme.knobRotation; color: Theme.fg }
     }
-    component ListRow: Rectangle {
+    component ListRow: Plate {
         property string glyph
         property string label
         property string sub: ""
@@ -155,7 +155,7 @@ PanelWindow {
         signal actionClicked
         width: parent.width; height: 34
         radius: Theme.radius
-        color: ma.containsMouse ? "#2affffff" : "transparent"
+        color: ma.containsMouse ? Theme.ink(0x2a) : "transparent"
         Row {
             anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 6; spacing: 8
             Text { anchors.verticalCenter: parent.verticalCenter; width: 20; text: glyph; color: active ? Theme.accent : Theme.fg; font.family: Theme.font; font.pointSize: 13 }
@@ -166,25 +166,25 @@ PanelWindow {
         }
         MouseArea { id: ma; anchors.fill: parent; anchors.rightMargin: action !== "" ? 90 : 0; hoverEnabled: true; onClicked: parent.clicked() }
     }
-    component Shortcut: Rectangle {
+    component Shortcut: Plate {
         property string glyph; property string label
         property bool on: false
         signal clicked
         width: (parent.width - 3 * 8) / 4; height: 62
         radius: Theme.radius
-        color: on ? Theme.red : (sm.containsMouse ? "#2affffff" : Theme.bg3)
+        color: on ? Theme.red : (sm.containsMouse ? Theme.ink(0x2a) : Theme.bg3)
         Column { anchors.centerIn: parent; spacing: 4
-            Text { anchors.horizontalCenter: parent.horizontalCenter; text: glyph; color: on ? "#1b1e20" : Theme.fg; font.family: Theme.font; font.pointSize: 18 }
-            Dim { anchors.horizontalCenter: parent.horizontalCenter; text: label; color: on ? "#1b1e20" : Theme.fgDim; font.pointSize: Theme.smallSize - 2 } }
+            Text { anchors.horizontalCenter: parent.horizontalCenter; text: glyph; color: on ? Theme.onAccent : Theme.fg; font.family: Theme.font; font.pointSize: 18 }
+            Dim { anchors.horizontalCenter: parent.horizontalCenter; text: label; color: on ? Theme.onAccent : Theme.fgDim; font.pointSize: Theme.smallSize - 2 } }
         MouseArea { id: sm; anchors.fill: parent; hoverEnabled: true; onClicked: parent.clicked() }
     }
 
-    Rectangle {
+    Plate {   // docked to the right edge: cut the two inner corners
         anchors.top: parent.top; anchors.bottom: parent.bottom; anchors.right: parent.right
         anchors.topMargin: Theme.barHeight
         width: Math.min(Settings.s.sidebar?.width || 600, win.width - 16)
         color: Theme.panelBg
-        border.color: Theme.cardBorder; border.width: 1
+        stroke: Theme.cardBorder; strokeWidth: 1; radius: 0; tl: true; bl: true; br: false; cut: 14
         MouseArea { anchors.fill: parent }
 
         // ---------- tab rail ----------
@@ -193,7 +193,7 @@ PanelWindow {
             anchors.left: parent.left; anchors.top: parent.top; anchors.bottom: parent.bottom
             anchors.margins: 1
             width: 56
-            color: "#14ffffff"
+            color: Theme.ink(0x14)
             Flickable {
                 anchors.fill: parent; anchors.topMargin: 8; anchors.bottomMargin: 58
                 contentHeight: tabColumn.implicitHeight; clip: true
@@ -204,15 +204,15 @@ PanelWindow {
                 spacing: 4
                 Repeater {
                     model: win.tabs
-                    Rectangle {
+                    Plate {
                         required property var modelData
                         width: 40; height: 40; radius: Theme.radius
-                        color: win.tab === modelData.id ? "#403daee9" : (tm.containsMouse ? "#2affffff" : "transparent")
+                        color: win.tab === modelData.id ? Theme.accentSoft : (tm.containsMouse ? Theme.ink(0x2a) : "transparent")
                         Text { anchors.centerIn: parent; text: modelData.glyph; color: win.tab === modelData.id ? Theme.accent : Theme.fgDim; font.family: Theme.font; font.pointSize: 15 }
                         Rectangle {   // badge for notifications
                             visible: modelData.id === "notifications" && Notifs.count > 0
                             anchors.top: parent.top; anchors.right: parent.right; anchors.margins: 4
-                            width: 8; height: 8; radius: 4; color: Theme.accent
+                            width: 8; height: 8; radius: Theme.r(4); color: Theme.accent
                         }
                         MouseArea { id: tm; anchors.fill: parent; hoverEnabled: true; onClicked: win.tab = modelData.id }
                         ToolTip.visible: tm.containsMouse
@@ -221,10 +221,10 @@ PanelWindow {
                 }
             }
             }
-            Rectangle {   // session
+            Plate {   // session
                 anchors.bottom: parent.bottom; anchors.horizontalCenter: parent.horizontalCenter; anchors.bottomMargin: 8
                 width: 40; height: 40; radius: Theme.radius
-                color: pm.containsMouse ? "#2affffff" : "transparent"
+                color: pm.containsMouse ? Theme.ink(0x2a) : "transparent"
                 Text { anchors.centerIn: parent; text: "⏻"; color: Theme.fgDim; font.family: Theme.font; font.pointSize: 14 }
                 MouseArea { id: pm; anchors.fill: parent; hoverEnabled: true; onClicked: { Launcher.sidebarOpen = false; Launcher.toggleSession() } }
             }
@@ -272,8 +272,8 @@ PanelWindow {
                         Row {
                             width: parent.width; spacing: 12
                             Rectangle {
-                                width: 56; height: 56; radius: 28; color: Theme.accent; clip: true
-                                Text { anchors.centerIn: parent; text: Quickshell.env("USER").slice(0, 1).toUpperCase(); color: "#1b1e20"; font.bold: true; font.family: Theme.font; font.pointSize: 22; visible: face.status !== Image.Ready }
+                                width: 56; height: 56; radius: Theme.r(28); color: Theme.accent; clip: true
+                                Text { anchors.centerIn: parent; text: Quickshell.env("USER").slice(0, 1).toUpperCase(); color: Theme.onAccent; font.bold: true; font.family: Theme.font; font.pointSize: 22; visible: face.status !== Image.Ready }
                                 Image { id: face; anchors.fill: parent; source: "file://" + Quickshell.env("HOME") + "/.face"; fillMode: Image.PreserveAspectCrop; asynchronous: true; smooth: true; sourceSize: Qt.size(112, 112) }
                             }
                             Column {
@@ -298,7 +298,7 @@ PanelWindow {
                         Card {   // media summary
                             width: (parent.width - 8) / 2
                             Row { width: parent.width; spacing: 10
-                                Rectangle { width: 40; height: 40; radius: 4; color: Theme.bg3; clip: true
+                                Rectangle { width: 40; height: 40; radius: Theme.r(4); color: Theme.bg3; clip: true
                                     Image { anchors.fill: parent; source: Media.artUrl; fillMode: Image.PreserveAspectCrop; asynchronous: true; smooth: true; mipmap: true; sourceSize: Qt.size(80, 80) }
                                     Text { visible: Media.artUrl === ""; anchors.centerIn: parent; text: "󰝚"; color: Theme.fgDim; font.family: Theme.font; font.pointSize: 14 } }
                                 Column { anchors.verticalCenter: parent.verticalCenter; width: parent.width - 50
@@ -325,7 +325,7 @@ PanelWindow {
                             visible: Capture.colors.length > 0
                             spacing: 6
                             Repeater { model: Capture.colors
-                                Rectangle { required property string modelData; width: 44; height: 22; radius: 3; color: modelData; border.color: "#44ffffff"; border.width: 1
+                                Rectangle { required property string modelData; width: 44; height: 22; radius: Theme.r(3); color: modelData; border.color: "#44ffffff"; border.width: 1
                                     Text { anchors.centerIn: parent; text: modelData.slice(1); color: Qt.color(modelData).hslLightness > 0.6 ? "#000" : "#fff"; font.family: Theme.font; font.pointSize: Theme.smallSize - 4 }
                                     MouseArea { anchors.fill: parent; onClicked: Capture.copyColor(modelData) } } }
                         }
@@ -333,7 +333,7 @@ PanelWindow {
                             visible: Capture.recent.length > 0
                             width: parent.width; spacing: 6
                             Repeater { model: Capture.recent
-                                Rectangle { required property string modelData; width: (parent.width - 30) / 6; height: width * 9 / 16; radius: 3; color: Theme.bg3; clip: true
+                                Rectangle { required property string modelData; width: (parent.width - 30) / 6; height: width * 9 / 16; radius: Theme.r(3); color: Theme.bg3; clip: true
                                     Image { anchors.fill: parent; source: "file://" + modelData; fillMode: Image.PreserveAspectCrop; asynchronous: true; smooth: true; sourceSize: Qt.size(120, 68) }
                                     MouseArea { anchors.fill: parent; onClicked: Quickshell.execDetached(["sh", "-c", "wl-copy < '" + modelData + "' && notify-send -a Screenshots 'Copied to clipboard' '" + modelData.split("/").pop() + "'"]) } } }
                         }
@@ -361,10 +361,10 @@ PanelWindow {
                             required property MprisPlayer modelData
                             readonly property MprisPlayer p: modelData
                             readonly property bool sel: p === Media.player
-                            border.color: sel ? Theme.accent : "transparent"; border.width: 1
+                            stroke: sel ? Theme.accent : "transparent"; strokeWidth: 1
                             Row {
                                 width: parent.width; spacing: 12
-                                Rectangle { width: 72; height: 72; radius: 4; color: Theme.bg3; clip: true
+                                Rectangle { width: 72; height: 72; radius: Theme.r(4); color: Theme.bg3; clip: true
                                     Image { anchors.fill: parent; source: p.trackArtUrl || ""; fillMode: Image.PreserveAspectCrop; asynchronous: true; smooth: true; mipmap: true; sourceSize: Qt.size(144, 144) } }
                                 Column { anchors.verticalCenter: parent.verticalCenter; width: parent.width - 84; spacing: 2
                                     Label { width: parent.width; elide: Text.ElideRight; text: p.trackTitle || "—"; font.bold: true }
@@ -374,8 +374,8 @@ PanelWindow {
                                         Dim { anchors.verticalCenter: parent.verticalCenter; text: p.isPlaying ? "playing" : "paused" } }
                                 }
                             }
-                            Rectangle { width: parent.width; height: 4; radius: 2; color: Theme.bg3
-                                Rectangle { width: p.length > 0 ? parent.width * Math.min(1, p.position / p.length) : 0; height: parent.height; radius: 2; color: Theme.accent } }
+                            Rectangle { width: parent.width; height: 4; radius: Theme.r(2); color: Theme.bg3
+                                Rectangle { width: p.length > 0 ? parent.width * Math.min(1, p.position / p.length) : 0; height: parent.height; radius: Theme.r(2); color: Theme.accent } }
                             Row {
                                 anchors.horizontalCenter: parent.horizontalCenter; spacing: 22
                                 BarButton { padding: 6; onClicked: p.previous(); BarText { text: "󰒮"; font.pointSize: 14 } }
@@ -685,9 +685,9 @@ PanelWindow {
                                     width: (parent.width - 6 * (st.days.length - 1)) / st.days.length
                                     height: parent.height
                                     Item { width: parent.width; height: parent.height - 16
-                                        Rectangle { anchors.bottom: parent.bottom; width: parent.width; radius: 3
+                                        Rectangle { anchors.bottom: parent.bottom; width: parent.width; radius: Theme.r(3)
                                             height: Math.max(2, parent.height * modelData.seconds / st.maxDay)
-                                            color: modelData.date === ScreenTime.today() ? Theme.accent : "#553daee9" } }
+                                            color: modelData.date === ScreenTime.today() ? Theme.accent : Theme.accentSoft } }
                                     Dim { anchors.horizontalCenter: parent.horizontalCenter; text: modelData.label; font.pointSize: Theme.smallSize - 3 }
                                 }
                             }
@@ -706,8 +706,8 @@ PanelWindow {
                                     IconImage { anchors.verticalCenter: parent.verticalCenter; implicitSize: 18; asynchronous: true; source: Apps.icon(modelData.app) }
                                     Label { anchors.verticalCenter: parent.verticalCenter; width: parent.width - 26 - 110; elide: Text.ElideRight; text: Apps.entry(modelData.app)?.name ?? modelData.app; font.pointSize: Theme.smallSize }
                                     Dim { anchors.verticalCenter: parent.verticalCenter; width: 110; horizontalAlignment: Text.AlignRight; text: ScreenTime.fmt(modelData.seconds) + "  ·  " + Math.round(frac * 100) + "%" } }
-                                Rectangle { width: parent.width; height: 4; radius: 2; color: Theme.bg3
-                                    Rectangle { width: parent.width * frac; height: parent.height; radius: 2; color: Theme.accent } }
+                                Rectangle { width: parent.width; height: 4; radius: Theme.r(2); color: Theme.bg3
+                                    Rectangle { width: parent.width * frac; height: parent.height; radius: Theme.r(2); color: Theme.accent } }
                             }
                         }
                     }
@@ -727,8 +727,8 @@ PanelWindow {
                             Column { anchors.verticalCenter: parent.verticalCenter
                                 Label { text: Battery.pct + "%"; font.bold: true; font.pointSize: Theme.fontSize + 6 }
                                 Dim { text: (Battery.charging ? "Charging" : Battery.full ? "Full" : "Discharging") + (Battery.timeText ? "  ·  " + Battery.timeText : "") } } }
-                        Rectangle { width: parent.width; height: 6; radius: 3; color: Theme.bg3
-                            Rectangle { width: parent.width * Battery.pct / 100; height: parent.height; radius: 3; color: Battery.low ? Theme.red : (Battery.charging ? Theme.green : Theme.accent) } }
+                        Rectangle { width: parent.width; height: 6; radius: Theme.r(3); color: Theme.bg3
+                            Rectangle { width: parent.width * Battery.pct / 100; height: parent.height; radius: Theme.r(3); color: Battery.low ? Theme.red : (Battery.charging ? Theme.green : Theme.accent) } }
                     }
                     Card {
                         visible: !Battery.present
@@ -768,8 +768,8 @@ PanelWindow {
                             Row { required property var modelData; width: parent.width; spacing: 8
                                 Text { text: modelData.glyph; width: 20; color: Theme.fg; font.family: Theme.font; font.pointSize: 12 }
                                 Label { text: modelData.name; width: parent.width - 28 - 120; elide: Text.ElideRight; font.pointSize: Theme.smallSize; anchors.verticalCenter: parent.verticalCenter }
-                                Rectangle { width: 80; height: 6; radius: 3; color: Theme.bg3; anchors.verticalCenter: parent.verticalCenter
-                                    Rectangle { width: parent.width * modelData.pct / 100; height: parent.height; radius: 3; color: modelData.pct < 20 ? Theme.red : Theme.green } }
+                                Rectangle { width: 80; height: 6; radius: Theme.r(3); color: Theme.bg3; anchors.verticalCenter: parent.verticalCenter
+                                    Rectangle { width: parent.width * modelData.pct / 100; height: parent.height; radius: Theme.r(3); color: modelData.pct < 20 ? Theme.red : Theme.green } }
                                 Dim { text: modelData.pct + "%" + (modelData.charging ? " 󱐋" : ""); width: 40; horizontalAlignment: Text.AlignRight; anchors.verticalCenter: parent.verticalCenter } } }
                     }
                 }

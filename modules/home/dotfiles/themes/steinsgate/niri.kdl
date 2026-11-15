@@ -1,0 +1,19 @@
+// Steins;Gate overrides, copied to ~/.local/state/quickshell/niri-theme.kdl by
+// `shell-theme` and pulled in by the optional include at the end of config.kdl.
+layout {
+    focus-ring {
+        width 2
+        active-gradient from="#ffc46b" to="#ff7a1a" angle=135
+        inactive-color "#3a2616"
+    }
+    shadow {
+        softness 36
+        spread 4
+        color "#ff6a0018"
+    }
+    background-color "#0a0604"
+}
+
+overview {
+    backdrop-color "#0a0604"
+}

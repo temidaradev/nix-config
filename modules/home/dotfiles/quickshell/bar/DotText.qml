@@ -1,12 +1,13 @@
 import QtQuick
+import qs
 
 Row {
     id: root
     property string text
     property real dot: 3
     property real gap: 1
-    property color color: "#ffffff"
-    property color offColor: "#14ffffff"
+    property color color: Theme.fg
+    property color offColor: Theme.ink(0x14)
     spacing: dot + gap
 
     readonly property var glyphs: ({
@@ -36,7 +37,7 @@ Row {
                 model: 35
                 Rectangle {
                     required property int index
-                    width: root.dot; height: root.dot; radius: root.dot / 2
+                    width: root.dot; height: root.dot; radius: Theme.r(root.dot / 2)
                     color: parent.bits[index] === "1" ? root.color : root.offColor
                 }
             }

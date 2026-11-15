@@ -2,6 +2,12 @@
 
 {
   vim = {
+    # Steins;Gate colorscheme + live sync with the desktop theme (shell-theme)
+    additionalRuntimePaths = [ ./runtime ];
+    luaConfigPost = ''
+      vim.api.nvim_create_autocmd("VimEnter", { once = true, callback = function() require("theme_sync").setup() end })
+    '';
+
     viAlias = true;
     vimAlias = true;
 

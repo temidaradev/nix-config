@@ -17,7 +17,7 @@ Row {
             id: btn
             required property SystemTrayItem modelData
             padding: 4
-            color: Launcher.trayItem === modelData ? "#40ffffff" : (hovered ? "#2affffff" : "transparent")
+            color: Launcher.trayItem === modelData ? Theme.ink(0x40) : (hovered ? Theme.ink(0x2a) : "transparent")
             IconImage {
                 source: modelData.icon
                 implicitSize: 16

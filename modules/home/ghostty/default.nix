@@ -1,4 +1,4 @@
-{ pkgs, hmUsername, ... }:
+{ config, pkgs, hmUsername, ... }:
 
 let
   # Assets referenced by absolute store path so the config works from anywhere.
@@ -33,6 +33,10 @@ let
     keybind = ctrl+shift+minus=decrease_font_size:1
     keybind = ctrl+tab=next_tab
     keybind = ctrl+shift+tab=previous_tab
+
+    # Theme overrides written by `shell-theme` (Steins;Gate palette); optional,
+    # last so it wins, reloaded on SIGUSR2.
+    config-file = ?${config.hjem.users.${hmUsername}.directory}/.local/state/quickshell/ghostty-theme
   '';
 in
 {

@@ -4,7 +4,7 @@ import Quickshell.Widgets
 import Quickshell.Services.Notifications
 import qs
 
-Rectangle {
+Plate {
     id: card
     property Notification n
     property bool compact: false
@@ -13,9 +13,9 @@ Rectangle {
 
     readonly property bool critical: n && n.urgency === NotificationUrgency.Critical
     implicitHeight: body.implicitHeight + 20
-    radius: 6
+    radius: Theme.r(6)
     color: Theme.panelBg
-    border.color: critical ? Theme.red : Theme.cardBorder; border.width: 1
+    stroke: critical ? Theme.red : Theme.cardBorder; strokeWidth: 1
 
     MouseArea { anchors.fill: parent; onClicked: card.clicked() }
 
@@ -49,7 +49,7 @@ Rectangle {
                 Text {
                     id: appName
                     text: card.n ? card.n.appName : ""
-                    color: "#66ffffff"; font.family: Theme.font; font.pointSize: Theme.smallSize - 2
+                    color: Theme.ink(0x66); font.family: Theme.font; font.pointSize: Theme.smallSize - 2
                     anchors.verticalCenter: parent.verticalCenter
                 }
             }
@@ -70,7 +70,7 @@ Rectangle {
                 spacing: 6; topPadding: 4
                 Repeater {
                     model: card.n ? card.n.actions : []
-                    Rectangle {
+                    Plate {
                         required property var modelData
                         width: at.implicitWidth + 16; height: 22
                         radius: Theme.radius; color: Theme.bg2

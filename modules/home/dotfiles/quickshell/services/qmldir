@@ -24,3 +24,4 @@ singleton Sony 1.0 Sony.qml
 singleton Mouse 1.0 Mouse.qml
 singleton AirPods 1.0 AirPods.qml
 singleton Workbench 1.0 Workbench.qml
+singleton Worldline 1.0 Worldline.qml

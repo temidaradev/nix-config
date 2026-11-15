@@ -50,7 +50,7 @@ Column {
             Component.onCompleted: text = Workbench.local.notes || ""
             Connections { target: Workbench; function onLocalChanged() { if (!notes.activeFocus) notes.text = Workbench.local.notes || "" } }
             onTextChanged: if (activeFocus) saveNotes.restart()
-            background: Rectangle { color: "#16000000"; radius: Theme.radius }
+            background: Plate { color: "#16000000"; radius: Theme.radius }
         }
         Timer { id: saveNotes; interval: 800; onTriggered: Workbench.preference("notes", notes.text) }
         Component.onDestruction: if (saveNotes.running) Workbench.preference("notes", notes.text)

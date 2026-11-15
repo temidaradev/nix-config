@@ -203,7 +203,7 @@ BarPopup {
             visible: Buds.connected
             label: popup.s.finding ? "󰓃  Stop ringing" : "󰓃  Find my buds"
             danger: true; on: false
-            color: popup.s.finding ? Theme.red : hovered ? "#2affffff" : Theme.bg2
+            color: popup.s.finding ? Theme.red : hovered ? Theme.ink(0x2a) : Theme.bg2
             onClicked: Buds.find(!popup.s.finding)
         }
         PopupButton { label: "󰕾  Sound"; onClicked: Launcher.toggleMenu("volume", Launcher.menuAnchorX) }

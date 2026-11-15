@@ -54,11 +54,11 @@ PanelWindow {
     onLayoutChanged: ping("layout")
     Connections { target: Brightness; function onOsd() { osd.ping("brightness") } }
 
-    Rectangle {
+    Plate {
         anchors.fill: parent
-        radius: 14
-        color: "#f21b1e20"
-        border.color: "#33ffffff"; border.width: 1
+        radius: Theme.r(14)
+        color: Theme.panel(0.95)
+        stroke: Theme.ink(0x33); strokeWidth: 1
         opacity: osd.shown ? 1 : 0
         scale: osd.shown ? 1 : 0.92
         Behavior on opacity { NumberAnimation { id: fade; duration: 180 } }
@@ -89,8 +89,8 @@ PanelWindow {
                     Rectangle {
                         required property int index
                         width: (osd.width - 36 - 28 - 14 - 14 - 44) / segs.count - 3
-                        height: 8; radius: 2
-                        color: (!osd.isMuted && index < segs.lit) ? Theme.fg : "#33ffffff"
+                        height: 8; radius: Theme.r(2)
+                        color: (!osd.isMuted && index < segs.lit) ? Theme.fg : Theme.ink(0x33)
                     }
                 }
             }

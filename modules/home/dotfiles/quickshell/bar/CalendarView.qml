@@ -54,7 +54,7 @@ Column {
         columns: 7; width: parent.width
         Repeater {
             model: cal.cells
-            Rectangle {
+            Plate {
                 required property var modelData
                 readonly property bool isToday: modelData.cur && cal.year === cal.today.getFullYear() && cal.month === cal.today.getMonth() && modelData.d === cal.today.getDate()
                 width: parent.width / 7; height: 30
@@ -63,7 +63,7 @@ Column {
                 Text {
                     anchors.centerIn: parent
                     text: modelData.d
-                    color: isToday ? "#1b1e20" : (modelData.cur ? Theme.fg : "#55ffffff")
+                    color: isToday ? Theme.onAccent : (modelData.cur ? Theme.fg : Theme.ink(0x55))
                     font.bold: isToday
                     font.family: Theme.font; font.pointSize: Theme.smallSize
                 }

@@ -84,7 +84,7 @@ PanelWindow {
                 icon: Apps.icon(w.app_id), title: w.title || w.app_id, sub: (Apps.entry(w.app_id)?.name ?? w.app_id) + "  ·  workspace " + (Niri.workspaces.find(s => s.id === w.workspace_id)?.idx ?? "?"),
                 run: () => Niri.focusWindow(w.id) }))
         case "wall":
-            return Wallpaper.available.filter(p => has(p.split("/").pop())).map(p => ({
+            return Wallpaper.available.filter(p => p !== Wallpaper.scene && has(p.split("/").pop())).map(p => ({
                 image: p, title: p.split("/").pop(), sub: p === Wallpaper.current ? "current" : p.replace(/^\/home\/[^/]+/, "~"), run: () => Wallpaper.set(p) }))
         case "clip":
             return Clipboard.items.filter(c => c.image ? has("image") : has(c.text)).map(c => ({
@@ -117,13 +117,13 @@ PanelWindow {
 
     MouseArea { anchors.fill: parent; onClicked: Launcher.hide() }
 
-    Rectangle {
+    Plate {
         id: panel
         anchors.centerIn: parent
         width: 600; height: 640
-        radius: 6
+        radius: Theme.r(6)
         color: Theme.panelBg
-        border.color: Theme.cardBorder; border.width: 1
+        stroke: Theme.cardBorder; strokeWidth: 1
         MouseArea { anchors.fill: parent }
 
         Column {
@@ -131,11 +131,11 @@ PanelWindow {
             anchors.margins: 10
             spacing: 8
 
-            Rectangle {   // search box
+            Plate {   // search box
                 width: parent.width; height: 36
                 radius: Theme.radius
                 color: Theme.bg2
-                border.color: search.activeFocus ? Theme.accent : "transparent"; border.width: 1
+                stroke: search.activeFocus ? Theme.accent : "transparent"; strokeWidth: 1
                 Row {
                     anchors.fill: parent; anchors.leftMargin: 10; anchors.rightMargin: 10
                     spacing: 8
@@ -184,12 +184,12 @@ PanelWindow {
                     }
                 }
 
-                delegate: Rectangle {
+                delegate: Plate {
                     required property var modelData
                     required property int index
                     width: list.width; height: modelData.image ? 64 : 42
                     radius: Theme.radius
-                    color: index === win.current ? "#403daee9" : (hover.containsMouse ? "#1affffff" : "transparent")
+                    color: index === win.current ? Theme.accentSoft : (hover.containsMouse ? Theme.ink(0x1a) : "transparent")
                     Row {
                         anchors.fill: parent; anchors.leftMargin: 8; anchors.rightMargin: 8
                         spacing: 10
@@ -197,7 +197,7 @@ PanelWindow {
                             width: modelData.image ? 90 : 28; height: parent.height
                             IconImage { visible: !!modelData.icon; anchors.centerIn: parent; implicitSize: 26; asynchronous: true; source: modelData.icon || "" }
                             Text { visible: !!modelData.glyph; anchors.centerIn: parent; text: modelData.glyph || ""; color: Theme.accent; font.family: Theme.font; font.pointSize: 16 }
-                            Rectangle { visible: !!modelData.image; anchors.centerIn: parent; width: 88; height: 50; radius: 3; color: Theme.bg3; clip: true
+                            Rectangle { visible: !!modelData.image; anchors.centerIn: parent; width: 88; height: 50; radius: Theme.r(3); color: Theme.bg3; clip: true
                                 Image { anchors.fill: parent; source: modelData.image ? "file://" + modelData.image : ""; fillMode: Image.PreserveAspectCrop; asynchronous: true; smooth: true; sourceSize: Qt.size(176, 100) } }
                         }
                         Column {
@@ -217,7 +217,7 @@ PanelWindow {
                 }
             }
 
-            Rectangle { width: parent.width; height: 1; color: "#22ffffff" }
+            Rectangle { width: parent.width; height: 1; color: Theme.ink(0x22) }
 
             Row {   // footer
                 width: parent.width; height: 36
