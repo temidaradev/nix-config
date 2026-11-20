@@ -27,13 +27,14 @@
       url = "github:temidaradev/kopuz";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    autolith.url = "github:lambda-symbolics/autolith";
     caelestia-shell = {
       url = "github:caelestia-dots/shell";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, nix-darwin, hjem, nvf, zen-browser, helium, kopuz, caelestia-shell, ... }:
+  outputs = inputs@{ self, nixpkgs, nix-darwin, hjem, nvf, zen-browser, helium, kopuz, autolith, caelestia-shell, ... }:
     let
       lib = nixpkgs.lib;
 

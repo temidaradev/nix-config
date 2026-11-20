@@ -20,6 +20,7 @@ in
   environment.systemPackages = packages.system ++ shared ++ [
     flakeInputs.helium.packages.${system}.default
     flakeInputs.kopuz.packages.${system}.default
+    flakeInputs.autolith.packages.${system}.default
     flakeInputs.zen-browser.packages.${system}.default
   ];
 }

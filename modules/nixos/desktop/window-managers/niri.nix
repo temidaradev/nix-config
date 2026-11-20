@@ -26,7 +26,7 @@ let
   ghosttySteins = pkgs.replaceVars "${steinsGate}/ghostty" { background = "${steinsGate}/terminal.jpg"; };
   shellTheme = pkgs.writeShellApplication {
     name = "shell-theme";
-    runtimeInputs = [ pkgs.coreutils pkgs.procps pkgs.gnugrep pkgs.findutils pkgs.glib ];
+    runtimeInputs = [ pkgs.coreutils pkgs.procps pkgs.gnugrep pkgs.findutils pkgs.glib pkgs.gawk pkgs.diffutils ];
     text = ''
       dir="''${XDG_STATE_HOME:-$HOME/.local/state}/quickshell"
       cfg="''${XDG_CONFIG_HOME:-$HOME/.config}"
@@ -101,6 +101,37 @@ let
           put "$p/chrome/steinsgate.css" "" "/* normal theme */"
         fi
       done
+
+      kz="$cfg/kopuz/settings.toml"
+      if [[ -f $kz ]]; then
+        kzsaved="$dir/normal/kopuz-theme"
+        kzcur=$(awk -F'"' '/^\[/ { exit } /^theme *=/ { print $2; exit }' "$kz")
+        if steins; then
+          if [[ $kzcur != steinsgate ]]; then mkdir -p "$dir/normal"; printf '%s' "''${kzcur:-system}" > "$kzsaved"; fi
+          kztheme=steinsgate
+        elif [[ $kzcur == steinsgate ]]; then
+          kztheme=$(cat "$kzsaved" 2>/dev/null || echo system)
+        else
+          kztheme=$kzcur
+        fi
+        awk -v t="$kztheme" -v pal="$sg/kopuz.toml" '
+          function line(s) { out[++n] = s }
+          /^\[/ {
+            if (!seen && t != "") { line("theme = \"" t "\""); seen = 1 }
+            top = 1; skip = ($0 ~ /^\[custom_themes\.steinsgate[].]/)
+          }
+          skip { next }
+          !top && /^theme *=/ { if (t != "") line("theme = \"" t "\""); seen = 1; next }
+          { line($0) }
+          END {
+            if (!seen && t != "") line("theme = \"" t "\"")
+            while (n > 0 && out[n] ~ /^[ \t]*$/) n--
+            for (i = 1; i <= n; i++) print out[i]
+            print ""
+            while ((getline l < pal) > 0) print l
+          }' "$kz" > "$kz.tmp"
+        if cmp -s "$kz" "$kz.tmp"; then rm -f "$kz.tmp"; else mv -f "$kz.tmp" "$kz"; fi
+      fi
 
       printf '%s' "$new" > "$dir/theme.tmp" && mv -f "$dir/theme.tmp" "$dir/theme"
 

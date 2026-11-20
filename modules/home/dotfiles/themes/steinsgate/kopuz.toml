@@ -1,0 +1,17 @@
+[custom_themes.steinsgate]
+name = "Steins;Gate"
+
+[custom_themes.steinsgate.vars]
+bg = "#0a0604"
+raised = "#140c06"
+surface = "#5a4330"
+text = "#ffdcae"
+text-muted = "#a88760"
+accent = "#ff9e2c"
+accent-soft = "#ffb35c"
+accent-alt = "#e0821a"
+accent-deep = "#4a2a10"
+highlight = "#5fd4e0"
+highlight-dark = "#3a9fb0"
+progress = "#ff9e2c"
+danger = "#e8452c"
