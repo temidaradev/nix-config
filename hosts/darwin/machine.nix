@@ -20,7 +20,7 @@ in
 
   # The custom top bar (modules/darwin/sketchybar). false = plain macOS menu
   # bar; apply with `nh switch`.
-  services.sketchybar.enable = true;
+  services.sketchybar.enable = false;
 
   environment.systemPackages = packages.system ++ shared;
 }

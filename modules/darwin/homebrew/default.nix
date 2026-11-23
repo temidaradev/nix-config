@@ -77,7 +77,7 @@ in
       "opencode"
       "opencv"
       "emscripten"
-      "git-flow-avh"
+      "git-flow"
       "gradle"
       "mole"
       "clipboard"

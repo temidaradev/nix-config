@@ -7,11 +7,11 @@
         "nixpkgs": "nixpkgs"
       },
       "locked": {
-        "lastModified": 1795439833,
-        "narHash": "sha256-eb5UBthDiDpMcrt2bli86S57J3Z+Ji5NPaC5HKUVdOE=",
+        "lastModified": 1795457475,
+        "narHash": "sha256-3UmMuD5fXMRCh+8c+8BZMinuUcg1vYrEZmSBQhA6fuw=",
         "owner": "lambda-symbolics",
         "repo": "autolith",
-        "rev": "a041074623dc4aefdd076fba976aae20cf1c63f9",
+        "rev": "47961cf9c810eb1b466cc07be47ff40e9fad4ef9",
         "type": "github"
       },
       "original": {
@@ -54,11 +54,11 @@
         "quickshell": "quickshell"
       },
       "locked": {
-        "lastModified": 1795322990,
-        "narHash": "sha256-ZzhOZu5I6Ku4oN3zqOa+RkuKLQyugomiyiHy2tCvifg=",
+        "lastModified": 1795449321,
+        "narHash": "sha256-LIUOZFwfsaO/9yxa/byduaY8RhF6f+ZUO/QUc0lqG5g=",
         "owner": "caelestia-dots",
         "repo": "shell",
-        "rev": "8c3cb1d5557b4fbdc4fce8354564141f44e92338",
+        "rev": "1e44367c34ee36607b1d3d5f93cd28c35c3aaa8c",
         "type": "github"
       },
       "original": {
@@ -240,11 +240,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1795443133,
-        "narHash": "sha256-jx4VHjBJkWCCLWQcVwEahBVXJHvThv5yrUyRbhQnv7o=",
+        "lastModified": 1795447411,
+        "narHash": "sha256-VT9LUyzmxvQejZv/NFgB4sq/mgZAv+WuqPrDtq3uRwY=",
         "owner": "temidaradev",
         "repo": "kopuz",
-        "rev": "732e63446c9086eafe69fa0f5a2f89c6e081f9a8",
+        "rev": "908bce63c323e53a6c168168eab7edfb946a4a60",
         "type": "github"
       },
       "original": {
